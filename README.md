@@ -20,3 +20,14 @@ python manage.py createsuperuser
 ```
 python manage.py runserver
 ```
+
+# Docker run
+## Docker compose up
+```
+docker-compose -f docker-compose.yml -f docker-compose-local-infrastructure.yml up --build
+```
+
+## Create admin
+```
+docker-compose run shortage-global-web python manage.py createsuperuser
+```
