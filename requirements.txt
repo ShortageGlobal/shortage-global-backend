@@ -1,5 +1,17 @@
 asgiref==3.5.2
 backports.zoneinfo==0.2.1
+da-vinci==0.3.0
 Django==4.0.5
+django-auditlog==2.0.0
+django-cleanup==6.0.0
 django-split-settings==1.1.0
+django-storages==1.12.3
+django-thumbnails==0.7.0
+djangorestframework==3.13.1
+gunicorn==20.1.0
+Pillow==9.1.1
+python-dateutil==2.8.2
+pytz==2022.1
+shortuuid==1.0.9
+six==1.16.0
 sqlparse==0.4.2
