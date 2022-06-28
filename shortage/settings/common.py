@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     
     'shortage.apps.catalog',
     
+    'tinymce',
+    'django_countries',
     'auditlog',
     'storages',
     'rest_framework',
@@ -152,15 +154,33 @@ THUMBNAILS = {
         # You can also use Amazon S3 or any other Django storage backends
     },
     'SIZES': {
-        'medium': {
+        'organization_medium': {
             'PROCESSORS': [
                 {'PATH': 'thumbnails.processors.resize', 'width': 300, 'height': 300, 'method': 'fill'},
             ],
         },
-        'large': {
+        'product_medium': {
+            'PROCESSORS': [
+                {'PATH': 'thumbnails.processors.resize', 'width': 300, 'height': 300, 'method': 'fill'},
+            ],
+        },
+        'product_large': {
             'PROCESSORS': [
                 {'PATH': 'thumbnails.processors.resize', 'width': 1024, 'height': 1024, 'method': 'fill'},
             ],
         },
     }
+}
+
+TINYMCE_DEFAULT_CONFIG = {
+    "theme": "silver",
+    "height": 500,
+    "menubar": True,
+    "plugins": "advlist,autolink,lists,link,image,charmap,print,preview,anchor,"
+    "searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,paste,"
+    "code,help,wordcount",
+    "toolbar": " undo redo | formatselect | link | "
+    "bold italic backcolor | alignleft aligncenter "
+    "alignright alignjustify | bullist numlist outdent indent | "
+    "removeformat | help",
 }
