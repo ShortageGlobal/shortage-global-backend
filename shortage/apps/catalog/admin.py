@@ -19,7 +19,7 @@ class InstructionAdmin(admin.ModelAdmin):
 
 
 class OnlineStoreAdmin(admin.ModelAdmin):
-    list_display = ['name', 'product', 'url', 'created_at']
+    list_display = ['url', 'product', 'name', 'created_at']
     autocomplete_fields = ['product']
 
 
