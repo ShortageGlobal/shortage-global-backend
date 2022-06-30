@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'shortage.apps.catalog',
+    'shortage.apps.packages',
     
     'tinymce',
     'django_countries',
