@@ -1,31 +1,11 @@
 from statistics import mode
-import uuid
-import os
 from django.db import models
 from tinymce.models import HTMLField
 from django_countries.fields import CountryField
 from auditlog.registry import auditlog
-from shortage.apps.catalog import storage
 from thumbnails.fields import ImageField
-
-
-def get_uuid_path(directory, filename):
-    ext = filename.split('.')[-1]
-    filename = "%s.%s" % (uuid.uuid4(), ext)
-
-    return os.path.join(directory, filename)
-
-
-def get_organization_path(instance, filename):
-    return get_uuid_path(f'photo/organization/{str(instance.id)}/', filename)
-
-
-def get_product_path(instance, filename):
-    return get_uuid_path(f'photo/product/{str(instance.id)}/', filename)
-
-
-def get_package_path(instance, filename):
-    return get_uuid_path(f'photo/package/{str(instance.uuid)}/', filename)
+from shortage.apps import storage
+from shortage.apps.file_paths import get_organization_path, get_product_path
 
 
 class Organization(models.Model):
@@ -47,6 +27,17 @@ class Organization(models.Model):
     def thumbnails(self):
         return self.photo.thumbnails.all()
 
+
+class Instruction(models.Model):
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    description = HTMLField(null=True, blank=True)
+    country = CountryField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)    
+
+    def __str__(self):
+        return self.name
+    
 
 class Product(models.Model):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
@@ -76,17 +67,6 @@ class Product(models.Model):
         return self.photo.thumbnails.all()
 
 
-class Instruction(models.Model):
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    description = HTMLField(null=True, blank=True)
-    country = CountryField(null=True)
-    created_at = models.DateTimeField(auto_now_add=True)    
-
-    def __str__(self):
-        return self.name
-
-
 class OnlineStore(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     url = models.URLField(max_length=255, null=True, blank=True)
@@ -97,47 +77,7 @@ class OnlineStore(models.Model):
         return self.url
 
 
-class DeliveryStatus(models.TextChoices):
-    PENDING = '', 'Pending'
-    CONFIRMED = 'Confirmed', 'Confirmed'
-    DELIVERED = 'Delivered', 'Delivered'
-    
-    
-class Package(models.Model):
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    full_name = models.CharField(max_length=100, null=True, blank=True)
-    email = models.EmailField(max_length=100, blank=True)
-    phone_number = models.CharField(max_length=100, blank=True)
-    delivery_company = models.CharField(max_length=100)
-    tracking_code = models.CharField(max_length=100)
-    note = models.TextField(null=True, blank=True)
-    status = models.CharField(
-        max_length=32,
-        choices=DeliveryStatus.choices,
-        default=DeliveryStatus.PENDING,
-        blank=True,
-        null=True
-    )
-    photo = ImageField(upload_to=get_package_path, null=True, blank=True, storage=storage.MediaStorage())
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.uuid.__str__()
-    
-    
-class PackageItem(models.Model):
-    package = models.ForeignKey(Package, on_delete=models.DO_NOTHING, null=True)
-    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, null=True)
-    quantity = models.PositiveIntegerField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return self.product.name
-
-
 auditlog.register(Organization)
-auditlog.register(Product)
 auditlog.register(Instruction)
+auditlog.register(Product)
 auditlog.register(OnlineStore)
-auditlog.register(Package)
-auditlog.register(PackageItem)

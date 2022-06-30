@@ -1,0 +1,57 @@
+from django.contrib import admin
+from .models import Package, PackageItem
+from django.utils.html import format_html
+
+
+class PackageAdmin(admin.ModelAdmin):
+    list_display = ['created_at', 'email', 'tracking_code', 'status', 'created_at']
+    fields = [
+        'status',
+        'full_name',
+        'email',
+        'phone_number',
+        'delivery_company',
+        'tracking_code',
+        'note',
+        'photo_preview',
+        'created_at',
+    ]
+    readonly_fields = [
+        'uuid',
+        'full_name',
+        'email',
+        'phone_number',
+        'delivery_company',
+        'tracking_code',
+        'note',
+        'photo_preview',
+        'created_at',
+    ]
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def get_ordering(self, request):
+        return super().get_ordering(request) or ['-created_at']
+
+    def photo_preview(self, obj):
+        if obj.photo:
+            html = format_html('<img width=300 src="{}" />'.format(obj.photo.url))
+        else:
+            html = 'No photo'
+        return html
+
+    photo_preview.short_description = 'Photo preview'
+
+
+class PackageItemAdmin(admin.ModelAdmin):
+    list_display = ['package', 'product', 'quantity', 'created_at']
+    fields = ['package', 'product', 'quantity', 'created_at']
+    readonly_fields = ['package', 'product', 'quantity', 'created_at']
+
+    def has_add_permission(self, request, obj=None):
+        return False    
+
+
+admin.site.register(Package, PackageAdmin)
+admin.site.register(PackageItem, PackageItemAdmin)
