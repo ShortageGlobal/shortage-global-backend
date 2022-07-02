@@ -10,12 +10,13 @@ def get_uuid_path(directory, filename):
 
 
 def get_organization_path(instance, filename):
-    return get_uuid_path(f'photo/organization/{str(instance.id)}/', filename)
+    return get_uuid_path(f'photo/organization/{str(instance.slug)}/', filename)
 
 
 def get_product_path(instance, filename):
-    return get_uuid_path(f'photo/product/{str(instance.id)}/', filename)
+    print(instance)
+    return get_uuid_path(f'photo/product/{str(instance.slug)}/', filename)
 
 
 def get_package_path(instance, filename):
-    return get_uuid_path(f'photo/package/{str(instance.uuid)}/', filename)
+    return get_uuid_path(f'photo/package/%Y/%m/%d/', filename)

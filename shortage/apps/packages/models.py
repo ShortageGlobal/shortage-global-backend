@@ -36,8 +36,8 @@ class Package(models.Model):
     
     
 class PackageItem(models.Model):
-    package = models.ForeignKey(Package, on_delete=models.DO_NOTHING, null=True)
-    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, null=True)
+    package = models.ForeignKey(Package, related_name='package_items', on_delete=models.DO_NOTHING, null=True)
+    product = models.ForeignKey(Product, related_name='package_items', on_delete=models.DO_NOTHING, null=True)
     quantity = models.PositiveIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     
