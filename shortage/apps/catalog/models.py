@@ -1,5 +1,5 @@
-from statistics import mode
 from django.db import models
+from django.contrib.auth.models import User
 from tinymce.models import HTMLField
 from django_countries.fields import CountryField
 from auditlog.registry import auditlog
@@ -9,6 +9,7 @@ from shortage.apps.file_paths import get_organization_path, get_product_path
 
 
 class Organization(models.Model):
+    owner = models.ForeignKey(User, related_name='organizations', on_delete=models.CASCADE)
     name = models.CharField(max_length=255, null=True, blank=True)
     slug = models.SlugField(max_length=255, unique=True)
     description = HTMLField(null=True, blank=True)
@@ -24,12 +25,12 @@ class Organization(models.Model):
         return self.name
 
     @property
-    def thumbnails(self):
-        return self.photo.thumbnails.all()
+    def medium_photo(self):
+        return self.photo.thumbnails.organization_medium
 
 
 class Instruction(models.Model):
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organization, related_name='instructions', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = HTMLField(null=True, blank=True)
     country = CountryField(null=True)
@@ -40,11 +41,11 @@ class Instruction(models.Model):
     
 
 class Product(models.Model):
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organization, related_name='products', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-    category= models.SmallIntegerField()
-    photo = ImageField(upload_to=get_product_path, null=True, blank=True, storage=storage.MediaStorage(),
-                       pregenerated_sizes=["product_large", "product_medium"])
+    slug = models.SlugField(max_length=255, unique=True, db_index=True)
+    category= models.CharField(max_length=255)
+    photo = ImageField(upload_to=get_product_path, null=True, blank=True, storage=storage.MediaStorage(), pregenerated_sizes=["product_large", "product_medium"])
     price = models.CharField(max_length=32, null=True, blank=True)
     requested_amount = models.PositiveIntegerField(default=0)
     description = HTMLField(null=True, blank=True)
@@ -57,18 +58,22 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta(object):
-        ordering = ['position']
+        ordering = ['position', '-created_at']
 
     def __str__(self):
         return self.name
 
     @property
-    def thumbnails(self):
-        return self.photo.thumbnails.all()
+    def large_photo(self):
+        return self.photo.thumbnails.product_large
+
+    @property
+    def medium_photo(self):
+        return self.photo.thumbnails.product_medium
 
 
 class OnlineStore(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
+    product = models.ForeignKey(Product, related_name='online_stores', on_delete=models.CASCADE, null=True)
     url = models.URLField(max_length=255, null=True, blank=True)
     name = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -3,7 +3,7 @@ from .models import Organization, Product, Instruction, OnlineStore
 
 
 class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'is_draft', 'is_validated', 'is_deleted', 'created_at']
+    list_display = ['name', 'is_draft', 'is_validated', 'is_deleted', 'owner', 'created_at']
     search_fields = ['name']
 
 
