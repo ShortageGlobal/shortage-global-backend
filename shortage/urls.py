@@ -20,8 +20,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('tinymce/', include('tinymce.urls')),
-    path('', include('shortage.apps.catalog.urls')),
-    # path('', include('shortage.apps.packages.urls')),
+    path('api/', include('shortage.apps.api_urls')),
 ]
 
 if settings.DEBUG:
