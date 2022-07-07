@@ -5,10 +5,12 @@ DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',')
 
+print(os.getenv('DATABASE_URL', ''))
+
 if os.getenv('DATABASE_URL', None) is None:
     raise Exception('DATABASE_URL environment variable not defined')
 DATABASES = {
-    'default': dj_database_url.parse(os.environ.get('DATABASE_URL')),
+    'default': dj_database_url.parse(os.getenv('DATABASE_URL', '')),
 }
 
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
