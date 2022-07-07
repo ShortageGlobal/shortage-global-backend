@@ -5,8 +5,6 @@ DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',')
 
-print(os.getenv('DATABASE_URL', ''))
-
 if os.getenv('DATABASE_URL', None) is None:
     raise Exception('DATABASE_URL environment variable not defined')
 DATABASES = {
