@@ -1,19 +1,34 @@
 import os
 import dj_database_url
 
-DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
+DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", '').split(",")
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',')
 
-if os.getenv("DATABASE_URL", None) is None:
-    raise Exception("DATABASE_URL environment variable not defined")
+if os.getenv('DATABASE_URL', None) is None:
+    raise Exception('DATABASE_URL environment variable not defined')
 DATABASES = {
-    "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),
+    'default': dj_database_url.parse(os.environ.get('DATABASE_URL')),
 }
 
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", '').split(",")
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-EMAIL_BACKEND = 'django_ses.SESBackend'
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
+
+# Storages
+AWS_ACCESS_KEY_ID = os.getenv('SPACE_KEY', '')
+AWS_SECRET_ACCESS_KEY = os.getenv('SPACE_SECRET_KEY', '')
+AWS_STORAGE_BUCKET_NAME = os.getenv('SPACE_NAME', '')
+AWS_DEFAULT_ACL = 'public-read'
+AWS_S3_ENDPOINT_URL = os.getenv('SPACE_URL', '')
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400'
+}
+AWS_STATIC_LOCATION = 'static'
+STATIC_URL = '%s/%s' % (AWS_S3_ENDPOINT_URL, AWS_STATIC_LOCATION)
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_MEDIA_LOCATION = 'media'
+MEDIA_URL = '%s%s' % (AWS_S3_ENDPOINT_URL, AWS_MEDIA_LOCATION)
+DEFAULT_FILE_STORAGE = 'django_project.storage_backends.MediaStorage'
+
 
 LOGGING = {
     'version': 1,

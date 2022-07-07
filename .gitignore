@@ -2,8 +2,8 @@ venv
 .idea
 .vscode
 db.sqlite3
-mediafiles
-staticfiles
+media
+static
 __pycache__
 
 # in case we need local settings
