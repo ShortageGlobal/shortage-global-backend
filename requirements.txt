@@ -23,5 +23,5 @@ s3transfer==0.6.0
 shortuuid==1.0.9
 six==1.16.0
 sqlparse==0.4.2
-typing-extensions==4.2.0.post1+dr
+typing-extensions==4.3.0
 urllib3==1.26.9
