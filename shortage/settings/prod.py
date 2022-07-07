@@ -24,7 +24,7 @@ AWS_S3_OBJECT_PARAMETERS = {
 }
 AWS_STATIC_LOCATION = 'static'
 STATIC_URL = '%s/%s' % (AWS_S3_ENDPOINT_URL, AWS_STATIC_LOCATION)
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATICFILES_STORAGE = 'shortage.apps.storage.StaticStorage'
 AWS_MEDIA_LOCATION = 'media'
 MEDIA_URL = '%s%s' % (AWS_S3_ENDPOINT_URL, AWS_MEDIA_LOCATION)
 DEFAULT_FILE_STORAGE = 'shortage.apps.storage.MediaStorage'
