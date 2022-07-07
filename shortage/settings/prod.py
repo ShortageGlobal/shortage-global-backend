@@ -18,6 +18,7 @@ AWS_ACCESS_KEY_ID = os.getenv('SPACE_KEY', '')
 AWS_SECRET_ACCESS_KEY = os.getenv('SPACE_SECRET_KEY', '')
 AWS_STORAGE_BUCKET_NAME = os.getenv('SPACE_NAME', '')
 AWS_DEFAULT_ACL = 'public-read'
+AWS_QUERYSTRING_AUTH = False
 AWS_S3_ENDPOINT_URL = os.getenv('SPACE_URL', '')
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400'
