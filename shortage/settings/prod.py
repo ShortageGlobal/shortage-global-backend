@@ -8,22 +8,23 @@ ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',')
 
 # Do not connect to database durung static collection
 if len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
-    if os.getenv('DATABASE_URL', None) is None:
-        raise Exception('DATABASE_URL environment variable not defined')
+    database_url = os.getenv('DJANGO_DATABASE_URL', None)
+    if database_url is None:
+        raise Exception('DJANGO_DATABASE_URL environment variable not defined')
     DATABASES = {
-        'default': dj_database_url.parse(os.getenv('DATABASE_URL', '')),
+        'default': dj_database_url.parse(database_url),
     }
 
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
+CSRF_TRUSTED_ORIGINS = os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',')
+CORS_ALLOWED_ORIGINS = os.getenv('DJANGO_CORS_ALLOWED_ORIGINS', '').split(',')
 
 # Storages
-AWS_ACCESS_KEY_ID = os.getenv('SPACE_KEY', '')
-AWS_SECRET_ACCESS_KEY = os.getenv('SPACE_SECRET_KEY', '')
-AWS_STORAGE_BUCKET_NAME = os.getenv('SPACE_NAME', '')
+AWS_ACCESS_KEY_ID = os.getenv('DJANGO_AWS_ACCESS_KEY_ID', '') # Space key
+AWS_SECRET_ACCESS_KEY = os.getenv('DJANGO_AWS_SECRET_ACCESS_KEY', '') # Space secret key
+AWS_STORAGE_BUCKET_NAME = os.getenv('DJANGO_AWS_STORAGE_BUCKET_NAME', '') # Space name
 AWS_DEFAULT_ACL = 'public-read'
 AWS_QUERYSTRING_AUTH = False
-AWS_S3_ENDPOINT_URL = os.getenv('SPACE_URL', '')
+AWS_S3_ENDPOINT_URL = os.getenv('DJANGO_AWS_S3_ENDPOINT_URL', '') # Space URL
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400'
 }
