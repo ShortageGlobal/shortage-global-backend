@@ -18,4 +18,3 @@ DATABASES = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = []
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
