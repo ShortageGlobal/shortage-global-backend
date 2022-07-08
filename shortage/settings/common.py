@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -48,12 +48,14 @@ INSTALLED_APPS = [
     'storages',
     'rest_framework',
     'thumbnails',
+    'corsheaders',
     'django_cleanup.apps.CleanupConfig', # should be last
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -128,11 +130,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_ROOT = BASE_DIR.joinpath("static")
-STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR.joinpath('static')
+STATIC_URL = '/static/'
 
-MEDIA_ROOT = BASE_DIR.joinpath("media")
-MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR.joinpath('media')
+MEDIA_URL = '/media/'
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
@@ -177,14 +179,14 @@ THUMBNAILS = {
 }
 
 TINYMCE_DEFAULT_CONFIG = {
-    "theme": "silver",
-    "height": 500,
-    "menubar": True,
-    "plugins": "advlist,autolink,lists,link,image,charmap,print,preview,anchor,"
-    "searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,paste,"
-    "code,help,wordcount",
-    "toolbar": " undo redo | formatselect | link | "
-    "bold italic backcolor | alignleft aligncenter "
-    "alignright alignjustify | bullist numlist outdent indent | "
-    "removeformat | help",
+    'theme': 'silver',
+    'height': 500,
+    'menubar': True,
+    'plugins': 'advlist,autolink,lists,link,image,charmap,print,preview,anchor,'
+    'searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,paste,'
+    'code,help,wordcount',
+    'toolbar': ' undo redo | formatselect | link | '
+    'bold italic backcolor | alignleft aligncenter '
+    'alignright alignjustify | bullist numlist outdent indent | '
+    'removeformat | help',
 }

@@ -1,3 +1,4 @@
+import sys
 import os
 import dj_database_url
 
@@ -5,13 +6,16 @@ DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',')
 
-if os.getenv('DATABASE_URL', None) is None:
-    raise Exception('DATABASE_URL environment variable not defined')
-DATABASES = {
-    'default': dj_database_url.parse(os.getenv('DATABASE_URL', '')),
-}
+# Do not connect to database durung static collection
+if len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
+    if os.getenv('DATABASE_URL', None) is None:
+        raise Exception('DATABASE_URL environment variable not defined')
+    DATABASES = {
+        'default': dj_database_url.parse(os.getenv('DATABASE_URL', '')),
+    }
 
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
 
 # Storages
 AWS_ACCESS_KEY_ID = os.getenv('SPACE_KEY', '')
