@@ -28,7 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -189,4 +188,13 @@ TINYMCE_DEFAULT_CONFIG = {
     'bold italic backcolor | alignleft aligncenter '
     'alignright alignjustify | bullist numlist outdent indent | '
     'removeformat | help',
+}
+
+# IMPORTANT: the list of category keys must be synchronized with frontend
+PRODUCT_CATEGORY_KEY = {
+  'VITAL_GOODS': 'VITAL_GOODS',
+  'HEALTHCARE': 'HEALTHCARE',
+  'EDUCATION': 'EDUCATION',
+  'BABY_CARE': 'BABY_CARE',
+  'SAVE_ANIMALS': 'SAVE_ANIMALS'
 }

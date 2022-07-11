@@ -1,6 +1,8 @@
 from django.conf import settings
 
+# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
 ALLOWED_HOSTS = [
     'localhost',
     '0.0.0.0',  # noqa: S104
