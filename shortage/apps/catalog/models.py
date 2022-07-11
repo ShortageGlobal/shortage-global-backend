@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
 from tinymce.models import HTMLField
 from django_countries.fields import CountryField
@@ -41,10 +42,18 @@ class Instruction(models.Model):
     
 
 class Product(models.Model):
+    CATEGORIES = [
+        (settings.PRODUCT_CATEGORY_KEY['VITAL_GOODS'], 'Vital Goods'),
+        (settings.PRODUCT_CATEGORY_KEY['HEALTHCARE'], 'Healthcare'),
+        (settings.PRODUCT_CATEGORY_KEY['EDUCATION'], 'Education'),
+        (settings.PRODUCT_CATEGORY_KEY['BABY_CARE'], 'Baby Care'),
+        (settings.PRODUCT_CATEGORY_KEY['SAVE_ANIMALS'], 'Save Animals'),
+    ]
+    
     organization = models.ForeignKey(Organization, related_name='products', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True, db_index=True)
-    category= models.CharField(max_length=255)
+    category= models.CharField(max_length=255, choices=CATEGORIES)
     photo = ImageField(upload_to=get_product_path, null=True, blank=True, storage=storage.MediaStorage(), pregenerated_sizes=["product_large", "product_medium"])
     price = models.CharField(max_length=32, null=True, blank=True)
     requested_amount = models.PositiveIntegerField(default=0)
