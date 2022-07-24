@@ -1,8 +1,8 @@
 # Shortage.Global backend
 
-API: https://shortage.global/api/
+API: https://backend-wp66a.ondigitalocean.app/api/
 
-Admin: https://shortage.global/admin/
+Admin: https://backend-wp66a.ondigitalocean.app/admin/
 
 ## Docker run for local development
 ### Docker compose up
