@@ -1,7 +1,7 @@
 from rest_framework import viewsets, mixins, filters
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from .models import Organization, Instruction, Product
+from .models import Organization, Instruction, Product, OnlineStore
 from .serializers import (
     OrganizationPreviewSerializer,
     InstructionSerializer,
@@ -10,6 +10,7 @@ from .serializers import (
     CategorySerializer,
     PublicOrganizationSerializer,
     ProductSerializer,
+    OnlineStoreSerializer,
 )
 
 
@@ -68,8 +69,7 @@ class OrganizationInstructionsViewSet(mixins.ListModelMixin, viewsets.GenericVie
         organization = get_object_or_404(
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
-        queryset = Instruction.objects.filter(organization=organization)
-        return queryset
+        return Instruction.objects.filter(organization=organization)
 
 
 class OrganizationProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -123,3 +123,23 @@ class OrganizationProductViewSet(mixins.RetrieveModelMixin, viewsets.GenericView
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
         return Product.objects.filter(organization=organization)
+
+
+class OrganizationProductOnlineStoresViewSet(
+    mixins.ListModelMixin, viewsets.GenericViewSet
+):
+    """
+    A list of online stores that belong to the given product of the given organization
+    """
+
+    serializer_class = OnlineStoreSerializer
+    paginator = None
+
+    def get_queryset(self):
+        organization = get_object_or_404(
+            Organization.objects.public(), slug=self.kwargs["org_slug"]
+        )
+        product = get_object_or_404(
+            Product, slug=self.kwargs["product_slug"], organization=organization
+        )
+        return OnlineStore.objects.filter(product=product)
