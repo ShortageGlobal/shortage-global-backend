@@ -9,16 +9,18 @@ from shortage.apps import storage
 from shortage.apps.file_paths import get_organization_path, get_product_path
 
 
-class PromotedOrganizationManager(models.Manager):
-    def get_queryset(self):
+class OrganizationManager(models.Manager):
+    def promoted(self):
         """
         Return all validated published organizations for now.
         In the future, use a "promoted' flag or something.
         """
-        return (
-            super()
-            .get_queryset()
-            .filter(is_verified=True, is_draft=False, is_deleted=False)
+        return self.public()
+
+    def public(self):
+        """Return all publicly available organizations"""
+        return self.get_queryset().filter(
+            is_verified=True, is_draft=False, is_deleted=False
         )
 
 
@@ -43,8 +45,7 @@ class Organization(models.Model):
     is_deleted = models.BooleanField(default=False, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    objects = models.Manager()
-    promoted_objects = PromotedOrganizationManager()
+    objects = OrganizationManager()
 
     def __str__(self):
         return self.name
@@ -60,22 +61,22 @@ class Instruction(models.Model):
     )
     name = models.CharField(max_length=255)
     description = HTMLField(null=True, blank=True)
-    country = CountryField(null=True)
+    country = CountryField(default="US")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
 
 
-class PromotedProductsManager(models.Manager):
-    def get_queryset(self):
+class ProductsManager(models.Manager):
+    def promoted(self):
         """
         Return all products for all promoted organizations.
         In the future, use a "promoted' flag or something.
         """
         return Product.objects.filter(
             organization_id__in=models.Subquery(
-                Organization.promoted_objects.values("id")
+                Organization.objects.promoted().values("id")
             )
         )
 
@@ -115,8 +116,7 @@ class Product(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
-    objects = models.Manager()
-    promoted_objects = PromotedProductsManager()
+    objects = ProductsManager()
 
     def __str__(self):
         return self.name
