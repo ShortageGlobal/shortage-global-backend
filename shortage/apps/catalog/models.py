@@ -78,15 +78,6 @@ class PromotedProductsManager(models.Manager):
                 Organization.promoted_objects.values("id")
             )
         )
-        # return (
-        #     super()
-        #     .get_queryset()
-        #     .filter(
-        #         organization__is_verified=True,
-        #         organization__is_draft=False,
-        #         organization__is_deleted=False,
-        #     )
-        # )
 
 
 class ProductCategory(models.TextChoices):

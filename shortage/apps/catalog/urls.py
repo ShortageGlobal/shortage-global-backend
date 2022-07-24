@@ -23,9 +23,4 @@ router.register(
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path("", include(router.urls)),
-    # path(
-    #     "promoted/categories/",
-    #     PromotedCategoriesView.as_view(),
-    #     name="promoted_categories-list",
-    # ),
 ]

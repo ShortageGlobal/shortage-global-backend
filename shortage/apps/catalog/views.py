@@ -29,15 +29,3 @@ class PromotedCategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     )
     serializer_class = CategorySerializer
     paginator = None
-
-
-# class PromotedCategoriesView(views.APIView):
-#     """The list of categories for promoted products."""
-
-#     queryset = Product.objects.none()
-
-#     def get(self, request, format=None):
-#         categories = Product.promoted_objects.distinct("category").values_list(
-#             "category", flat=True
-#         )
-#         return response.Response(categories)
