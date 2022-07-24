@@ -3,8 +3,14 @@ from .models import Organization, Product, Instruction, OnlineStore
 
 
 class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ['name', 'is_draft', 'is_validated', 'is_deleted', 'owner', 'created_at']
-    search_fields = ['name']
+    list_display = [
+        "name",
+        "is_verified",
+        "is_draft",
+        "owner",
+        "created_at",
+    ]
+    search_fields = ["name"]
 
 
 class InstructionAdmin(admin.ModelAdmin):
@@ -12,14 +18,22 @@ class InstructionAdmin(admin.ModelAdmin):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'category', 'price', 'requested_amount', 'top_priority', 'created_at']
-    search_fields = ['name']
-    autocomplete_fields = ['organization']
+    list_display = [
+        "id",
+        "name",
+        "category",
+        "price",
+        "requested_amount",
+        "top_priority",
+        "created_at",
+    ]
+    search_fields = ["name"]
+    autocomplete_fields = ["organization"]
 
 
 class OnlineStoreAdmin(admin.ModelAdmin):
-    list_display = ['url', 'product', 'name', 'created_at']
-    autocomplete_fields = ['product']
+    list_display = ["url", "product", "name", "created_at"]
+    autocomplete_fields = ["product"]
 
 
 admin.site.register(Organization, OrganizationAdmin)

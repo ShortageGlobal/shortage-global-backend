@@ -8,11 +8,11 @@ from shortage.apps.catalog.models import Product
 
 
 class DeliveryStatus(models.TextChoices):
-    PENDING = '', 'Pending'
-    CONFIRMED = 'Confirmed', 'Confirmed'
-    DELIVERED = 'Delivered', 'Delivered'
-    
-    
+    PENDING = "", "Pending"
+    CONFIRMED = "Confirmed", "Confirmed"
+    DELIVERED = "Delivered", "Delivered"
+
+
 class Package(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     full_name = models.CharField(max_length=100, null=True, blank=True)
@@ -26,21 +26,30 @@ class Package(models.Model):
         choices=DeliveryStatus.choices,
         default=DeliveryStatus.PENDING,
         blank=True,
-        null=True
+        null=True,
     )
-    photo = ImageField(upload_to=get_package_path, null=True, blank=True, storage=storage.MediaStorage())
+    photo = ImageField(
+        upload_to=get_package_path,
+        null=True,
+        blank=True,
+        storage=storage.MediaStorage(),
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.uuid.__str__()
-    
-    
+
+
 class PackageItem(models.Model):
-    package = models.ForeignKey(Package, related_name='package_items', on_delete=models.DO_NOTHING, null=True)
-    product = models.ForeignKey(Product, related_name='package_items', on_delete=models.DO_NOTHING, null=True)
+    package = models.ForeignKey(
+        Package, related_name="package_items", on_delete=models.DO_NOTHING, null=True
+    )
+    product = models.ForeignKey(
+        Product, related_name="package_items", on_delete=models.DO_NOTHING, null=True
+    )
     quantity = models.PositiveIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return self.product.name
 
