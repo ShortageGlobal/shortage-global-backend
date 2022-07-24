@@ -9,6 +9,7 @@ from .views import (
     OrganizationCategoriesViewSet,
     OrganizationProductsViewSet,
     OrganizationProductViewSet,
+    OrganizationProductOnlineStoresViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -55,7 +56,13 @@ router.register(
     basename="organization_product",
 )
 
+
 # Online stores
+router.register(
+    r"organizations/(?P<org_slug>[^/.]+)/products/(?P<product_slug>[^/.]+)/online-stores",
+    OrganizationProductOnlineStoresViewSet,
+    basename="organization_product_online_stores",
+)
 
 # Packages
 

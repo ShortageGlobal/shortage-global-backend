@@ -88,3 +88,9 @@ class ProductSerializer(serializers.ModelSerializer):
             "description",
             "top_priority",
         ]
+
+
+class OnlineStoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OnlineStore
+        fields = ["url", "name"]
