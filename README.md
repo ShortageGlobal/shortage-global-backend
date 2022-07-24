@@ -1,33 +1,30 @@
-# Local run
-## Python
+# Shortage.Global backend
+API: https://shortage.global/api/
+Admin: https://shortage.global/admin/
+
+## Docker run for local development
+### Docker compose up
 ```
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+docker-compose up
 ```
 
-## Run migrations
+If you want to rebuild the container and run it:
 ```
-python manage.py migrate
-```
-
-## Create admin
-```
-python manage.py createsuperuser
+docker-compose up --build
 ```
 
-## Run local server
+### Run migrations
+Hereafter we use `exec` instead of `run`, which means the container must be running before executing the command.
 ```
-python manage.py runserver
-```
-
-# Docker run
-## Docker compose up
-```
-docker-compose -f docker-compose.yml -f docker-compose-local-infrastructure.yml up --build
+docker-compose exec django python manage.py migrate
 ```
 
-## Create admin
+### Create admin
 ```
-docker-compose run shortage-global-web python manage.py createsuperuser
+docker-compose exec django python manage.py createsuperuser
+```
+
+### Run shell
+```
+docker-compose exec django python manage.py shell
 ```

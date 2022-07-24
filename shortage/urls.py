@@ -18,9 +18,9 @@ from django.conf import settings
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('tinymce/', include('tinymce.urls')),
-    path('api/', include('shortage.apps.api_urls')),
+    path("admin/", admin.site.urls),
+    path("tinymce/", include("tinymce.urls")),
+    path("api/", include("shortage.apps.api_urls")),
 ]
 
 if settings.DEBUG:

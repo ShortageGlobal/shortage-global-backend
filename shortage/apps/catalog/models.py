@@ -9,19 +9,43 @@ from shortage.apps import storage
 from shortage.apps.file_paths import get_organization_path, get_product_path
 
 
+class PromotedOrganizationManager(models.Manager):
+    def get_queryset(self):
+        """
+        Return all validated published organizations for now.
+        In the future, use a "promoted' flag or something.
+        """
+        return (
+            super()
+            .get_queryset()
+            .filter(is_verified=True, is_draft=False, is_deleted=False)
+        )
+
+
 class Organization(models.Model):
-    owner = models.ForeignKey(User, related_name='organizations', on_delete=models.CASCADE)
+    owner = models.ForeignKey(
+        User, related_name="organizations", on_delete=models.CASCADE
+    )
     name = models.CharField(max_length=255, null=True, blank=True)
     slug = models.SlugField(max_length=255, unique=True)
     description = HTMLField(null=True, blank=True)
-    photo = ImageField(upload_to=get_organization_path, null=True, blank=True, storage=storage.MediaStorage(),
-                       pregenerated_sizes=["organization_medium"])
+    photo = ImageField(
+        upload_to=get_organization_path,
+        null=True,
+        blank=True,
+        storage=storage.MediaStorage(),
+        pregenerated_sizes=["organization_medium"],
+    )
     url = models.URLField(max_length=255, null=True, blank=True)
-    is_draft = models.BooleanField(default=True)
-    is_validated = models.BooleanField(default=False)
-    is_deleted = models.BooleanField(default=False)
+    ein_number = models.CharField(max_length=255, null=True, blank=True)
+    is_verified = models.BooleanField(default=False, db_index=True)
+    is_draft = models.BooleanField(default=True, db_index=True)
+    is_deleted = models.BooleanField(default=False, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
+    objects = models.Manager()
+    promoted_objects = PromotedOrganizationManager()
+
     def __str__(self):
         return self.name
 
@@ -31,30 +55,55 @@ class Organization(models.Model):
 
 
 class Instruction(models.Model):
-    organization = models.ForeignKey(Organization, related_name='instructions', on_delete=models.CASCADE)
+    organization = models.ForeignKey(
+        Organization, related_name="instructions", on_delete=models.CASCADE
+    )
     name = models.CharField(max_length=255)
     description = HTMLField(null=True, blank=True)
     country = CountryField(null=True)
-    created_at = models.DateTimeField(auto_now_add=True)    
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
-    
+
+
+class PromotedProductsManager(models.Manager):
+    def get_queryset(self):
+        """
+        Return all products for all promoted organizations.
+        In the future, use a "promoted' flag or something.
+        """
+        return Product.objects.filter(
+            organization_id__in=models.Subquery(
+                Organization.promoted_objects.values("id")
+            )
+        )
+
+
+class ProductCategory(models.TextChoices):
+    VITAL_GOODS = settings.PRODUCT_CATEGORY_KEY["VITAL_GOODS"], "Vital Goods"
+    HEALTHCARE = settings.PRODUCT_CATEGORY_KEY["HEALTHCARE"], "Healthcare"
+    EDUCATION = settings.PRODUCT_CATEGORY_KEY["EDUCATION"], "Education"
+    BABY_CARE = settings.PRODUCT_CATEGORY_KEY["BABY_CARE"], "Baby Care"
+    SAVE_ANIMALS = settings.PRODUCT_CATEGORY_KEY["SAVE_ANIMALS"], "Save Animals"
+
 
 class Product(models.Model):
-    CATEGORIES = [
-        (settings.PRODUCT_CATEGORY_KEY['VITAL_GOODS'], 'Vital Goods'),
-        (settings.PRODUCT_CATEGORY_KEY['HEALTHCARE'], 'Healthcare'),
-        (settings.PRODUCT_CATEGORY_KEY['EDUCATION'], 'Education'),
-        (settings.PRODUCT_CATEGORY_KEY['BABY_CARE'], 'Baby Care'),
-        (settings.PRODUCT_CATEGORY_KEY['SAVE_ANIMALS'], 'Save Animals'),
-    ]
-    
-    organization = models.ForeignKey(Organization, related_name='products', on_delete=models.CASCADE)
+    organization = models.ForeignKey(
+        Organization, related_name="products", on_delete=models.CASCADE
+    )
     name = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True, db_index=True)
-    category= models.CharField(max_length=255, choices=CATEGORIES)
-    photo = ImageField(upload_to=get_product_path, null=True, blank=True, storage=storage.MediaStorage(), pregenerated_sizes=["product_large", "product_medium"])
+    slug = models.SlugField(max_length=255, unique=True)
+    category = models.CharField(
+        max_length=255, choices=ProductCategory.choices, db_index=True
+    )
+    photo = ImageField(
+        upload_to=get_product_path,
+        null=True,
+        blank=True,
+        storage=storage.MediaStorage(),
+        pregenerated_sizes=["product_large", "product_medium"],
+    )
     price = models.CharField(max_length=32, null=True, blank=True)
     requested_amount = models.PositiveIntegerField(default=0)
     description = HTMLField(null=True, blank=True)
@@ -66,8 +115,8 @@ class Product(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta(object):
-        ordering = ['position', '-created_at']
+    objects = models.Manager()
+    promoted_objects = PromotedProductsManager()
 
     def __str__(self):
         return self.name
@@ -82,7 +131,9 @@ class Product(models.Model):
 
 
 class OnlineStore(models.Model):
-    product = models.ForeignKey(Product, related_name='online_stores', on_delete=models.CASCADE, null=True)
+    product = models.ForeignKey(
+        Product, related_name="online_stores", on_delete=models.CASCADE, null=True
+    )
     url = models.URLField(max_length=255, null=True, blank=True)
     name = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
