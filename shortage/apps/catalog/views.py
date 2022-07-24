@@ -1,31 +1,125 @@
-from rest_framework import viewsets, views, mixins, response
-from .models import Organization, Product
+from rest_framework import viewsets, mixins, filters
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+from .models import Organization, Instruction, Product
 from .serializers import (
-    PromotedOrganizationPreviewSerializer,
+    OrganizationPreviewSerializer,
+    InstructionSerializer,
+    PromotedProductPreviewSerializer,
     ProductPreviewSerializer,
     CategorySerializer,
+    PublicOrganizationSerializer,
+    ProductSerializer,
 )
 
 
 class PromotedOrganizationsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    """The list of promoted organizations."""
+    """A list of promoted organizations"""
 
-    queryset = Organization.promoted_objects.all().order_by("-created_at")
-    serializer_class = PromotedOrganizationPreviewSerializer
+    queryset = Organization.objects.promoted().order_by("-created_at")
+    serializer_class = OrganizationPreviewSerializer
 
 
 class PromotedProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    """The list of promoted products."""
+    """A list of promoted products"""
 
-    queryset = Product.promoted_objects.all().order_by("-created_at")
-    serializer_class = ProductPreviewSerializer
+    serializer_class = PromotedProductPreviewSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["name"]
+    ordering_fields = ["created_at"]
+    ordering = ["-created_at"]
+
+    def get_queryset(self):
+        queryset = Product.objects.promoted()
+
+        # filter by category
+        category = self.request.query_params.get("category")
+        if category:
+            queryset = queryset.filter(category=category)
+
+        return queryset
 
 
 class PromotedCategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    """The list of categories for promoted products."""
+    """A list of categories of promoted products"""
 
-    queryset = Product.promoted_objects.distinct("category").values_list(
-        "category", flat=True
+    queryset = (
+        Product.objects.promoted()
+        .distinct("category")
+        .values_list("category", flat=True)
     )
     serializer_class = CategorySerializer
     paginator = None
+
+
+class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = Organization.objects.public()
+    serializer_class = PublicOrganizationSerializer
+    lookup_field = "slug"
+
+
+class OrganizationInstructionsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """A list of instructions that belong to the given organization"""
+
+    serializer_class = InstructionSerializer
+    paginator = None
+
+    def get_queryset(self):
+        organization = get_object_or_404(
+            Organization.objects.public(), slug=self.kwargs["org_slug"]
+        )
+        queryset = Instruction.objects.filter(organization=organization)
+        return queryset
+
+
+class OrganizationProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """A list of products that belong to the given organization"""
+
+    serializer_class = ProductPreviewSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["name"]
+    ordering_fields = ["created_at"]
+    ordering = ["-created_at"]
+
+    def get_queryset(self):
+        organization = get_object_or_404(
+            Organization.objects.public(), slug=self.kwargs["org_slug"]
+        )
+        queryset = Product.objects.filter(organization=organization)
+
+        # filter by category
+        category = self.request.query_params.get("category")
+        if category:
+            queryset = queryset.filter(category=category)
+
+        return queryset
+
+
+class OrganizationCategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """A list of categories of the given organization's products"""
+
+    serializer_class = CategorySerializer
+    paginator = None
+
+    def get_queryset(self):
+        organization = get_object_or_404(
+            Organization.objects.public(), slug=self.kwargs["org_slug"]
+        )
+        return (
+            Product.objects.filter(organization=organization)
+            .distinct("category")
+            .values_list("category", flat=True)
+        )
+
+
+class OrganizationProductViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """Product details for the given slug and the given organization"""
+
+    serializer_class = ProductSerializer
+    lookup_field = "slug"
+
+    def get_queryset(self):
+        organization = get_object_or_404(
+            Organization.objects.public(), slug=self.kwargs["org_slug"]
+        )
+        return Product.objects.filter(organization=organization)
