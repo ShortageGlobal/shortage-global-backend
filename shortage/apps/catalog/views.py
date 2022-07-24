@@ -136,10 +136,9 @@ class OrganizationProductOnlineStoresViewSet(
     paginator = None
 
     def get_queryset(self):
-        organization = get_object_or_404(
-            Organization.objects.public(), slug=self.kwargs["org_slug"]
-        )
         product = get_object_or_404(
-            Product, slug=self.kwargs["product_slug"], organization=organization
+            Product,
+            slug=self.kwargs["product_slug"],
+            organization__slug=self.kwargs["org_slug"],
         )
         return OnlineStore.objects.filter(product=product)
