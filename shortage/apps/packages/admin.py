@@ -4,7 +4,14 @@ from django.utils.html import format_html
 
 
 class PackageAdmin(admin.ModelAdmin):
-    list_display = ["created_at", "email", "tracking_code", "status", "created_at"]
+    list_display = [
+        "created_at",
+        "email",
+        "delivery_company",
+        "tracking_code",
+        "status",
+        "uuid",
+    ]
     fields = [
         "status",
         "full_name",
@@ -45,7 +52,7 @@ class PackageAdmin(admin.ModelAdmin):
 
 
 class PackageItemAdmin(admin.ModelAdmin):
-    list_display = ["package", "product", "quantity", "created_at"]
+    list_display = ["product", "quantity", "created_at", "package"]
     fields = ["package", "product", "quantity", "created_at"]
     readonly_fields = ["package", "product", "quantity", "created_at"]
 

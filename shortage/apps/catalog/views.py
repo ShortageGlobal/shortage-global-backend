@@ -1,5 +1,4 @@
 from rest_framework import viewsets, mixins, filters
-from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .models import Organization, Instruction, Product, OnlineStore
 from .serializers import (
@@ -54,12 +53,14 @@ class PromotedCategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
 class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """Organization details"""
+
     queryset = Organization.objects.public()
     serializer_class = PublicOrganizationSerializer
     lookup_field = "slug"
 
 
-class OrganizationInstructionsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class InstructionsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """A list of instructions that belong to the given organization"""
 
     serializer_class = InstructionSerializer
@@ -72,7 +73,7 @@ class OrganizationInstructionsViewSet(mixins.ListModelMixin, viewsets.GenericVie
         return Instruction.objects.filter(organization=organization)
 
 
-class OrganizationProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class ProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """A list of products that belong to the given organization"""
 
     serializer_class = ProductPreviewSerializer
@@ -95,7 +96,7 @@ class OrganizationProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet
         return queryset
 
 
-class OrganizationCategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class CategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """A list of categories of the given organization's products"""
 
     serializer_class = CategorySerializer
@@ -112,7 +113,7 @@ class OrganizationCategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewS
         )
 
 
-class OrganizationProductViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class ProductViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """Product details for the given slug and the given organization"""
 
     serializer_class = ProductSerializer
@@ -125,9 +126,7 @@ class OrganizationProductViewSet(mixins.RetrieveModelMixin, viewsets.GenericView
         return Product.objects.filter(organization=organization)
 
 
-class OrganizationProductOnlineStoresViewSet(
-    mixins.ListModelMixin, viewsets.GenericViewSet
-):
+class OnlineStoresViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """
     A list of online stores that belong to the given product of the given organization
     """

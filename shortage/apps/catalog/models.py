@@ -82,11 +82,11 @@ class ProductsManager(models.Manager):
 
 
 class ProductCategory(models.TextChoices):
-    VITAL_GOODS = settings.PRODUCT_CATEGORY_KEY["VITAL_GOODS"], "Vital Goods"
-    HEALTHCARE = settings.PRODUCT_CATEGORY_KEY["HEALTHCARE"], "Healthcare"
-    EDUCATION = settings.PRODUCT_CATEGORY_KEY["EDUCATION"], "Education"
-    BABY_CARE = settings.PRODUCT_CATEGORY_KEY["BABY_CARE"], "Baby Care"
-    SAVE_ANIMALS = settings.PRODUCT_CATEGORY_KEY["SAVE_ANIMALS"], "Save Animals"
+    VITAL_GOODS = settings.PRODUCT_CATEGORY["VITAL_GOODS"], "Vital Goods"
+    HEALTHCARE = settings.PRODUCT_CATEGORY["HEALTHCARE"], "Healthcare"
+    EDUCATION = settings.PRODUCT_CATEGORY["EDUCATION"], "Education"
+    BABY_CARE = settings.PRODUCT_CATEGORY["BABY_CARE"], "Baby Care"
+    SAVE_ANIMALS = settings.PRODUCT_CATEGORY["SAVE_ANIMALS"], "Save Animals"
 
 
 class Product(models.Model):
@@ -94,7 +94,7 @@ class Product(models.Model):
         Organization, related_name="products", on_delete=models.CASCADE
     )
     name = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True)
+    slug = models.SlugField(max_length=255, db_index=True)
     category = models.CharField(
         max_length=255, choices=ProductCategory.choices, db_index=True
     )
@@ -117,6 +117,13 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     objects = ProductsManager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["slug", "organization"], name="unique_slug_organization"
+            )
+        ]
 
     def __str__(self):
         return self.name

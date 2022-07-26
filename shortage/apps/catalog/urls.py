@@ -5,11 +5,11 @@ from .views import (
     PromotedProductsViewSet,
     PromotedCategoriesViewSet,
     OrganizationViewSet,
-    OrganizationInstructionsViewSet,
-    OrganizationCategoriesViewSet,
-    OrganizationProductsViewSet,
-    OrganizationProductViewSet,
-    OrganizationProductOnlineStoresViewSet,
+    InstructionsViewSet,
+    CategoriesViewSet,
+    ProductsViewSet,
+    ProductViewSet,
+    OnlineStoresViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -27,44 +27,42 @@ router.register(
     r"promoted/categories", PromotedCategoriesViewSet, basename="promoted_categories"
 )
 
-# Organizations
-router.register(r"organizations", OrganizationViewSet, basename="organizations")
+# Organization
+router.register(r"organizations", OrganizationViewSet, basename="organization")
 
 # Instructions
 router.register(
     r"organizations/(?P<org_slug>[^/.]+)/instructions",
-    OrganizationInstructionsViewSet,
-    basename="organization_instructions",
+    InstructionsViewSet,
+    basename="instructions",
 )
 
 # Categories
 router.register(
     r"organizations/(?P<org_slug>[^/.]+)/categories",
-    OrganizationCategoriesViewSet,
-    basename="organization_categories",
+    CategoriesViewSet,
+    basename="categories",
 )
 
 # Products
 router.register(
     r"organizations/(?P<org_slug>[^/.]+)/products",
-    OrganizationProductsViewSet,
-    basename="organization_products",
+    ProductsViewSet,
+    basename="products",
 )
 router.register(
     r"organizations/(?P<org_slug>[^/.]+)/products",
-    OrganizationProductViewSet,
-    basename="organization_product",
+    ProductViewSet,
+    basename="product",
 )
 
 
 # Online stores
 router.register(
     r"organizations/(?P<org_slug>[^/.]+)/products/(?P<product_slug>[^/.]+)/online-stores",
-    OrganizationProductOnlineStoresViewSet,
-    basename="organization_product_online_stores",
+    OnlineStoresViewSet,
+    basename="online_stores",
 )
-
-# Packages
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
