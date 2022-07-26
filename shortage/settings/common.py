@@ -187,6 +187,16 @@ THUMBNAILS = {
                 },
             ],
         },
+        "package_medium": {
+            "PROCESSORS": [
+                {
+                    "PATH": "thumbnails.processors.resize",
+                    "width": 1024,
+                    "height": 1024,
+                    "method": "fill",
+                },
+            ],
+        },
     },
 }
 
@@ -204,10 +214,16 @@ TINYMCE_DEFAULT_CONFIG = {
 }
 
 # IMPORTANT: the list of category keys must be synchronized with frontend
-PRODUCT_CATEGORY_KEY = {
+PRODUCT_CATEGORY = {
     "VITAL_GOODS": "VITAL_GOODS",
     "HEALTHCARE": "HEALTHCARE",
     "EDUCATION": "EDUCATION",
     "BABY_CARE": "BABY_CARE",
     "SAVE_ANIMALS": "SAVE_ANIMALS",
+}
+
+PACKAGE_STATUS = {
+    "REGISTERED": "REGISTERED",
+    "CONFIRMED": "CONFIRMED",
+    "DELIVERED": "DELIVERED",
 }

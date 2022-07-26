@@ -64,8 +64,6 @@ router.register(
     basename="organization_product_online_stores",
 )
 
-# Packages
-
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [

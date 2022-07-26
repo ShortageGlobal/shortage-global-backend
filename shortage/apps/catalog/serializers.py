@@ -1,4 +1,3 @@
-from calendar import c
 from rest_framework import serializers
 from .models import Organization, Instruction, Product, OnlineStore
 

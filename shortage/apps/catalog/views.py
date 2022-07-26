@@ -1,5 +1,4 @@
 from rest_framework import viewsets, mixins, filters
-from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .models import Organization, Instruction, Product, OnlineStore
 from .serializers import (
@@ -54,6 +53,8 @@ class PromotedCategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
 class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """Organization details"""
+
     queryset = Organization.objects.public()
     serializer_class = PublicOrganizationSerializer
     lookup_field = "slug"
