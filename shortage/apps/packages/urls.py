@@ -1,6 +1,6 @@
 from django.urls import include, path
 from rest_framework import routers
-from .views import PackageViewSet
+from .views import PackageViewSet, PackageCreationViewSet
 
 router = routers.DefaultRouter()
 
@@ -8,6 +8,11 @@ router = routers.DefaultRouter()
 router.register(
     r"organizations/(?P<org_slug>[^/.]+)/packages",
     PackageViewSet,
+    basename="organization_package",
+)
+router.register(
+    r"organizations/(?P<org_slug>[^/.]+)/packages",
+    PackageCreationViewSet,
     basename="organization_package",
 )
 
