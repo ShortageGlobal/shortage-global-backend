@@ -25,6 +25,7 @@ class ProductAdmin(admin.ModelAdmin):
         "price",
         "requested_amount",
         "top_priority",
+        "is_deleted",
         "created_at",
     ]
     search_fields = ["name"]

@@ -6,5 +6,8 @@ media
 static
 __pycache__
 
+# for convenient debugging in python manage.py shell
+sandbox.py
+
 # in case we need local settings
 shortage/settings/local.py

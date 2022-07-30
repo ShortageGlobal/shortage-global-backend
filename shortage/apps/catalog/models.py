@@ -71,14 +71,18 @@ class Instruction(models.Model):
 class ProductsManager(models.Manager):
     def promoted(self):
         """
-        Return all products for all promoted organizations.
+        Return all public products for all promoted organizations.
         In the future, use a "promoted' flag or something.
         """
-        return Product.objects.filter(
+        return self.public().filter(
             organization_id__in=models.Subquery(
                 Organization.objects.promoted().values("id")
             )
         )
+
+    def public(self):
+        """Return all publicly available products"""
+        return self.get_queryset().filter(is_deleted=False)
 
 
 class ProductCategory(models.TextChoices):
@@ -114,6 +118,7 @@ class Product(models.Model):
         blank=False,
         null=False,
     )
+    is_deleted = models.BooleanField(default=False, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     objects = ProductsManager()

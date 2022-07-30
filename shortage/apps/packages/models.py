@@ -46,10 +46,10 @@ class Package(models.Model):
 
 class PackageItem(models.Model):
     package = models.ForeignKey(
-        Package, related_name="package_items", on_delete=models.DO_NOTHING, null=True
+        Package, related_name="package_items", on_delete=models.CASCADE
     )
     product = models.ForeignKey(
-        Product, related_name="package_items", on_delete=models.DO_NOTHING, null=True
+        Product, related_name="package_items", on_delete=models.CASCADE
     )
     quantity = models.PositiveIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
