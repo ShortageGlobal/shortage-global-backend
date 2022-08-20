@@ -18,6 +18,7 @@ from django.conf import settings
 from django.urls import path, include
 
 urlpatterns = [
+    path("__debug__/", include("debug_toolbar.urls")),
     path("admin/", admin.site.urls),
     path("tinymce/", include("tinymce.urls")),
     path("api/", include("shortage.apps.api_urls")),

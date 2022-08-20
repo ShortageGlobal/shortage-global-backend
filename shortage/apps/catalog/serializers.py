@@ -41,15 +41,22 @@ class ProductPreviewSerializer(serializers.ModelSerializer):
         ]
 
 
+class ProductOrganizationPreviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Organization
+        fields = [
+            "name",
+            "slug",
+        ]
+
+
 class PromotedProductPreviewSerializer(ProductPreviewSerializer):
-    organization_name = serializers.CharField(source="organization.name")
-    organization_slug = serializers.CharField(source="organization.slug")
+    organization = ProductOrganizationPreviewSerializer(read_only=True)
 
     class Meta:
         model = Product
         fields = ProductPreviewSerializer.Meta.fields + [
-            "organization_name",
-            "organization_slug",
+            "organization",
         ]
 
 
@@ -74,6 +81,7 @@ class PublicOrganizationSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     photo = serializers.ImageField(source="large_photo", read_only=True)
+    organization = ProductOrganizationPreviewSerializer(read_only=True)
 
     class Meta:
         model = Product
@@ -86,6 +94,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "requested_amount",
             "description",
             "top_priority",
+            "organization",
         ]
 
 
