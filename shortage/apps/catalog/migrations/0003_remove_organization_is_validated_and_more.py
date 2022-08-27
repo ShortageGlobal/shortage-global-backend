@@ -6,47 +6,37 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("catalog", "0002_alter_product_category"),
+        ('catalog', '0002_alter_product_category'),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name="organization",
-            name="is_validated",
+            model_name='organization',
+            name='is_validated',
         ),
         migrations.AddField(
-            model_name="organization",
-            name="ein_number",
+            model_name='organization',
+            name='ein_number',
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name="organization",
-            name="is_verified",
+            model_name='organization',
+            name='is_verified',
             field=models.BooleanField(db_index=True, default=False),
         ),
         migrations.AlterField(
-            model_name="organization",
-            name="is_deleted",
+            model_name='organization',
+            name='is_deleted',
             field=models.BooleanField(db_index=True, default=False),
         ),
         migrations.AlterField(
-            model_name="organization",
-            name="is_draft",
+            model_name='organization',
+            name='is_draft',
             field=models.BooleanField(db_index=True, default=True),
         ),
         migrations.AlterField(
-            model_name="product",
-            name="category",
-            field=models.CharField(
-                choices=[
-                    ("VITAL_GOODS", "Vital Goods"),
-                    ("HEALTHCARE", "Healthcare"),
-                    ("EDUCATION", "Education"),
-                    ("BABY_CARE", "Baby Care"),
-                    ("SAVE_ANIMALS", "Save Animals"),
-                ],
-                db_index=True,
-                max_length=255,
-            ),
+            model_name='product',
+            name='category',
+            field=models.CharField(choices=[('VITAL_GOODS', 'Vital Goods'), ('HEALTHCARE', 'Healthcare'), ('EDUCATION', 'Education'), ('BABY_CARE', 'Baby Care'), ('SAVE_ANIMALS', 'Save Animals')], db_index=True, max_length=255),
         ),
     ]

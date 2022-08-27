@@ -7,31 +7,21 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("catalog", "0008_product_is_deleted"),
-        ("packages", "0003_alter_package_status"),
+        ('catalog', '0008_product_is_deleted'),
+        ('packages', '0003_alter_package_status'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name="packageitem",
-            name="package",
-            field=models.ForeignKey(
-                default=1,
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="package_items",
-                to="packages.package",
-            ),
+            model_name='packageitem',
+            name='package',
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='package_items', to='packages.package'),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name="packageitem",
-            name="product",
-            field=models.ForeignKey(
-                default="1",
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="package_items",
-                to="catalog.product",
-            ),
+            model_name='packageitem',
+            name='product',
+            field=models.ForeignKey(default='1', on_delete=django.db.models.deletion.CASCADE, related_name='package_items', to='catalog.product'),
             preserve_default=False,
         ),
     ]

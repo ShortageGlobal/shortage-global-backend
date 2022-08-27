@@ -6,14 +6,12 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("catalog", "0006_alter_product_slug"),
+        ('catalog', '0006_alter_product_slug'),
     ]
 
     operations = [
         migrations.AddConstraint(
-            model_name="product",
-            constraint=models.UniqueConstraint(
-                fields=("slug", "organization"), name="unique_slug_organization"
-            ),
+            model_name='product',
+            constraint=models.UniqueConstraint(fields=('slug', 'organization'), name='unique_slug_organization'),
         ),
     ]
