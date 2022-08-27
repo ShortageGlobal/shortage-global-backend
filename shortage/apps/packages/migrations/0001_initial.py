@@ -12,33 +12,85 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('catalog', '0001_initial'),
+        ("catalog", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Package',
+            name="Package",
             fields=[
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('full_name', models.CharField(blank=True, max_length=100, null=True)),
-                ('email', models.EmailField(blank=True, max_length=100)),
-                ('phone_number', models.CharField(blank=True, max_length=100)),
-                ('delivery_company', models.CharField(max_length=100)),
-                ('tracking_code', models.CharField(max_length=100)),
-                ('note', models.TextField(blank=True, null=True)),
-                ('status', models.CharField(blank=True, choices=[('', 'Pending'), ('Confirmed', 'Confirmed'), ('Delivered', 'Delivered')], default='', max_length=32, null=True)),
-                ('photo', thumbnails.fields.ImageField(blank=True, null=True, upload_to=shortage.apps.file_paths.get_package_path)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("full_name", models.CharField(blank=True, max_length=100, null=True)),
+                ("email", models.EmailField(blank=True, max_length=100)),
+                ("phone_number", models.CharField(blank=True, max_length=100)),
+                ("delivery_company", models.CharField(max_length=100)),
+                ("tracking_code", models.CharField(max_length=100)),
+                ("note", models.TextField(blank=True, null=True)),
+                (
+                    "status",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("", "Pending"),
+                            ("Confirmed", "Confirmed"),
+                            ("Delivered", "Delivered"),
+                        ],
+                        default="",
+                        max_length=32,
+                        null=True,
+                    ),
+                ),
+                (
+                    "photo",
+                    thumbnails.fields.ImageField(
+                        blank=True,
+                        null=True,
+                        upload_to=shortage.apps.file_paths.get_package_path,
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
-            name='PackageItem',
+            name="PackageItem",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('quantity', models.PositiveIntegerField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('package', models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='package_items', to='packages.package')),
-                ('product', models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='package_items', to='catalog.product')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("quantity", models.PositiveIntegerField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "package",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="package_items",
+                        to="packages.package",
+                    ),
+                ),
+                (
+                    "product",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="package_items",
+                        to="catalog.product",
+                    ),
+                ),
             ],
         ),
     ]

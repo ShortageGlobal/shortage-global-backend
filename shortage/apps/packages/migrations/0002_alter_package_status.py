@@ -6,13 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('packages', '0001_initial'),
+        ("packages", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='package',
-            name='status',
-            field=models.CharField(blank=True, choices=[('REGISTERED', 'Registered'), ('CONFIRMED', 'Confirmed'), ('DELIVERED', 'Delivered')], default='REGISTERED', max_length=32, null=True),
+            model_name="package",
+            name="status",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("REGISTERED", "Registered"),
+                    ("CONFIRMED", "Confirmed"),
+                    ("DELIVERED", "Delivered"),
+                ],
+                default="REGISTERED",
+                max_length=32,
+                null=True,
+            ),
         ),
     ]

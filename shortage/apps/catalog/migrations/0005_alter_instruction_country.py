@@ -7,13 +7,13 @@ import django_countries.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('catalog', '0004_alter_product_options'),
+        ("catalog", "0004_alter_product_options"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='instruction',
-            name='country',
-            field=django_countries.fields.CountryField(default='US', max_length=2),
+            model_name="instruction",
+            name="country",
+            field=django_countries.fields.CountryField(default="US", max_length=2),
         ),
     ]

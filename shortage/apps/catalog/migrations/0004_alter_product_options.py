@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('catalog', '0003_remove_organization_is_validated_and_more'),
+        ("catalog", "0003_remove_organization_is_validated_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='product',
+            name="product",
             options={},
         ),
     ]
