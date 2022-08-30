@@ -1,5 +1,5 @@
 asgiref==3.5.2
-backports.zoneinfo==0.2.1
+backports.zoneinfo;python_version<"3.9"
 black==22.6.0
 boto3==1.24.18
 botocore==1.27.18
@@ -33,3 +33,4 @@ sqlparse==0.4.2
 tomli==2.0.1
 typing-extensions==4.3.0
 urllib3==1.26.9
+pysendpulse
