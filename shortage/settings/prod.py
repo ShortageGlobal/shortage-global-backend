@@ -43,9 +43,6 @@ MEDIA_URL = "%s/%s/%s/" % (
 )
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
-SENDPULSE_API_ID = os.getenv("SENDPULSE_API_ID", "")
-SENDPULSE_API_SECRET = os.getenv("SENDPULSE_API_SECRET", "")
-
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

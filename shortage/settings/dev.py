@@ -29,6 +29,3 @@ CSRF_TRUSTED_ORIGINS = []
 # Debug tooltbar
 hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
 INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
-
-SENDPULSE_API_ID = os.getenv("SENDPULSE_API_ID", "")
-SENDPULSE_API_SECRET = os.getenv("SENDPULSE_API_SECRET", "")
