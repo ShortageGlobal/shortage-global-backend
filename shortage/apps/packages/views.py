@@ -41,8 +41,9 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         uuid = package_response.data["uuid"]
         package = Package.objects.get(uuid=uuid)
 
-        notification = SendPulseNotification('');
+        notification = SendPulseNotification("Test")
         notification.add_recipient(package.full_name, package.email)
+        notification.add_variable_substitution("UserName", package.full_name)
         notification.send()
 
         return package_response
