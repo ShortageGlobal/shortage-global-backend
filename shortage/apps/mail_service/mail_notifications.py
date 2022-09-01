@@ -1,6 +1,7 @@
 from pysendpulse.pysendpulse import PySendPulse
 from django.conf import settings
 from django.apps import apps
+from django.template import Context, Template
 import logging
 import json
 import os
@@ -18,7 +19,7 @@ class MailNotification:
     def __init__(self, notification_type: str):
         self.notificationType = notification_type.lower()
         self.recipients = []
-        self.variable_substitutions = []
+        self.variable_substitutions = {}
 
         # Load the configuration for the provided notification type
         config_path = (
@@ -35,7 +36,7 @@ class MailNotification:
         self.recipients.append({"name": recipient_name, "email": recipient_address})
 
     def add_variable_substitution(self, var_name: str, var_value: str):
-        self.variable_substitutions.append({"name": var_name, "value": var_value})
+        self.variable_substitutions[var_name] = var_value
 
     def contents(self) -> str:
         template_path = (
@@ -47,13 +48,10 @@ class MailNotification:
 
         template_contents = open(template_path).read()
 
-        # Substitute any variables
-        for substitution in self.variable_substitutions:
-            template_contents = template_contents.replace(
-                "{{" + substitution["name"] + "}}", substitution["value"]
-            )
+        template = Template(template_contents)
+        context = Context(self.variable_substitutions)
 
-        return template_contents
+        return template.render(context)
 
     def send(self) -> bool:
         sender_functor = self.__send_log
