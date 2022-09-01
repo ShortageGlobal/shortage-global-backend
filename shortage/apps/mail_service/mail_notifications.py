@@ -68,8 +68,8 @@ class MailNotification:
 
     def __send_sendpulse(self):
         sp_api_proxy = PySendPulse(
-            settings.DJANGO_SENDPULSE_API_ID,
-            settings.DJANGO_SENDPULSE_API_SECRET,
+            settings.SENDPULSE_API_ID,
+            settings.SENDPULSE_API_SECRET,
             "memcached",
             memcached_host="127.0.0.1:11211",
         )
