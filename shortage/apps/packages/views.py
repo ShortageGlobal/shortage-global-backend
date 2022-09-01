@@ -6,7 +6,7 @@ from .serializers import (
     PackageSerializer,
     PackageCreationSerializer,
 )
-from shortage.apps.packages.mail_notifications import SendPulseNotification
+from shortage.apps.mail_service.mail_notifications import MailNotification
 
 
 class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -41,7 +41,7 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         uuid = package_response.data["uuid"]
         package = Package.objects.get(uuid=uuid)
 
-        notification = SendPulseNotification("Test")
+        notification = MailNotification("Test")
         notification.add_recipient(package.full_name, package.email)
         notification.add_variable_substitution("UserName", package.full_name)
         notification.send()

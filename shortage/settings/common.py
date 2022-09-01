@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "shortage.apps.catalog",
     "shortage.apps.packages",
+    "shortage.apps.mail_service",
     "tinymce",
     "django_countries",
     "auditlog",
