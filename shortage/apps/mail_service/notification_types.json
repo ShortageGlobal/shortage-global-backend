@@ -2,7 +2,7 @@
   "test": {
       "subject": "Test mail, please ignore",
       "sender_name": "Mr. T",
-      "sender_email": "notifications@shortage.global",
+      "sender_email": "serhii@shortage.global",
       "template_name": "test"
     }
 }
