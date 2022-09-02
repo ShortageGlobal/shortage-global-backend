@@ -1,7 +1,7 @@
 from pysendpulse.pysendpulse import PySendPulse
 from django.conf import settings
 from django.apps import apps
-from django.template import Context, Template
+from django.template.loader import render_to_string
 import logging
 import json
 import os
@@ -40,18 +40,10 @@ class MailNotification:
 
     def contents(self) -> str:
         template_path = (
-            os.path.dirname(os.path.abspath(__file__))
-            + "/mail_templates/"
-            + self.notification_config["template_name"].lower()
-            + ".html"
+            "/emails/" + self.notification_config["template_name"].lower() + ".html"
         )
 
-        template_contents = open(template_path).read()
-
-        template = Template(template_contents)
-        context = Context(self.variable_substitutions)
-
-        return template.render(context)
+        return render_to_string(template_path, self.variable_substitutions)
 
     def send(self) -> bool:
         sender_functor = self.__send_log
