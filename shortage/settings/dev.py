@@ -1,5 +1,4 @@
 import socket
-from django.conf import settings
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

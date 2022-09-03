@@ -2,8 +2,8 @@ venv
 .idea
 .vscode
 db.sqlite3
-media
-static
+/media
+/static
 __pycache__
 
 # for convenient debugging in python manage.py shell

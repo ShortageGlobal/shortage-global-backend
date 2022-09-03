@@ -38,8 +38,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "debug_toolbar",
-    "shortage.apps.catalog",
-    "shortage.apps.packages",
     "tinymce",
     "django_countries",
     "auditlog",
@@ -47,6 +45,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "thumbnails",
     "corsheaders",
+    "shortage.apps.mailing",
+    "shortage.apps.catalog",
+    "shortage.apps.packages",
     "django_cleanup.apps.CleanupConfig",  # should be last
 ]
 
@@ -229,3 +230,7 @@ PACKAGE_STATUS = {
     "CONFIRMED": "CONFIRMED",
     "DELIVERED": "DELIVERED",
 }
+
+# Mailing
+SENDPULSE_API_ID = os.getenv("DJANGO_SENDPULSE_API_ID", "")
+SENDPULSE_API_SECRET = os.getenv("DJANGO_SENDPULSE_API_SECRET", "")

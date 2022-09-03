@@ -6,7 +6,7 @@ DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
 
-# Do not connect to database durung static collection
+# Do not connect to database during static collection
 if len(sys.argv) > 0 and sys.argv[1] != "collectstatic":
     database_url = os.getenv("DJANGO_DATABASE_URL", None)
     if database_url is None:
@@ -42,7 +42,6 @@ MEDIA_URL = "%s/%s/%s/" % (
     AWS_MEDIA_LOCATION,
 )
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-
 
 LOGGING = {
     "version": 1,
