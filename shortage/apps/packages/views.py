@@ -6,7 +6,7 @@ from .serializers import (
     PackageSerializer,
     PackageCreationSerializer,
 )
-from shortage.apps.mail_service.mail_notifications import MailNotification
+from shortage.apps.mailing.mail_service import PackageRegistrationEmail
 
 
 class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -41,9 +41,11 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         uuid = package_response.data["uuid"]
         package = Package.objects.get(uuid=uuid)
 
-        notification = MailNotification("Test")
-        notification.add_recipient(package.full_name, package.email)
-        notification.add_variable_substitution("UserName", package.full_name)
-        notification.send()
+        if package.email:
+            package_email = PackageRegistrationEmail(
+                organization_slug=self.kwargs["org_slug"], package_uuid=package.uuid
+            )
+            package_email.add_recipient(email=package.email, name=package.full_name)
+            package_email.send()
 
         return package_response
