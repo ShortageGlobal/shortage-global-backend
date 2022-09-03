@@ -42,10 +42,12 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         package = Package.objects.get(uuid=uuid)
 
         if package.email:
-            package_email = PackageRegistrationEmail(
+            package_registration_email = PackageRegistrationEmail(
                 organization_slug=self.kwargs["org_slug"], package_uuid=package.uuid
             )
-            package_email.add_recipient(email=package.email, name=package.full_name)
-            package_email.send()
+            package_registration_email.add_recipient(
+                email=package.email, name=package.full_name
+            )
+            package_registration_email.send()
 
         return package_response
