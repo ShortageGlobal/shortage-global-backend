@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import User
 from auditlog.registry import auditlog
 from thumbnails.fields import ImageField
 from shortage.apps import storage
@@ -16,6 +17,13 @@ class PackageStatus(models.TextChoices):
 
 class Package(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.ForeignKey(
+        User,
+        related_name="packages",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     full_name = models.CharField(max_length=100, null=True, blank=True)
     email = models.EmailField(max_length=100, blank=True)
     phone_number = models.CharField(max_length=100, blank=True)

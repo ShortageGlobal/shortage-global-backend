@@ -6,6 +6,7 @@ from django.utils.html import format_html
 class PackageAdmin(admin.ModelAdmin):
     list_display = [
         "created_at",
+        "owner",
         "email",
         "delivery_company",
         "tracking_code",
@@ -14,6 +15,7 @@ class PackageAdmin(admin.ModelAdmin):
     ]
     fields = [
         "status",
+        "owner",
         "full_name",
         "email",
         "phone_number",
@@ -25,6 +27,7 @@ class PackageAdmin(admin.ModelAdmin):
     ]
     readonly_fields = [
         "uuid",
+        "owner",
         "full_name",
         "email",
         "phone_number",
