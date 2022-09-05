@@ -15,6 +15,11 @@ If you want to rebuild the container and run it:
 docker-compose up --build
 ```
 
+If you want to update dependencies in `django` container and keep `postgres`  untouched:
+```
+docker-compose build --no-cache django
+```
+
 ### Run migrations
 Hereafter we use `exec` instead of `run`, which means the container must be running before executing the command.
 ```

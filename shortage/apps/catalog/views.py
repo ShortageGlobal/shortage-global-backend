@@ -26,8 +26,7 @@ class PromotedProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = PromotedProductPreviewSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["name"]
-    ordering_fields = ["created_at"]
-    ordering = ["-created_at"]
+    ordering = ["-top_priority", "position", "-created_at"]
 
     def get_queryset(self):
         queryset = Product.objects.promoted()
@@ -79,8 +78,7 @@ class ProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = ProductPreviewSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["name"]
-    ordering_fields = ["created_at"]
-    ordering = ["-created_at"]
+    ordering = ["-top_priority", "position", "-created_at"]
 
     def get_queryset(self):
         organization = get_object_or_404(

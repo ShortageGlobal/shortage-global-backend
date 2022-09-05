@@ -1,0 +1,13 @@
+Thank you for your donation
+
+We've registered a shortage goods package with your email address. We will track it using the provided tracking number and see it delivered to those in need.
+
+We appreciate all the help.
+
+Track your package here: {{ url }}
+
+-
+
+Best Regards,
+
+The Shortage Team
