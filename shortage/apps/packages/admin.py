@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Package, PackageItem
+from .models import Package, PackageItem, Cart, CartItem
 from django.utils.html import format_html
 
 
@@ -63,5 +63,45 @@ class PackageItemAdmin(admin.ModelAdmin):
         return False
 
 
+class CartAdmin(admin.ModelAdmin):
+    list_display = [
+        "created_at",
+        "owner",
+        "uuid",
+    ]
+    readonly_fields = [
+        "uuid",
+        "owner",
+        "created_at",
+    ]
+
+    # def has_add_permission(self, request, obj=None):
+    #     return False
+
+    def get_ordering(self, request):
+        return super().get_ordering(request) or ["-created_at"]
+
+    def photo_preview(self, obj):
+        if obj.photo:
+            html = format_html('<img width=300 src="{}" />'.format(obj.photo.url))
+        else:
+            html = "No photo"
+        return html
+
+    photo_preview.short_description = "Photo preview"
+
+
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ["product", "quantity", "created_at", "cart"]
+    fields = ["cart", "product", "quantity", "created_at"]
+    readonly_fields = ["created_at"]
+    # readonly_fields = ["cart", "product", "quantity", "created_at"]
+
+    # def has_add_permission(self, request, obj=None):
+    #     return False
+
+
 admin.site.register(Package, PackageAdmin)
 admin.site.register(PackageItem, PackageItemAdmin)
+admin.site.register(Cart, CartAdmin)
+admin.site.register(CartItem, CartItemAdmin)
