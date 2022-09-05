@@ -75,8 +75,8 @@ class CartAdmin(admin.ModelAdmin):
         "created_at",
     ]
 
-    # def has_add_permission(self, request, obj=None):
-    #     return False
+    def has_add_permission(self, request, obj=None):
+        return False
 
     def get_ordering(self, request):
         return super().get_ordering(request) or ["-created_at"]
@@ -94,11 +94,10 @@ class CartAdmin(admin.ModelAdmin):
 class CartItemAdmin(admin.ModelAdmin):
     list_display = ["product", "quantity", "created_at", "cart"]
     fields = ["cart", "product", "quantity", "created_at"]
-    readonly_fields = ["created_at"]
-    # readonly_fields = ["cart", "product", "quantity", "created_at"]
+    readonly_fields = ["cart", "product", "quantity", "created_at"]
 
-    # def has_add_permission(self, request, obj=None):
-    #     return False
+    def has_add_permission(self, request, obj=None):
+        return False
 
 
 admin.site.register(Package, PackageAdmin)
