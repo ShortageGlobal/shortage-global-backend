@@ -70,20 +70,9 @@ class CartItemCreationSerializer(serializers.ModelSerializer):
         product_slug = attrs.get("product_slug")
         organization_slug = attrs.get("organization_slug")
 
-        # check product with the given slug and the given organization slug exists
-        if (
-            not Product.objects.public()
-            .filter(slug=product_slug, organization__slug=organization_slug)
-            .exists()
-        ):
-            raise serializers.ValidationError(
-                'Product with "%s" slug and "%s" organization slug does not exist'
-                % (product_slug, organization_slug)
-            )
-
         # if we create/update/delete a CartItem of the existing Cart, there will be 'cart_pk' in the context
-        cart_pk = self.context.get("cart_pk")
-        pk = self.context.get("pk")
+        cart_pk = self.context.get("cart_pk")  # Cart pk
+        pk = self.context.get("pk")  # CartItem pk
         if cart_pk is not None:
             # check the cart exists
             if not Cart.objects.filter(pk=cart_pk).exists():
@@ -100,6 +89,17 @@ class CartItemCreationSerializer(serializers.ModelSerializer):
                 .exists()
             ):
                 raise serializers.ValidationError("Cart already includes this product")
+
+        # check product with the given slug and the given organization slug exists
+        if (
+            not Product.objects.public()
+            .filter(slug=product_slug, organization__slug=organization_slug)
+            .exists()
+        ):
+            raise serializers.ValidationError(
+                'Product with "%s" slug and "%s" organization slug does not exist'
+                % (product_slug, organization_slug)
+            )
 
         return super().validate(attrs)
 
