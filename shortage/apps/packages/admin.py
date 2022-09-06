@@ -5,13 +5,17 @@ from django.utils.html import format_html
 
 class PackageAdmin(admin.ModelAdmin):
     list_display = [
-        "created_at",
+        "status",
         "owner",
+        "full_name",
         "email",
+        "phone_number",
         "delivery_company",
         "tracking_code",
+        "note",
         "status",
-        "uuid",
+        "photo_preview",
+        "created_at",
     ]
     fields = [
         "status",
@@ -22,6 +26,7 @@ class PackageAdmin(admin.ModelAdmin):
         "delivery_company",
         "tracking_code",
         "note",
+        "status",
         "photo_preview",
         "created_at",
     ]
@@ -37,6 +42,7 @@ class PackageAdmin(admin.ModelAdmin):
         "photo_preview",
         "created_at",
     ]
+    search_fields = ["full_name", "email"]
 
     def has_add_permission(self, request, obj=None):
         return False
