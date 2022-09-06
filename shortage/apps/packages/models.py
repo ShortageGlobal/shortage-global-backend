@@ -88,6 +88,13 @@ class CartItem(models.Model):
     quantity = models.PositiveIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["cart", "product"], name="unique_cart_product"
+            )
+        ]
+
     def __str__(self):
         return self.product.name
 
