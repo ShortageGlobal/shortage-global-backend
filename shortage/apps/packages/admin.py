@@ -81,15 +81,6 @@ class CartAdmin(admin.ModelAdmin):
     def get_ordering(self, request):
         return super().get_ordering(request) or ["-created_at"]
 
-    def photo_preview(self, obj):
-        if obj.photo:
-            html = format_html('<img width=300 src="{}" />'.format(obj.photo.url))
-        else:
-            html = "No photo"
-        return html
-
-    photo_preview.short_description = "Photo preview"
-
 
 class CartItemAdmin(admin.ModelAdmin):
     list_display = ["product", "quantity", "created_at", "cart"]
