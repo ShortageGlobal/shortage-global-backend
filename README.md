@@ -35,3 +35,24 @@ docker-compose exec django python manage.py createsuperuser
 ```
 docker-compose exec django python manage.py shell
 ```
+
+## Installing all dependencies when starting from scratch (on macOS)
+### Install XCode tools
+```
+xcode-select --install
+```
+### Install libpq
+```
+brew install libpq
+```
+### Install openssl
+```
+brew install openssl
+```
+### Install psycopg2
+At this point you have all dependencies to finally build psycopg2
+```
+export LDFLAGS="-L/opt/homebrew/opt/openssl@3/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/openssl@3/include"
+pip install psycopg2
+```
