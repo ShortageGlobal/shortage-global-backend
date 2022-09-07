@@ -1,24 +1,53 @@
+import logging
+
 from django.db import transaction
 from rest_framework import serializers
 from shortage.apps.catalog.models import Product
 from .models import Package, PackageItem
 
 
+class ProductSlugRelatedField(serializers.SlugRelatedField):
+    def get_queryset(self):
+        return super().get_queryset().filter(organization=self.context["organization"])
+
+
+class PackageItemSerializer(serializers.ModelSerializer):
+    product = ProductSlugRelatedField(
+        queryset=Product.objects.public(),
+        slug_field="slug",
+        allow_null=False,
+        required=True,
+    )
+    quantity = serializers.IntegerField(
+        min_value=1, max_value=2147483647, required=True
+    )
+
+    class Meta:
+        model = PackageItem
+        fields = ["product", "quantity"]
+        read_only_fields = fields
+
+
 class PackageSerializer(serializers.ModelSerializer):
+    items = PackageItemSerializer(
+        write_only=True, many=True, required=False, allow_empty=True
+    )
+
     class Meta:
         model = Package
         fields = [
+            "uuid",
+            "owner",
+            "full_name",
+            "email",
+            "phone_number",
             "delivery_company",
             "tracking_code",
-            "created_at",
+            "note",
             "status",
+            "items",
         ]
-
-
-class ProductSlugRelatedField(serializers.SlugRelatedField):
-    def get_queryset(self):
-        organization = self.context["view"].organization
-        return super().get_queryset().filter(organization=organization)
+        read_only_fields = fields
 
 
 class PackageItemCreationSerializer(serializers.ModelSerializer):
@@ -78,7 +107,7 @@ class PackageCreationSerializer(serializers.ModelSerializer):
         validated_items_data = validated_data.pop("items")
 
         # create package
-        package = Package.objects.create(**validated_data)
+        package = Package.objects.create(owner=self.context["user"], **validated_data)
 
         # create package items
         package_items = [
