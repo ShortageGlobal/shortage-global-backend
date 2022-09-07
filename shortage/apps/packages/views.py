@@ -1,22 +1,21 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, mixins, permissions
+from rest_framework import viewsets, mixins, permissions, response
 from shortage.apps.catalog.models import Organization
-from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Package
 from .serializers import (
     PackageSerializer,
     PackageCreationSerializer,
 )
+
 from shortage.apps.mailing.mail_service import PackageRegistrationEmail
 
 
 class PackageViewSet(
-    LoginRequiredMixin,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     viewsets.GenericViewSet,
 ):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def get_serializer_class(self):
         if "GET" == self.request.method:
@@ -38,11 +37,19 @@ class PackageViewSet(
         organization = self.get_serializer_context()["organization"]
         owner = self.get_serializer_context()["user"]
 
-        return (
-            Package.objects.all()
-            .filter(package_items__product__organization=organization, owner=owner)
-            .distinct()
-        )
+        queryset = Package.objects.all().filter(package_items__product__organization=organization).distinct()
+
+        # Return everything for the org's owner
+        if owner.is_authenticated and owner == organization.owner:
+            pass
+        # Return only user's items if he is not an org owner
+        elif owner.is_authenticated and owner != organization.owner:
+            queryset = queryset.filter(owner=owner)
+        # For everyone else - return nothing
+        else:
+            queryset = Package.objects.none()
+
+        return queryset
 
     def create(self, request, *args, **kwargs):
         package_response = super().create(request, *args, **kwargs)
