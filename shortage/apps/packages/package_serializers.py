@@ -116,10 +116,10 @@ class PackageCreationSerializer(serializers.ModelSerializer):
             package = Package.objects.create(**validated_data)
 
         # create package items
-        package_items = [
+        items = [
             PackageItem(package=package, **validated_item_data)
             for validated_item_data in validated_items_data
         ]
-        PackageItem.objects.bulk_create(package_items)
+        PackageItem.objects.bulk_create(items)
 
         return package
