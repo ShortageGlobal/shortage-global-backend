@@ -53,11 +53,7 @@ class Package(models.Model):
 
 
 class PackageItem(models.Model):
-    package = models.ForeignKey(
-        Package,
-        related_name="items",
-        on_delete=models.CASCADE
-    )
+    package = models.ForeignKey(Package, related_name="items", on_delete=models.CASCADE)
     product = models.ForeignKey(
         Product,
         related_name="package_items",
