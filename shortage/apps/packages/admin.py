@@ -18,7 +18,6 @@ class PackageAdmin(admin.ModelAdmin):
         "created_at",
     ]
     fields = [
-        "status",
         "owner",
         "full_name",
         "email",
