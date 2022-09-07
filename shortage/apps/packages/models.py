@@ -1,7 +1,6 @@
 import uuid
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import User
 from auditlog.registry import auditlog
 from thumbnails.fields import ImageField
 from shortage.apps import storage
@@ -17,8 +16,9 @@ class PackageStatus(models.TextChoices):
 
 class Package(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # User can be empty because we allow anonymous donations
     owner = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         related_name="packages",
         on_delete=models.CASCADE,
         null=True,
@@ -54,10 +54,14 @@ class Package(models.Model):
 
 class PackageItem(models.Model):
     package = models.ForeignKey(
-        Package, related_name="package_items", on_delete=models.CASCADE
+        Package,
+        related_name="package_items",
+        on_delete=models.CASCADE,
     )
     product = models.ForeignKey(
-        Product, related_name="package_items", on_delete=models.CASCADE
+        Product,
+        related_name="package_items",
+        on_delete=models.CASCADE,
     )
     quantity = models.PositiveIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
