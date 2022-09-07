@@ -44,7 +44,11 @@ class PackageViewSet(
         organization = self.get_serializer_context()["organization"]
         owner = self.get_serializer_context()["user"]
 
-        queryset = Package.objects.all().filter(package_items__product__organization=organization).distinct()
+        queryset = (
+            Package.objects.all()
+            .filter(package_items__product__organization=organization)
+            .distinct()
+        )
 
         # Return everything for the org's owner
         if owner.is_authenticated and owner == organization.owner:
