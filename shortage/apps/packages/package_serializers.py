@@ -35,6 +35,7 @@ class PackageSerializer(serializers.ModelSerializer):
         model = Package
         fields = [
             "uuid",
+            "created_at",
             "owner",
             "full_name",
             "email",
@@ -73,6 +74,7 @@ class PackageCreationSerializer(serializers.ModelSerializer):
         model = Package
         fields = [
             "uuid",
+            "created_at",
             "full_name",
             "email",
             "phone_number",
@@ -83,7 +85,7 @@ class PackageCreationSerializer(serializers.ModelSerializer):
             "photo",
             "items",
         ]
-        read_only_fields = ["status"]
+        read_only_fields = ["status", "created_at"]
 
     def validate(self, attrs):
         items = attrs.get("items")
