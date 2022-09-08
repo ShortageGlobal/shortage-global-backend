@@ -25,7 +25,7 @@ class PackageViewSet(
     permission_classes = [permissions.AllowAny]
 
     def get_serializer_class(self):
-        if "GET" == self.request.method:
+        if self.action == "list":
             return PackageSerializer
 
         return PackageCreationSerializer
