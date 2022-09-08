@@ -1,7 +1,11 @@
 import socket
 
+from shortage.settings.common import BASE_DIR
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 ALLOWED_HOSTS = [
     "localhost",
