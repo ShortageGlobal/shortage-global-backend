@@ -12,7 +12,6 @@ class PackageAdmin(admin.ModelAdmin):
         "phone_number",
         "delivery_company",
         "tracking_code",
-        "note",
         "status",
         "photo_preview",
         "created_at",
@@ -24,7 +23,6 @@ class PackageAdmin(admin.ModelAdmin):
         "phone_number",
         "delivery_company",
         "tracking_code",
-        "note",
         "status",
         "photo_preview",
         "created_at",
@@ -37,7 +35,6 @@ class PackageAdmin(admin.ModelAdmin):
         "phone_number",
         "delivery_company",
         "tracking_code",
-        "note",
         "photo_preview",
         "created_at",
     ]
