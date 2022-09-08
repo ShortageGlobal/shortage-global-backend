@@ -26,6 +26,7 @@ class PackageAdmin(admin.ModelAdmin):
         "status",
         "photo_preview",
         "created_at",
+        "note",
     ]
     readonly_fields = [
         "uuid",
