@@ -18,6 +18,7 @@ from shortage.apps.mailing.mail_service import PackageRegistrationEmail
 
 
 class PackageViewSet(
+    mixins.RetrieveModelMixin,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     viewsets.GenericViewSet,
@@ -25,10 +26,12 @@ class PackageViewSet(
     permission_classes = [permissions.AllowAny]
 
     def get_serializer_class(self):
-        if self.action == "list":
+        if "list" == self.action:
             return PackageSerializer
-
-        return PackageCreationSerializer
+        elif "retrieve" == self.action:
+            return PackageSerializer
+        else:
+            return PackageCreationSerializer
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
