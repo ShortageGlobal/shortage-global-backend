@@ -11,7 +11,7 @@ class ProductSlugRelatedField(serializers.SlugRelatedField):
 
 class PackageItemSerializer(serializers.ModelSerializer):
     product = ProductSlugRelatedField(
-        queryset=Product.objects.public(),
+        queryset=Product.objects.all(),
         slug_field="slug",
         allow_null=False,
         required=True,
