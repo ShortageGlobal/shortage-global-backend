@@ -44,8 +44,10 @@ class PackageViewSet(
         return context
 
     def get_queryset(self):
-        organization = self.get_serializer_context()["organization"]
-        owner = self.get_serializer_context()["user"]
+        context = self.get_serializer_context()
+
+        organization = context["organization"]
+        owner = context["user"]
 
         queryset = (
             Package.objects.all()
