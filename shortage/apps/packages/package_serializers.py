@@ -112,14 +112,7 @@ class PackageCreationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_items_data = validated_data.pop("items")
 
-        # create package
-        owner = self.context["request"].user
-        package = None
-
-        if owner.is_authenticated:
-            package = Package.objects.create(owner=owner, **validated_data)
-        else:
-            package = Package.objects.create(**validated_data)
+        package = Package.objects.create(owner=self.owner, **validated_data)
 
         # create package items
         items = [
