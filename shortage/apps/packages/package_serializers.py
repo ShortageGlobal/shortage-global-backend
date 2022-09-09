@@ -42,6 +42,7 @@ class PackageCreationSerializer(serializers.ModelSerializer):
     items = PackageItemCreationSerializer(
         write_only=True, many=True, required=True, allow_empty=False
     )
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Package
@@ -55,6 +56,7 @@ class PackageCreationSerializer(serializers.ModelSerializer):
             "note",
             "status",
             "photo",
+            "owner",
             "items",
         ]
         read_only_fields = ["status"]
