@@ -124,10 +124,11 @@ class CartCreationSerializer(serializers.ModelSerializer):
     items = CartItemCreationSerializer(
         write_only=True, many=True, required=True, allow_empty=False
     )
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Cart
-        fields = ["items", "uuid"]
+        fields = ["items", "owner", "uuid"]
 
     def validate(self, attrs):
         items = attrs.get("items")
