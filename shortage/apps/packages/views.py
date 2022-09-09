@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.core import exceptions
@@ -44,24 +46,21 @@ class PackageViewSet(
             return PackageSerializer
         elif "retrieve" == self.action:
             return PackageSerializer
-        else:
+        elif "create" == self.action:
             return PackageCreationSerializer
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
 
         context["organization_slug"] = self.kwargs["org_slug"]
-        context["user"] = self.request.user
 
         return context
 
     def get_queryset(self):
-        context = self.get_serializer_context()
-
         organization = get_object_or_404(
-            Organization.objects.public(), slug=context["organization_slug"]
+            Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
-        owner = context["user"]
+        owner = self.request.user
 
         queryset = (
             Package.objects.all()
@@ -69,11 +68,7 @@ class PackageViewSet(
             .distinct()
         )
 
-        # Return everything for the org's owner
-        if owner.is_authenticated and owner == organization.owner:
-            pass
-        # Return only user's items if he is not an org owner
-        elif owner.is_authenticated and owner != organization.owner:
+        if owner.is_authenticated:
             queryset = queryset.filter(owner=owner)
         # For everyone else - return nothing
         else:

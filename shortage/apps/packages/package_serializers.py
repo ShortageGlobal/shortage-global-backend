@@ -111,7 +111,7 @@ class PackageCreationSerializer(serializers.ModelSerializer):
         validated_items_data = validated_data.pop("items")
 
         # create package
-        owner = self.context["user"]
+        owner = self.context["request"].user
         package = None
 
         if owner.is_authenticated:
