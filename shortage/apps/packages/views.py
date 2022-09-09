@@ -84,7 +84,7 @@ class PackageViewSet(
 
         if package.email:
             package_registration_email = PackageRegistrationEmail(
-                organization_slug=self.get_serializer_context()["organization_slug"],
+                organization_slug=self.kwargs["org_slug"],
                 package_uuid=package.uuid,
             )
             package_registration_email.add_recipient(
