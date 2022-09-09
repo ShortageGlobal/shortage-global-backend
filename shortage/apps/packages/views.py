@@ -2,6 +2,8 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.core import exceptions
 from rest_framework import viewsets, mixins, permissions
+from rest_framework.permissions import BasePermission
+
 from shortage.apps.catalog.models import Organization
 from .models import Package, Cart, CartItem
 from .package_serializers import (
@@ -17,13 +19,25 @@ from .cart_serializers import (
 from shortage.apps.mailing.mail_service import PackageRegistrationEmail
 
 
+class PackageViewSetPermission(BasePermission):
+    """
+    Allows only authorized GETs
+    """
+
+    def has_permission(self, request, view):
+        if "GET" == request.method:
+            return bool(request.user and request.user.is_authenticated)
+        else:
+            return True
+
+
 class PackageViewSet(
     mixins.RetrieveModelMixin,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     viewsets.GenericViewSet,
 ):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [PackageViewSetPermission]
 
     def get_serializer_class(self):
         if "list" == self.action:
@@ -36,9 +50,7 @@ class PackageViewSet(
     def get_serializer_context(self):
         context = super().get_serializer_context()
 
-        context["organization"] = get_object_or_404(
-            Organization.objects.public(), slug=self.kwargs["org_slug"]
-        )
+        context["organization_slug"] = self.kwargs["org_slug"]
         context["user"] = self.request.user
 
         return context
@@ -46,12 +58,14 @@ class PackageViewSet(
     def get_queryset(self):
         context = self.get_serializer_context()
 
-        organization = context["organization"]
+        organization = get_object_or_404(
+            Organization.objects.public(), slug=context["organization_slug"]
+        )
         owner = context["user"]
 
         queryset = (
             Package.objects.all()
-            .filter(package_items__product__organization=organization)
+            .filter(items__product__organization=organization)
             .distinct()
         )
 
@@ -75,7 +89,8 @@ class PackageViewSet(
 
         if package.email:
             package_registration_email = PackageRegistrationEmail(
-                organization_slug=self.kwargs["org_slug"], package_uuid=package.uuid
+                organization_slug=self.get_serializer_context()["organization_slug"],
+                package_uuid=package.uuid,
             )
             package_registration_email.add_recipient(
                 email=package.email, name=package.full_name

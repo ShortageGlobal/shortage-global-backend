@@ -6,7 +6,11 @@ from .models import Package, PackageItem
 
 class ProductSlugRelatedField(serializers.SlugRelatedField):
     def get_queryset(self):
-        return super().get_queryset().filter(organization=self.context["organization"])
+        return (
+            super()
+            .get_queryset()
+            .filter(organization__slug=self.context["organization_slug"])
+        )
 
 
 class PackageItemSerializer(serializers.ModelSerializer):
