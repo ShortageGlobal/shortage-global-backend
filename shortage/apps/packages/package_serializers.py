@@ -1,3 +1,5 @@
+import logging
+
 from django.db import transaction
 from rest_framework import serializers
 from shortage.apps.catalog.models import Product
@@ -6,11 +8,8 @@ from .models import Package, PackageItem
 
 class ProductSlugRelatedField(serializers.SlugRelatedField):
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(organization__slug=self.context["organization_slug"])
-        )
+        organization = self.context["view"].organization
+        return super().get_queryset().filter(organization=organization)
 
 
 class PackageItemSerializer(serializers.ModelSerializer):
@@ -40,7 +39,6 @@ class PackageSerializer(serializers.ModelSerializer):
         fields = [
             "uuid",
             "created_at",
-            "owner",
             "full_name",
             "email",
             "phone_number",
@@ -112,7 +110,7 @@ class PackageCreationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_items_data = validated_data.pop("items")
 
-        package = Package.objects.create(owner=self.owner, **validated_data)
+        package = Package.objects.create(**validated_data)
 
         # create package items
         items = [

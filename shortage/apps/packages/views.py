@@ -4,8 +4,6 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.core import exceptions
 from rest_framework import viewsets, mixins, permissions
-from rest_framework.permissions import BasePermission
-
 from shortage.apps.catalog.models import Organization
 from .models import Package, Cart, CartItem
 from .package_serializers import (
@@ -21,62 +19,50 @@ from .cart_serializers import (
 from shortage.apps.mailing.mail_service import PackageRegistrationEmail
 
 
-class PackageViewSetPermission(BasePermission):
-    """
-    Allows only authorized GETs
-    """
-
-    def has_permission(self, request, view):
-        if "GET" == request.method:
-            return bool(request.user and request.user.is_authenticated)
-        else:
-            return True
-
-
 class PackageViewSet(
     mixins.RetrieveModelMixin,
-    mixins.ListModelMixin,
     mixins.CreateModelMixin,
     viewsets.GenericViewSet,
 ):
-    permission_classes = [PackageViewSetPermission]
+    permission_classes = [permissions.AllowAny]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.organization = None
 
     def get_serializer_class(self):
-        if "list" == self.action:
+        if "retrieve" == self.action:
             return PackageSerializer
-        elif "retrieve" == self.action:
-            return PackageSerializer
-        elif "create" == self.action:
-            return PackageCreationSerializer
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-
-        context["organization_slug"] = self.kwargs["org_slug"]
-
-        return context
+        return PackageCreationSerializer
 
     def get_queryset(self):
-        organization = get_object_or_404(
-            Organization.objects.public(), slug=self.kwargs["org_slug"]
-        )
-        owner = self.request.user
-
-        queryset = (
+        return (
             Package.objects.all()
-            .filter(items__product__organization=organization)
+            .filter(items__product__organization=self.organization, owner=self.request.user)
             .distinct()
         )
 
-        if owner.is_authenticated:
-            queryset = queryset.filter(owner=owner)
-        # For everyone else - return nothing
-        else:
-            queryset = Package.objects.none()
+    def retrieve(self, request, *args, **kwargs):
+        if not request.user or not request.user.is_authenticated:
+            self.permission_denied(request, "Unauthorized", 401)
+            return None
 
-        return queryset
+        # check organization and store it into view,
+        # so serializer could use it for validation
+        self.organization = get_object_or_404(
+            Organization.objects.public(), slug=self.kwargs["org_slug"]
+        )
+
+        return super().retrieve(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
+        # check organization and store it into view,
+        # so serializer could use it for validation
+        self.organization = get_object_or_404(
+            Organization.objects.public(), slug=self.kwargs["org_slug"]
+        )
+
         package_response = super().create(request, *args, **kwargs)
 
         uuid = package_response.data["uuid"]
@@ -84,7 +70,7 @@ class PackageViewSet(
 
         if package.email:
             package_registration_email = PackageRegistrationEmail(
-                organization_slug=self.kwargs["org_slug"],
+                organization_slug=self.organization.slug,
                 package_uuid=package.uuid,
             )
             package_registration_email.add_recipient(
