@@ -10,14 +10,14 @@ class AuthorizedUserOrNone:
     requires_context = True
 
     def __call__(self, serializer_field):
-        user = serializer_field.context['request'].user
+        user = serializer_field.context["request"].user
         if user.is_authenticated:
             return user
 
         return None
 
     def __repr__(self):
-        return '%s()' % self.__class__.__name__
+        return "%s()" % self.__class__.__name__
 
 
 class ProductSlugRelatedField(serializers.SlugRelatedField):
