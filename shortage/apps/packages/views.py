@@ -39,7 +39,9 @@ class PackageViewSet(
     def get_queryset(self):
         return (
             Package.objects.all()
-            .filter(items__product__organization=self.organization, owner=self.request.user)
+            .filter(
+                items__product__organization=self.organization, owner=self.request.user
+            )
             .distinct()
         )
 
