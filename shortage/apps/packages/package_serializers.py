@@ -1,23 +1,17 @@
-import logging
-
 from django.db import transaction
 from rest_framework import serializers
+from rest_framework.fields import CurrentUserDefault
 from shortage.apps.catalog.models import Product
 from .models import Package, PackageItem
 
 
-class AuthorizedUserOrNone:
-    requires_context = True
-
+class AuthorizedUserOrNone(CurrentUserDefault):
     def __call__(self, serializer_field):
         user = serializer_field.context["request"].user
         if user.is_authenticated:
             return user
 
         return None
-
-    def __repr__(self):
-        return "%s()" % self.__class__.__name__
 
 
 class ProductSlugRelatedField(serializers.SlugRelatedField):
