@@ -14,49 +14,22 @@ class AuthorizedUserOrNone(CurrentUserDefault):
         return None
 
 
-class ProductSlugRelatedField(serializers.SlugRelatedField):
-    def get_queryset(self):
-        organization = self.context["view"].organization
-        return super().get_queryset().filter(organization=organization)
-
-
-class PackageItemSerializer(serializers.ModelSerializer):
-    product = ProductSlugRelatedField(
-        queryset=Product.objects.all(),
-        slug_field="slug",
-        allow_null=False,
-        required=True,
-    )
-    quantity = serializers.IntegerField(
-        min_value=1, max_value=2147483647, required=True
-    )
-
-    class Meta:
-        model = PackageItem
-        fields = ["product", "quantity"]
-        read_only_fields = fields
-
-
 class PackageSerializer(serializers.ModelSerializer):
-    items = PackageItemSerializer(
-        write_only=True, many=True, required=False, allow_empty=True
-    )
-
     class Meta:
         model = Package
         fields = [
             "uuid",
-            "created_at",
-            "full_name",
-            "email",
-            "phone_number",
             "delivery_company",
             "tracking_code",
-            "note",
+            "created_at",
             "status",
-            "items",
         ]
-        read_only_fields = fields
+
+
+class ProductSlugRelatedField(serializers.SlugRelatedField):
+    def get_queryset(self):
+        organization = self.context["view"].organization
+        return super().get_queryset().filter(organization=organization)
 
 
 class PackageItemCreationSerializer(serializers.ModelSerializer):
@@ -79,13 +52,12 @@ class PackageCreationSerializer(serializers.ModelSerializer):
     items = PackageItemCreationSerializer(
         write_only=True, many=True, required=True, allow_empty=False
     )
-    owner = serializers.HiddenField(default=AuthorizedUserOrNone())
+    owner = serializers.HiddenField(default=serializers.AuthorizedUserOrNone())
 
     class Meta:
         model = Package
         fields = [
             "uuid",
-            "created_at",
             "full_name",
             "email",
             "phone_number",
@@ -97,7 +69,7 @@ class PackageCreationSerializer(serializers.ModelSerializer):
             "owner",
             "items",
         ]
-        read_only_fields = ["uuid", "status", "created_at"]
+        read_only_fields = ["uuid", "status"]
 
     def validate(self, attrs):
         items = attrs.get("items")
@@ -118,6 +90,7 @@ class PackageCreationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_items_data = validated_data.pop("items")
 
+        # create package
         package = Package.objects.create(**validated_data)
 
         # create package items
