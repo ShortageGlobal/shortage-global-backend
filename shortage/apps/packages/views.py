@@ -43,19 +43,6 @@ class PackageViewSet(
             .distinct()
         )
 
-    def retrieve(self, request, *args, **kwargs):
-        if not request.user or not request.user.is_authenticated:
-            self.permission_denied(request, "Unauthorized", 401)
-            return None
-
-        # check organization and store it into view,
-        # so serializer could use it for validation
-        self.organization = get_object_or_404(
-            Organization.objects.public(), slug=self.kwargs["org_slug"]
-        )
-
-        return super().retrieve(request, *args, **kwargs)
-
     def create(self, request, *args, **kwargs):
         # check organization and store it into view,
         # so serializer could use it for validation
