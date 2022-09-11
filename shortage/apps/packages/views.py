@@ -17,31 +17,25 @@ from .cart_serializers import (
 from shortage.apps.mailing.mail_service import PackageRegistrationEmail
 
 
-class PackageViewSet(
-    mixins.RetrieveModelMixin,
-    mixins.CreateModelMixin,
-    viewsets.GenericViewSet,
-):
-    permission_classes = [permissions.AllowAny]
+class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """Package details for the given uuid and the given organization"""
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.organization = None
-
-    def get_serializer_class(self):
-        if "retrieve" == self.action:
-            return PackageSerializer
-
-        return PackageCreationSerializer
+    serializer_class = PackageSerializer
 
     def get_queryset(self):
-        return (
-            Package.objects.all()
-            .filter(
-                items__product__organization=self.organization, owner=self.request.user
-            )
-            .distinct()
+        organization = get_object_or_404(
+            Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
+        return Package.objects.filter(
+            items__product__organization=organization
+        ).distinct()
+
+
+class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    """Create package"""
+
+    permission_classes = [permissions.AllowAny]
+    serializer_class = PackageCreationSerializer
 
     def create(self, request, *args, **kwargs):
         # check organization and store it into view,
@@ -57,8 +51,7 @@ class PackageViewSet(
 
         if package.email:
             package_registration_email = PackageRegistrationEmail(
-                organization_slug=self.organization.slug,
-                package_uuid=package.uuid,
+                organization_slug=self.kwargs["org_slug"], package_uuid=package.uuid
             )
             package_registration_email.add_recipient(
                 email=package.email, name=package.full_name
