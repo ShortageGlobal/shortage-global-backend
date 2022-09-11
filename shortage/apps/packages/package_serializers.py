@@ -52,7 +52,7 @@ class PackageCreationSerializer(serializers.ModelSerializer):
     items = PackageItemCreationSerializer(
         write_only=True, many=True, required=True, allow_empty=False
     )
-    owner = serializers.HiddenField(default=serializers.AuthorizedUserOrNone())
+    owner = serializers.HiddenField(default=AuthorizedUserOrNone())
 
     class Meta:
         model = Package
