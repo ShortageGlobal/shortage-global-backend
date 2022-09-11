@@ -1,13 +1,14 @@
-name: build
+name: Code style check
 
 on: pull_request
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-
+  pre-commit:
+    name: Run all pre-commit hooks
+    runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v1
-      - uses: lgeiger/black-action@master
-        with:
-          args: ". --check"
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+      - name: Run all pre-commit hooks
+        uses: pre-commit/action@v3.0.0
