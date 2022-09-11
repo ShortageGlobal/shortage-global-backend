@@ -1,15 +1,16 @@
 from django.urls import include, path
 from rest_framework import routers
+
 from .views import (
-    PromotedOrganizationsViewSet,
-    PromotedProductsViewSet,
-    PromotedCategoriesViewSet,
-    OrganizationViewSet,
-    InstructionsViewSet,
     CategoriesViewSet,
+    InstructionsViewSet,
+    OnlineStoresViewSet,
+    OrganizationViewSet,
     ProductsViewSet,
     ProductViewSet,
-    OnlineStoresViewSet,
+    PromotedCategoriesViewSet,
+    PromotedOrganizationsViewSet,
+    PromotedProductsViewSet,
 )
 
 router = routers.DefaultRouter()

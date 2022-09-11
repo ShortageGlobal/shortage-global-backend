@@ -1,5 +1,6 @@
-import sys
 import os
+import sys
+
 import dj_database_url
 
 DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"

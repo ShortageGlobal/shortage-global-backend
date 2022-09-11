@@ -1,6 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
-from .views import PackageViewSet, PackageCreationViewSet, CartViewSet, CartItemViewSet
+
+from .views import CartItemViewSet, CartViewSet, PackageCreationViewSet, PackageViewSet
 
 router = routers.DefaultRouter()
 

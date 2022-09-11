@@ -1,12 +1,14 @@
 import uuid
-from django.db import models
+
+from auditlog.registry import auditlog
 from django.conf import settings
 from django.contrib.auth.models import User
-from auditlog.registry import auditlog
+from django.db import models
 from thumbnails.fields import ImageField
+
 from shortage.apps import storage
-from shortage.apps.file_paths import get_package_path
 from shortage.apps.catalog.models import Product
+from shortage.apps.file_paths import get_package_path
 
 
 class PackageStatus(models.TextChoices):

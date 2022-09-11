@@ -1,20 +1,19 @@
-from django.shortcuts import get_object_or_404
-from django.http import Http404
 from django.core import exceptions
-from rest_framework import viewsets, mixins, permissions
+from django.http import Http404
+from django.shortcuts import get_object_or_404
+from rest_framework import mixins, permissions, viewsets
+
 from shortage.apps.catalog.models import Organization
-from .models import Package, Cart, CartItem
-from .package_serializers import (
-    PackageSerializer,
-    PackageCreationSerializer,
-)
-from .cart_serializers import (
-    CartSerializer,
-    CartCreationSerializer,
-    CartItemUpdateSerializer,
-    CartItemCreationSerializer,
-)
 from shortage.apps.mailing.mail_service import PackageRegistrationEmail
+
+from .cart_serializers import (
+    CartCreationSerializer,
+    CartItemCreationSerializer,
+    CartItemUpdateSerializer,
+    CartSerializer,
+)
+from .models import Cart, CartItem, Package
+from .package_serializers import PackageCreationSerializer, PackageSerializer
 
 
 class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):

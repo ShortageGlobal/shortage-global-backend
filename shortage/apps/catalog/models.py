@@ -1,10 +1,11 @@
-from django.db import models
+from auditlog.registry import auditlog
 from django.conf import settings
 from django.contrib.auth.models import User
-from tinymce.models import HTMLField
+from django.db import models
 from django_countries.fields import CountryField
-from auditlog.registry import auditlog
 from thumbnails.fields import ImageField
+from tinymce.models import HTMLField
+
 from shortage.apps import storage
 from shortage.apps.file_paths import get_organization_path, get_product_path
 

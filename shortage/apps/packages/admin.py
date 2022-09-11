@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import Package, PackageItem, Cart, CartItem
 from django.utils.html import format_html
+
+from .models import Cart, CartItem, Package, PackageItem
 
 
 class PackageAdmin(admin.ModelAdmin):

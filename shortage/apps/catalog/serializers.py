@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Organization, Instruction, Product, OnlineStore
+
+from .models import Instruction, OnlineStore, Organization, Product
 
 
 class OrganizationPreviewSerializer(serializers.ModelSerializer):

@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Organization, Product, Instruction, OnlineStore
+
+from .models import Instruction, OnlineStore, Organization, Product
 
 
 class OrganizationAdmin(admin.ModelAdmin):

@@ -1,7 +1,8 @@
 import logging
-from pysendpulse.pysendpulse import PySendPulse
+
 from django.conf import settings
 from django.template.loader import render_to_string
+from pysendpulse.pysendpulse import PySendPulse
 
 
 class MailingBackend:

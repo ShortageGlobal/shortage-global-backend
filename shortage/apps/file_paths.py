@@ -1,5 +1,5 @@
-import uuid
 import os
+import uuid
 
 
 def get_uuid_path(directory, filename):
@@ -19,4 +19,4 @@ def get_product_path(instance, filename):
 
 
 def get_package_path(instance, filename):
-    return get_uuid_path(f"photo/package/%Y/%m/%d/", filename)
+    return get_uuid_path(f"photo/package/%Y/%m/%d/", filename)  # noqa: F541
