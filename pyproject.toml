@@ -1,8 +1,27 @@
 [tool.black]
 
-exclude = '''
+force-exclude = '''
 (
     ^/venv
     | .+/migrations
 )
 '''
+
+[tool.autoflake]
+
+recursive = true
+ignore-init-module-imports = true
+exclude = "venv,migrations"
+
+[tool.isort]
+
+filter_files = true
+profile = "black"
+skip = [ "migrations", "venv" ]
+quiet = true
+
+[tool.flake8]
+
+ignore = [ "E501", "F401" ]
+max-complexity = 10
+exclude = [ "migrations" ]
