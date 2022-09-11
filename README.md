@@ -38,3 +38,9 @@ docker-compose exec django python manage.py createsuperuser
 ```
 docker-compose exec django python manage.py shell
 ```
+
+## Setup pre-commit hooks
+```
+pip install pre-commit
+pre-commit install
+```
