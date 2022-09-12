@@ -1,10 +1,14 @@
 import socket
 from shortage.settings.common import BASE_DIR
+import os
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
 
 ALLOWED_HOSTS = [
     "localhost",
