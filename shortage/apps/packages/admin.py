@@ -5,15 +5,6 @@ from django.utils.html import format_html
 
 class PackageAdmin(admin.ModelAdmin):
     list_display = [
-        "created_at",
-        "owner",
-        "email",
-        "delivery_company",
-        "tracking_code",
-        "status",
-        "uuid",
-    ]
-    fields = [
         "status",
         "owner",
         "full_name",
@@ -21,9 +12,21 @@ class PackageAdmin(admin.ModelAdmin):
         "phone_number",
         "delivery_company",
         "tracking_code",
-        "note",
+        "status",
         "photo_preview",
         "created_at",
+    ]
+    fields = [
+        "owner",
+        "full_name",
+        "email",
+        "phone_number",
+        "delivery_company",
+        "tracking_code",
+        "status",
+        "photo_preview",
+        "created_at",
+        "note",
     ]
     readonly_fields = [
         "uuid",
@@ -33,10 +36,10 @@ class PackageAdmin(admin.ModelAdmin):
         "phone_number",
         "delivery_company",
         "tracking_code",
-        "note",
         "photo_preview",
         "created_at",
     ]
+    search_fields = ["full_name", "email"]
 
     def has_add_permission(self, request, obj=None):
         return False
