@@ -1,5 +1,5 @@
 asgiref==3.5.2
-backports.zoneinfo==0.2.1;python_version<"3.9"
+backports.zoneinfo==0.2.1
 black==22.6.0
 boto3==1.24.18
 botocore==1.27.18
@@ -20,7 +20,6 @@ django-storages==1.12.3
 django-thumbnails==0.7.0
 django-tinymce==3.4.0
 djangorestframework==3.13.1
-djangorestframework-simplejwt==5.2.0
 gunicorn==20.1.0
 idna==3.3
 jmespath==1.0.1
@@ -29,7 +28,6 @@ pathspec==0.9.0
 Pillow==9.1.1
 platformdirs==2.5.2
 psycopg2==2.9.3
-PyJWT==2.4.0
 pysendpulse==0.1.4
 python-dateutil==2.8.2
 python3-memcached==1.51
@@ -43,5 +41,3 @@ tomli==2.0.1
 typing_extensions==4.3.0
 urllib3==1.26.9
 wrapt==1.14.1
-pyyaml==6.0
-uritemplate==4.1.1
