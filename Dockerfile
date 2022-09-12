@@ -1,4 +1,4 @@
-FROM python:3.8.9
+FROM python:3.10.7
 ENV PYTHONDONTWRITEBYTECODE 1
 WORKDIR /project
 COPY requirements.txt /project/

@@ -1,17 +1,8 @@
 from django.db import transaction
 from rest_framework import serializers
-from rest_framework.fields import CurrentUserDefault
+from shortage.helpers.serializers import AuthorizedUserOrNone
 from shortage.apps.catalog.models import Product
 from .models import Package, PackageItem
-
-
-class AuthorizedUserOrNone(CurrentUserDefault):
-    def __call__(self, serializer_field):
-        user = serializer_field.context["request"].user
-        if user.is_authenticated:
-            return user
-
-        return None
 
 
 class PackageSerializer(serializers.ModelSerializer):
@@ -69,7 +60,7 @@ class PackageCreationSerializer(serializers.ModelSerializer):
             "owner",
             "items",
         ]
-        read_only_fields = ["uuid", "status"]
+        read_only_fields = ["status"]
 
     def validate(self, attrs):
         items = attrs.get("items")

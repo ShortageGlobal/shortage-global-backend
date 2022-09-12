@@ -1,6 +1,7 @@
 from django.db import transaction
 from django.http import Http404
 from rest_framework import serializers
+from shortage.helpers.serializers import AuthorizedUserOrNone
 from shortage.apps.catalog.models import Product
 from shortage.apps.catalog.serializers import ProductOrganizationPreviewSerializer
 from .models import Cart, CartItem
@@ -124,7 +125,7 @@ class CartCreationSerializer(serializers.ModelSerializer):
     items = CartItemCreationSerializer(
         write_only=True, many=True, required=True, allow_empty=False
     )
-    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    owner = serializers.HiddenField(default=AuthorizedUserOrNone())
 
     class Meta:
         model = Cart
