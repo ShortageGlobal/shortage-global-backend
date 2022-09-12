@@ -1,6 +1,7 @@
 # Shortage.Global backend
 
 API: https://backend-wp66a.ondigitalocean.app/api/
+Swagger: https://backend-wp66a.ondigitalocean.app/api/swagger
 
 Admin: https://backend-wp66a.ondigitalocean.app/admin/
 
@@ -86,3 +87,10 @@ pip install psycopg2
 ```
 pip install -r requirements.txt
 ```
+
+## Generate OpenAPI schema when changing any API elements
+```
+docker compose exec django python manage.py generateschema > schema.yaml
+```
+Schema file should be located in /static/openapi/schema.yaml
+Make sure you don't overwrite the file but merge them together
