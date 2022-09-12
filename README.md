@@ -93,4 +93,5 @@ pip install -r requirements.txt
 docker compose exec django python manage.py generateschema > schema.yaml
 ```
 Schema file should be located in /static/openapi/schema.yaml
-Make sure you don't overwrite the file but merge them together
+
+Make sure you don't overwrite the file located in /static/openapi/ folder but manually merge the old and new files
