@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Organization, Instruction, Product, OnlineStore
+from ...helpers.serializers import AuthorizedUserOrNone
 
 
 class OrganizationPreviewSerializer(serializers.ModelSerializer):
@@ -11,6 +12,23 @@ class OrganizationPreviewSerializer(serializers.ModelSerializer):
             "name",
             "slug",
             "photo",
+        ]
+
+
+class OrganizationSerializer(serializers.ModelSerializer):
+    photo = serializers.ImageField()
+    owner = serializers.HiddenField(default=AuthorizedUserOrNone())
+
+    class Meta:
+        model = Organization
+        fields = [
+            "owner",
+            "name",
+            "slug",
+            "description",
+            "photo",
+            "url",
+            "ein_number",
         ]
 
 

@@ -1,4 +1,4 @@
-from rest_framework import viewsets, mixins, filters
+from rest_framework import viewsets, mixins, filters, permissions
 from django.shortcuts import get_object_or_404
 from .models import Organization, Instruction, Product, OnlineStore
 from .serializers import (
@@ -10,6 +10,7 @@ from .serializers import (
     PublicOrganizationSerializer,
     ProductSerializer,
     OnlineStoreSerializer,
+    OrganizationSerializer,
 )
 
 
@@ -57,6 +58,25 @@ class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Organization.objects.public()
     serializer_class = PublicOrganizationSerializer
     lookup_field = "slug"
+
+
+class OrganizationCreateViewSet(
+    mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
+):
+    """Organization details"""
+
+    queryset = Organization.objects.public()
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = OrganizationSerializer
+    lookup_field = "slug"
+
+    def create(self, request, *args, **kwargs):
+        # Todo: Send an email about organization's creation
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        # Todo: Send an email about changes to the organization
+        return super().create(request, *args, **kwargs)
 
 
 class InstructionsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):

@@ -26,7 +26,7 @@ class OrganizationManager(models.Manager):
 
 class Organization(models.Model):
     owner = models.ForeignKey(
-        User, related_name="organizations", on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL, related_name="organizations", on_delete=models.CASCADE
     )
     name = models.CharField(max_length=255, null=True, blank=True)
     slug = models.SlugField(max_length=255, unique=True)
