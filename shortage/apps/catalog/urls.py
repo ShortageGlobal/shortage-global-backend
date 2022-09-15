@@ -10,8 +10,8 @@ from .views import (
     ProductsViewSet,
     ProductViewSet,
     OnlineStoresViewSet,
-    OrganizationCreateViewSet,
-    OrganizationUpdateViewSet,
+    PrivateOrganizationCreateViewSet,
+    PrivateOrganizationUpdateViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -32,10 +32,14 @@ router.register(
 # Organization
 router.register(r"organizations", OrganizationViewSet, basename="organization")
 router.register(
-    r"private/organizations", OrganizationCreateViewSet, basename="private_organization"
+    r"private/organizations",
+    PrivateOrganizationCreateViewSet,
+    basename="private_organization",
 )
 router.register(
-    r"private/organizations", OrganizationUpdateViewSet, basename="private_organization"
+    r"private/organizations",
+    PrivateOrganizationUpdateViewSet,
+    basename="private_organization",
 )
 
 
