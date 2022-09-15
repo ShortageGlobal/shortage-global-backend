@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Organization, Instruction, Product, OnlineStore
-from ...helpers.serializers import AuthorizedUserOrNone
+from shortage.helpers.serializers import AuthorizedUserOrNone
 
 
 class OrganizationPreviewSerializer(serializers.ModelSerializer):

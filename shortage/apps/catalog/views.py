@@ -60,12 +60,12 @@ class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     lookup_field = "slug"
 
 
-class OrganizationCreateViewSet(
+class OrganizationCreateUpdateViewSet(
     mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
 ):
     """Organization details"""
 
-    queryset = Organization.objects.public()
+    queryset = Organization.objects.all()
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = OrganizationSerializer
     lookup_field = "slug"
