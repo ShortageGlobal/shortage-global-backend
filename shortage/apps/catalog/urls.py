@@ -30,7 +30,9 @@ router.register(
 
 # Organization
 router.register(r"organizations", OrganizationViewSet, basename="organization")
-router.register(r"private/organizations", OrganizationCreateUpdateViewSet, basename="organization")
+router.register(
+    r"private/organizations", OrganizationCreateUpdateViewSet, basename="organization"
+)
 
 # Instructions
 router.register(
