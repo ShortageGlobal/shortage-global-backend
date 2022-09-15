@@ -15,7 +15,7 @@ class OrganizationPreviewSerializer(serializers.ModelSerializer):
         ]
 
 
-class OrganizationSerializer(serializers.ModelSerializer):
+class PrivateOrganizationSerializer(serializers.ModelSerializer):
     photo = serializers.ImageField()
     owner = serializers.HiddenField(default=AuthorizedUserOrNone())
 
@@ -86,7 +86,7 @@ class CategorySerializer(serializers.BaseSerializer):
         return instance
 
 
-class PublicOrganizationSerializer(serializers.ModelSerializer):
+class OrganizationSerializer(serializers.ModelSerializer):
     photo = serializers.ImageField(source="medium_photo", read_only=True)
 
     class Meta:

@@ -7,10 +7,10 @@ from .serializers import (
     PromotedProductPreviewSerializer,
     ProductPreviewSerializer,
     CategorySerializer,
-    PublicOrganizationSerializer,
+    OrganizationSerializer,
     ProductSerializer,
     OnlineStoreSerializer,
-    OrganizationSerializer,
+    PrivateOrganizationSerializer,
 )
 
 
@@ -56,27 +56,35 @@ class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """Organization details"""
 
     queryset = Organization.objects.public()
-    serializer_class = PublicOrganizationSerializer
+    serializer_class = OrganizationSerializer
     lookup_field = "slug"
 
 
-class OrganizationCreateUpdateViewSet(
+class OrganizationCreateViewSet(
     mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
 ):
-    """Organization details"""
-
     queryset = Organization.objects.all()
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = OrganizationSerializer
+    serializer_class = PrivateOrganizationSerializer
     lookup_field = "slug"
 
     def create(self, request, *args, **kwargs):
         # Todo: Send an email about organization's creation
         return super().create(request, *args, **kwargs)
 
+
+class OrganizationUpdateViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = PrivateOrganizationSerializer
+    lookup_field = "slug"
+
+    def get_queryset(self):
+        return Organization.objects.all().filter(owner=self.request.user)
+
     def update(self, request, *args, **kwargs):
         # Todo: Send an email about changes to the organization
-        return super().create(request, *args, **kwargs)
+        return super().update(request, *args, **kwargs)
 
 
 class InstructionsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
