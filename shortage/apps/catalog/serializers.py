@@ -31,8 +31,8 @@ class OrganizationSerializer(serializers.ModelSerializer):
             "ein_number",
             "is_verified",
             "is_draft",
-            "is_deleted",
         ]
+        read_only_fields = ["is_verified"]
 
 
 class InstructionSerializer(serializers.ModelSerializer):
