@@ -29,6 +29,9 @@ class OrganizationSerializer(serializers.ModelSerializer):
             "photo",
             "url",
             "ein_number",
+            "is_verified",
+            "is_draft",
+            "is_deleted",
         ]
 
 
