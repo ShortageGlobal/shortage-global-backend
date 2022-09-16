@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from rest_framework import viewsets, mixins, filters, permissions
 from django.shortcuts import get_object_or_404
 from .models import Organization, Instruction, Product, OnlineStore
@@ -64,11 +65,15 @@ class PrivateOrganizationCreateViewSet(
     mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
 ):
     queryset = Organization.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     serializer_class = PrivateOrganizationSerializer
     lookup_field = "slug"
 
     def create(self, request, *args, **kwargs):
+        # Allow only one organization per user
+        if Organization.objects.all().filter(owner=self.request.user).exists():
+            return HttpResponse(status=409)
+
         # Todo: Send an email about organization's creation
         return super().create(request, *args, **kwargs)
 
