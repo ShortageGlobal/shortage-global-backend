@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Organization, Instruction, Product, OnlineStore
+from shortage.helpers.serializers import AuthorizedUserOrNone
 
 
 class OrganizationPreviewSerializer(serializers.ModelSerializer):
@@ -12,6 +13,26 @@ class OrganizationPreviewSerializer(serializers.ModelSerializer):
             "slug",
             "photo",
         ]
+
+
+class PrivateOrganizationSerializer(serializers.ModelSerializer):
+    photo = serializers.ImageField()
+    owner = serializers.HiddenField(default=AuthorizedUserOrNone())
+
+    class Meta:
+        model = Organization
+        fields = [
+            "owner",
+            "name",
+            "slug",
+            "description",
+            "photo",
+            "url",
+            "ein_number",
+            "is_verified",
+            "is_draft",
+        ]
+        read_only_fields = ["is_verified"]
 
 
 class InstructionSerializer(serializers.ModelSerializer):
@@ -65,7 +86,7 @@ class CategorySerializer(serializers.BaseSerializer):
         return instance
 
 
-class PublicOrganizationSerializer(serializers.ModelSerializer):
+class OrganizationSerializer(serializers.ModelSerializer):
     photo = serializers.ImageField(source="medium_photo", read_only=True)
 
     class Meta:

@@ -149,7 +149,8 @@ paths:
   /api/organizations/{slug}/:
     get:
       operationId: retrieveOrganization
-      description: Organization details
+      description: Returns information about specific organization if that organization
+        was verified
       parameters:
       - name: slug
         in: path
@@ -162,10 +163,163 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PublicOrganization'
+                $ref: '#/components/schemas/Organization'
           description: ''
       tags:
-      - api
+      - Organizations
+  /api/private/organizations/:
+    get:
+      operationId: listPrivateOrganizations
+      description: ''
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?offset=400&limit=100
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?offset=200&limit=100
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PrivateOrganization'
+          description: ''
+      tags:
+      - Private
+      - Organizations
+    post:
+      operationId: createPrivateOrganization
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateOrganization'
+          description: ''
+      tags:
+      - Private
+      - Organizations
+  /api/private/organizations/{slug}/:
+    get:
+      operationId: retrievePrivateOrganization
+      description: ''
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateOrganization'
+          description: ''
+      tags:
+      - Private
+      - Organizations
+    put:
+      operationId: updatePrivateOrganization
+      description: ''
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateOrganization'
+          description: ''
+      tags:
+      - Private
+      - Organizations
+    patch:
+      operationId: partialUpdatePrivateOrganization
+      description: ''
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateOrganization'
+          description: ''
+      tags:
+      - Private
+      - Organizations
   /api/organizations/{org_slug}/instructions/:
     get:
       operationId: listInstructions
@@ -543,6 +697,62 @@ paths:
           description: ''
       tags:
       - api
+  /api/token/:
+    post:
+      operationId: createTokenObtainPair
+      description: 'Takes a set of user credentials and returns an access and refresh
+        JSON web
+
+        token pair to prove the authentication of those credentials.'
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+      tags:
+      - api
+  /api/token/refresh/:
+    post:
+      operationId: createTokenRefresh
+      description: 'Takes a refresh type JSON web token and returns an access type
+        JSON web
+
+        token if the refresh token is valid.'
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+      tags:
+      - api
   /api/carts/{cart_pk}/items/{id}/:
     put:
       operationId: updateCartItemUpdate
@@ -710,7 +920,7 @@ components:
       - name
       - slug
       - category
-    PublicOrganization:
+    Organization:
       type: object
       properties:
         name:
@@ -741,6 +951,46 @@ components:
             s]*)?\\z"
       required:
       - slug
+    PrivateOrganization:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+          nullable: true
+        photo:
+          type: string
+          format: binary
+        url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 255
+          pattern: "^(?:[a-z0-9.+-]*)://(?:[^\\s:@/]+(?::[^\\s:@/]*)?@)?(?:(?:0|25[0-5]|2[0-4]\\\
+            d|1\\d?\\d?|[1-9]\\d?)(?:\\.(?:0|25[0-5]|2[0-4]\\d|1\\d?\\d?|[1-9]\\d?)){3}|\\\
+            [[0-9a-f:.]+\\]|([a-z\xA1-\uFFFF0-9](?:[a-z\xA1-\uFFFF0-9-]{0,61}[a-z\xA1\
+            -\uFFFF0-9])?(?:\\.(?!-)[a-z\xA1-\uFFFF0-9-]{1,63}(?<!-))*\\.(?!-)(?:[a-z\xA1\
+            -\uFFFF-]{2,63}|xn--[a-z0-9]{1,59})(?<!-)\\.?|localhost))(?::\\d{1,5})?(?:[/?#][^\\\
+            s]*)?\\z"
+        ein_number:
+          type: string
+          nullable: true
+          maxLength: 255
+        is_verified:
+          type: boolean
+          readOnly: true
+        is_draft:
+          type: boolean
+      required:
+      - slug
+      - photo
     Instruction:
       type: object
       properties:
@@ -1340,6 +1590,27 @@ components:
       - product_slug
       - organization_slug
       - quantity
+    TokenObtainPair:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - username
+      - password
+    TokenRefresh:
+      type: object
+      properties:
+        refresh:
+          type: string
+        access:
+          type: string
+          readOnly: true
+      required:
+      - refresh
     CartItemUpdate:
       type: object
       properties:

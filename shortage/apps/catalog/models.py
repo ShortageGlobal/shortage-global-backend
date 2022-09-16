@@ -1,6 +1,5 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import User
 from tinymce.models import HTMLField
 from django_countries.fields import CountryField
 from auditlog.registry import auditlog
@@ -23,10 +22,14 @@ class OrganizationManager(models.Manager):
             is_verified=True, is_draft=False, is_deleted=False
         )
 
+    def active(self):
+        """Return all available organizations which have not been deleted"""
+        return self.get_queryset().filter(is_deleted=False)
+
 
 class Organization(models.Model):
     owner = models.ForeignKey(
-        User, related_name="organizations", on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL, related_name="organizations", on_delete=models.CASCADE
     )
     name = models.CharField(max_length=255, null=True, blank=True)
     slug = models.SlugField(max_length=255, unique=True)

@@ -1,5 +1,8 @@
-from rest_framework import viewsets, mixins, filters
+from rest_framework import viewsets, mixins, filters, permissions, status
 from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
+from rest_framework.schemas.openapi import AutoSchema
+
 from .models import Organization, Instruction, Product, OnlineStore
 from .serializers import (
     OrganizationPreviewSerializer,
@@ -7,9 +10,10 @@ from .serializers import (
     PromotedProductPreviewSerializer,
     ProductPreviewSerializer,
     CategorySerializer,
-    PublicOrganizationSerializer,
+    OrganizationSerializer,
     ProductSerializer,
     OnlineStoreSerializer,
+    PrivateOrganizationSerializer,
 )
 
 
@@ -52,11 +56,56 @@ class PromotedCategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
 class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    """Organization details"""
+    """Returns information about specific organization if that organization was verified"""
+
+    schema = AutoSchema(
+        tags=["Organizations"],
+    )
 
     queryset = Organization.objects.public()
-    serializer_class = PublicOrganizationSerializer
+    serializer_class = OrganizationSerializer
     lookup_field = "slug"
+
+
+class PrivateOrganizationViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
+
+    schema = AutoSchema(
+        tags=["Private", "Organizations"],
+    )
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = PrivateOrganizationSerializer
+    lookup_field = "slug"
+
+    def get_queryset(self):
+        if "retrieve" == self.action or "list" == self.action:
+            return Organization.objects.active().filter(owner=self.request.user)
+        else:
+            # Prevent changes to organizations which you don't own and which are already verified
+            return Organization.objects.all().filter(
+                owner=self.request.user, is_verified=False
+            )
+
+    """Allows you to create or update an organization. Only one organization is allowed per user"""
+
+    def create(self, request, *args, **kwargs):
+
+        # Allow only one organization per user
+        if Organization.objects.all().filter(owner=self.request.user).exists():
+            return Response(status=status.HTTP_409_CONFLICT)
+
+        # Todo: Send an email about organization's creation
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        # Todo: Send an email about changes to the organization
+        return super().update(request, *args, **kwargs)
 
 
 class InstructionsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
