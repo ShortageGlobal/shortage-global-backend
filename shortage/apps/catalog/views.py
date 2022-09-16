@@ -67,10 +67,13 @@ class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     lookup_field = "slug"
 
 
-class PrivateOrganizationCreateUpdateViewSet(
-    mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
+class PrivateOrganizationViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
 ):
-    """Allows you to create or update an organization. Only one organization is allowed per user"""
 
     schema = AutoSchema(
         tags=["Private", "Organizations"],
@@ -81,12 +84,18 @@ class PrivateOrganizationCreateUpdateViewSet(
     lookup_field = "slug"
 
     def get_queryset(self):
-        # Prevent changes to organizations which you don't own and which are already verified
-        return Organization.objects.all().filter(
-            owner=self.request.user, is_verified=False
-        )
+        if "retrieve" == self.action or "list" == self.action:
+            return Organization.objects.active().filter(owner=self.request.user)
+        else:
+            # Prevent changes to organizations which you don't own and which are already verified
+            return Organization.objects.all().filter(
+                owner=self.request.user, is_verified=False
+            )
+
+    """Allows you to create or update an organization. Only one organization is allowed per user"""
 
     def create(self, request, *args, **kwargs):
+
         # Allow only one organization per user
         if Organization.objects.all().filter(owner=self.request.user).exists():
             return Response(status=status.HTTP_409_CONFLICT)

@@ -167,6 +167,159 @@ paths:
           description: ''
       tags:
       - Organizations
+  /api/private/organizations/:
+    get:
+      operationId: listPrivateOrganizations
+      description: ''
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?offset=400&limit=100
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?offset=200&limit=100
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PrivateOrganization'
+          description: ''
+      tags:
+      - Private
+      - Organizations
+    post:
+      operationId: createPrivateOrganization
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateOrganization'
+          description: ''
+      tags:
+      - Private
+      - Organizations
+  /api/private/organizations/{slug}/:
+    get:
+      operationId: retrievePrivateOrganization
+      description: ''
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateOrganization'
+          description: ''
+      tags:
+      - Private
+      - Organizations
+    put:
+      operationId: updatePrivateOrganization
+      description: ''
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateOrganization'
+          description: ''
+      tags:
+      - Private
+      - Organizations
+    patch:
+      operationId: partialUpdatePrivateOrganization
+      description: ''
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PrivateOrganization'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateOrganization'
+          description: ''
+      tags:
+      - Private
+      - Organizations
   /api/organizations/{org_slug}/instructions/:
     get:
       operationId: listInstructions
@@ -457,33 +610,6 @@ paths:
           description: ''
       tags:
       - api
-  /api/private/organizations/:
-    post:
-      operationId: createPrivateOrganization
-      description: Allows you to create or update an organization. Only one organization
-        is allowed per user
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PrivateOrganization'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PrivateOrganization'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PrivateOrganization'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PrivateOrganization'
-          description: ''
-      tags:
-      - Private
-      - Organizations
   /api/organizations/{org_slug}/packages/:
     post:
       operationId: createPackageCreation
@@ -627,71 +753,6 @@ paths:
           description: ''
       tags:
       - api
-  /api/private/organizations/{slug}/:
-    put:
-      operationId: updatePrivateOrganization
-      description: Allows you to create or update an organization. Only one organization
-        is allowed per user
-      parameters:
-      - name: slug
-        in: path
-        required: true
-        description: ''
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PrivateOrganization'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PrivateOrganization'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PrivateOrganization'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PrivateOrganization'
-          description: ''
-      tags:
-      - Private
-      - Organizations
-    patch:
-      operationId: partialUpdatePrivateOrganization
-      description: Allows you to create or update an organization. Only one organization
-        is allowed per user
-      parameters:
-      - name: slug
-        in: path
-        required: true
-        description: ''
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PrivateOrganization'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PrivateOrganization'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PrivateOrganization'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PrivateOrganization'
-          description: ''
-      tags:
-      - Private
-      - Organizations
   /api/carts/{cart_pk}/items/{id}/:
     put:
       operationId: updateCartItemUpdate
@@ -890,6 +951,46 @@ components:
             s]*)?\\z"
       required:
       - slug
+    PrivateOrganization:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+          nullable: true
+        photo:
+          type: string
+          format: binary
+        url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 255
+          pattern: "^(?:[a-z0-9.+-]*)://(?:[^\\s:@/]+(?::[^\\s:@/]*)?@)?(?:(?:0|25[0-5]|2[0-4]\\\
+            d|1\\d?\\d?|[1-9]\\d?)(?:\\.(?:0|25[0-5]|2[0-4]\\d|1\\d?\\d?|[1-9]\\d?)){3}|\\\
+            [[0-9a-f:.]+\\]|([a-z\xA1-\uFFFF0-9](?:[a-z\xA1-\uFFFF0-9-]{0,61}[a-z\xA1\
+            -\uFFFF0-9])?(?:\\.(?!-)[a-z\xA1-\uFFFF0-9-]{1,63}(?<!-))*\\.(?!-)(?:[a-z\xA1\
+            -\uFFFF-]{2,63}|xn--[a-z0-9]{1,59})(?<!-)\\.?|localhost))(?::\\d{1,5})?(?:[/?#][^\\\
+            s]*)?\\z"
+        ein_number:
+          type: string
+          nullable: true
+          maxLength: 255
+        is_verified:
+          type: boolean
+          readOnly: true
+        is_draft:
+          type: boolean
+      required:
+      - slug
+      - photo
     Instruction:
       type: object
       properties:
@@ -1372,46 +1473,6 @@ components:
             - product
             - quantity
           readOnly: true
-    PrivateOrganization:
-      type: object
-      properties:
-        name:
-          type: string
-          nullable: true
-          maxLength: 255
-        slug:
-          type: string
-          maxLength: 255
-          pattern: ^[-a-zA-Z0-9_]+$
-        description:
-          type: string
-          nullable: true
-        photo:
-          type: string
-          format: binary
-        url:
-          type: string
-          format: uri
-          nullable: true
-          maxLength: 255
-          pattern: "^(?:[a-z0-9.+-]*)://(?:[^\\s:@/]+(?::[^\\s:@/]*)?@)?(?:(?:0|25[0-5]|2[0-4]\\\
-            d|1\\d?\\d?|[1-9]\\d?)(?:\\.(?:0|25[0-5]|2[0-4]\\d|1\\d?\\d?|[1-9]\\d?)){3}|\\\
-            [[0-9a-f:.]+\\]|([a-z\xA1-\uFFFF0-9](?:[a-z\xA1-\uFFFF0-9-]{0,61}[a-z\xA1\
-            -\uFFFF0-9])?(?:\\.(?!-)[a-z\xA1-\uFFFF0-9-]{1,63}(?<!-))*\\.(?!-)(?:[a-z\xA1\
-            -\uFFFF-]{2,63}|xn--[a-z0-9]{1,59})(?<!-)\\.?|localhost))(?::\\d{1,5})?(?:[/?#][^\\\
-            s]*)?\\z"
-        ein_number:
-          type: string
-          nullable: true
-          maxLength: 255
-        is_verified:
-          type: boolean
-          readOnly: true
-        is_draft:
-          type: boolean
-      required:
-      - slug
-      - photo
     PackageCreation:
       type: object
       properties:

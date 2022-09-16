@@ -22,6 +22,10 @@ class OrganizationManager(models.Manager):
             is_verified=True, is_draft=False, is_deleted=False
         )
 
+    def active(self):
+        """Return all available organizations which have not been deleted"""
+        return self.get_queryset().filter(is_deleted=False)
+
 
 class Organization(models.Model):
     owner = models.ForeignKey(
