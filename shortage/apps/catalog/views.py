@@ -57,6 +57,7 @@ class PromotedCategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """Returns information about specific organization if that organization was verified"""
+
     schema = AutoSchema(
         tags=["Organizations"],
     )
@@ -70,6 +71,7 @@ class PrivateOrganizationCreateViewSet(
     mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
 ):
     """Allows you to create a new organization. Only one organization is allowed per user"""
+
     schema = AutoSchema(
         tags=["Private", "Organizations"],
     )
@@ -91,6 +93,7 @@ class PrivateOrganizationUpdateViewSet(
     mixins.UpdateModelMixin, viewsets.GenericViewSet
 ):
     """Allows you to update organization's data"""
+
     schema = AutoSchema(
         tags=["Private", "Organizations"],
     )
