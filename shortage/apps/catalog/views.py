@@ -1,3 +1,5 @@
+import logging
+
 from rest_framework import viewsets, mixins, filters, permissions, status
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
@@ -14,6 +16,7 @@ from .serializers import (
     ProductSerializer,
     OnlineStoreSerializer,
     PrivateOrganizationSerializer,
+    ProductOrganizationPreviewSerializer,
 )
 
 
@@ -65,6 +68,28 @@ class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Organization.objects.public()
     serializer_class = OrganizationSerializer
     lookup_field = "slug"
+
+
+class OrganizationSlugExistsView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """
+    Checks if organization with specified slug exists
+    """
+
+    schema = AutoSchema(
+        tags=["Organizations"],
+    )
+
+    serializer_class = ProductOrganizationPreviewSerializer
+    lookup_field = "slug"
+
+    def get_queryset(self):
+        return Organization.objects.all().filter(slug=self.kwargs[self.lookup_field])
+
+    def retrieve(self, request, *args, **kwargs):
+        if self.filter_queryset(self.get_queryset()).exists():
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class PrivateOrganizationViewSet(
@@ -141,6 +166,34 @@ class ProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             queryset = queryset.filter(category=category)
 
         return queryset
+
+
+class ProductsSlugExistsView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """
+    Checks if product with specified slug exists
+    """
+
+    schema = AutoSchema(
+        tags=["Products"],
+    )
+
+    serializer_class = ProductPreviewSerializer
+    lookup_field = "slug"
+
+    def get_queryset(self):
+        organization = get_object_or_404(
+            Organization.objects.public(), slug=self.kwargs["org_slug"]
+        )
+
+        return Product.objects.all().filter(
+            slug=self.kwargs[self.lookup_field], organization=organization
+        )
+
+    def retrieve(self, request, *args, **kwargs):
+        if self.filter_queryset(self.get_queryset()).exists():
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class CategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
