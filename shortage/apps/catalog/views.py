@@ -1,6 +1,6 @@
-from django.http import HttpResponse
-from rest_framework import viewsets, mixins, filters, permissions
+from rest_framework import viewsets, mixins, filters, permissions, status
 from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 
 from .models import Organization, Instruction, Product, OnlineStore
@@ -67,36 +67,15 @@ class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     lookup_field = "slug"
 
 
-class PrivateOrganizationCreateViewSet(
+class PrivateOrganizationCreateUpdateViewSet(
     mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
 ):
-    """Allows you to create a new organization. Only one organization is allowed per user"""
+    """Allows you to create or update an organization. Only one organization is allowed per user"""
 
     schema = AutoSchema(
         tags=["Private", "Organizations"],
     )
-    queryset = Organization.objects.all()
-    permission_classes = [permissions.AllowAny]
-    serializer_class = PrivateOrganizationSerializer
-    lookup_field = "slug"
 
-    def create(self, request, *args, **kwargs):
-        # Allow only one organization per user
-        if Organization.objects.all().filter(owner=self.request.user).exists():
-            return HttpResponse(status=409)
-
-        # Todo: Send an email about organization's creation
-        return super().create(request, *args, **kwargs)
-
-
-class PrivateOrganizationUpdateViewSet(
-    mixins.UpdateModelMixin, viewsets.GenericViewSet
-):
-    """Allows you to update organization's data"""
-
-    schema = AutoSchema(
-        tags=["Private", "Organizations"],
-    )
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = PrivateOrganizationSerializer
     lookup_field = "slug"
@@ -106,6 +85,14 @@ class PrivateOrganizationUpdateViewSet(
         return Organization.objects.all().filter(
             owner=self.request.user, is_verified=False
         )
+
+    def create(self, request, *args, **kwargs):
+        # Allow only one organization per user
+        if Organization.objects.all().filter(owner=self.request.user).exists():
+            return Response(status=status.HTTP_409_CONFLICT)
+
+        # Todo: Send an email about organization's creation
+        return super().create(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
         # Todo: Send an email about changes to the organization

@@ -459,8 +459,8 @@ paths:
       - api
   /api/private/organizations/:
     post:
-      operationId: createOrganization
-      description: Allows you to create a new organization. Only one organization
+      operationId: createPrivateOrganization
+      description: Allows you to create or update an organization. Only one organization
         is allowed per user
       parameters: []
       requestBody:
@@ -630,7 +630,8 @@ paths:
   /api/private/organizations/{slug}/:
     put:
       operationId: updatePrivateOrganization
-      description: Allows you to update organization's data
+      description: Allows you to create or update an organization. Only one organization
+        is allowed per user
       parameters:
       - name: slug
         in: path
@@ -661,7 +662,8 @@ paths:
       - Organizations
     patch:
       operationId: partialUpdatePrivateOrganization
-      description: Allows you to update organization's data
+      description: Allows you to create or update an organization. Only one organization
+        is allowed per user
       parameters:
       - name: slug
         in: path
