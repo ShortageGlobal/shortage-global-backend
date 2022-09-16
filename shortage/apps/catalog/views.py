@@ -88,7 +88,9 @@ class PrivateOrganizationUpdateViewSet(
 
     def get_queryset(self):
         # Prevent changes to organizations which you don't own and which are already verified
-        return Organization.objects.all().filter(owner=self.request.user, is_verified=False)
+        return Organization.objects.all().filter(
+            owner=self.request.user, is_verified=False
+        )
 
     def update(self, request, *args, **kwargs):
         # Todo: Send an email about changes to the organization
