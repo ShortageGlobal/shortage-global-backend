@@ -1,6 +1,8 @@
 from django.http import HttpResponse
 from rest_framework import viewsets, mixins, filters, permissions
 from django.shortcuts import get_object_or_404
+from rest_framework.schemas.openapi import AutoSchema
+
 from .models import Organization, Instruction, Product, OnlineStore
 from .serializers import (
     OrganizationPreviewSerializer,
@@ -54,7 +56,10 @@ class PromotedCategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
 class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    """Organization details"""
+    """Returns information about specific organization if that organization was verified"""
+    schema = AutoSchema(
+        tags=["Organizations"],
+    )
 
     queryset = Organization.objects.public()
     serializer_class = OrganizationSerializer
@@ -64,6 +69,10 @@ class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 class PrivateOrganizationCreateViewSet(
     mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
 ):
+    """Allows you to create a new organization. Only one organization is allowed per user"""
+    schema = AutoSchema(
+        tags=["Private", "Organizations"],
+    )
     queryset = Organization.objects.all()
     permission_classes = [permissions.AllowAny]
     serializer_class = PrivateOrganizationSerializer
@@ -81,7 +90,10 @@ class PrivateOrganizationCreateViewSet(
 class PrivateOrganizationUpdateViewSet(
     mixins.UpdateModelMixin, viewsets.GenericViewSet
 ):
-
+    """Allows you to update organization's data"""
+    schema = AutoSchema(
+        tags=["Private", "Organizations"],
+    )
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = PrivateOrganizationSerializer
     lookup_field = "slug"

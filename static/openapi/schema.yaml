@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
-  title: ''
-  version: ''
+  title: 'Shortage API'
+  version: '0.0.1'
 paths:
   /api/promoted/organizations/:
     get:
@@ -149,7 +149,8 @@ paths:
   /api/organizations/{slug}/:
     get:
       operationId: retrieveOrganization
-      description: Organization details
+      description: Returns information about specific organization if that organization
+        was verified
       parameters:
       - name: slug
         in: path
@@ -165,7 +166,7 @@ paths:
                 $ref: '#/components/schemas/Organization'
           description: ''
       tags:
-      - api
+      - Organizations
   /api/organizations/{org_slug}/instructions/:
     get:
       operationId: listInstructions
@@ -459,7 +460,8 @@ paths:
   /api/private/organizations/:
     post:
       operationId: createOrganization
-      description: ''
+      description: Allows you to create a new organization. Only one organization
+        is allowed per user
       parameters: []
       requestBody:
         content:
@@ -480,7 +482,8 @@ paths:
                 $ref: '#/components/schemas/PrivateOrganization'
           description: ''
       tags:
-      - api
+      - Private
+      - Organizations
   /api/organizations/{org_slug}/packages/:
     post:
       operationId: createPackageCreation
@@ -627,7 +630,7 @@ paths:
   /api/private/organizations/{slug}/:
     put:
       operationId: updatePrivateOrganization
-      description: ''
+      description: Allows you to update organization's data
       parameters:
       - name: slug
         in: path
@@ -654,10 +657,11 @@ paths:
                 $ref: '#/components/schemas/PrivateOrganization'
           description: ''
       tags:
-      - api
+      - Private
+      - Organizations
     patch:
       operationId: partialUpdatePrivateOrganization
-      description: ''
+      description: Allows you to update organization's data
       parameters:
       - name: slug
         in: path
@@ -684,7 +688,8 @@ paths:
                 $ref: '#/components/schemas/PrivateOrganization'
           description: ''
       tags:
-      - api
+      - Private
+      - Organizations
   /api/carts/{cart_pk}/items/{id}/:
     put:
       operationId: updateCartItemUpdate
