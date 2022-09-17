@@ -1,5 +1,5 @@
-from rest_framework import viewsets, mixins, filters, permissions, status
 from django.shortcuts import get_object_or_404
+from rest_framework import viewsets, mixins, filters, permissions, status
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 
@@ -74,6 +74,7 @@ class PrivateOrganizationViewSet(
     mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
+    """Retrieve/create/update organization owned by a current user"""
 
     schema = AutoSchema(
         tags=["Private", "Organizations"],
@@ -92,10 +93,7 @@ class PrivateOrganizationViewSet(
                 owner=self.request.user, is_verified=False
             )
 
-    """Allows you to create or update an organization. Only one organization is allowed per user"""
-
     def create(self, request, *args, **kwargs):
-
         # Allow only one organization per user
         if Organization.objects.all().filter(owner=self.request.user).exists():
             return Response(status=status.HTTP_409_CONFLICT)
