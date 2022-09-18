@@ -70,7 +70,9 @@ class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     lookup_field = "slug"
 
 
-class OrganizationSlugExistsView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class PrivateOrganizationSlugExistsView(
+    mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
     """
     Checks if organization with specified slug exists
     """
@@ -79,6 +81,8 @@ class OrganizationSlugExistsView(mixins.RetrieveModelMixin, viewsets.GenericView
         tags=["Organizations"],
     )
 
+    permission_classes = [permissions.IsAuthenticated]
+    # Serializer class is needed because otherwise some stuff like schema generation won't work
     serializer_class = ProductOrganizationPreviewSerializer
     lookup_field = "slug"
 
@@ -168,7 +172,7 @@ class ProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         return queryset
 
 
-class ProductsSlugExistsView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class PrivateProductsSlugExistsView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """
     Checks if product with specified slug exists
     """
@@ -177,16 +181,15 @@ class ProductsSlugExistsView(mixins.RetrieveModelMixin, viewsets.GenericViewSet)
         tags=["Products"],
     )
 
+    permission_classes = [permissions.IsAuthenticated]
+    # Serializer class is needed because otherwise some stuff like schema generation won't work
     serializer_class = ProductPreviewSerializer
     lookup_field = "slug"
 
     def get_queryset(self):
-        organization = get_object_or_404(
-            Organization.objects.public(), slug=self.kwargs["org_slug"]
-        )
-
         return Product.objects.all().filter(
-            slug=self.kwargs[self.lookup_field], organization=organization
+            slug=self.kwargs[self.lookup_field],
+            organization__slug=self.kwargs["org_slug"],
         )
 
     def retrieve(self, request, *args, **kwargs):

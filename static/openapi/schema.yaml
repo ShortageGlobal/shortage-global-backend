@@ -167,7 +167,7 @@ paths:
           description: ''
       tags:
       - Organizations
-  /api/exists/organizations/{slug}/:
+  /api/private/exists/organizations/{slug}/:
     get:
       operationId: retrieveProductOrganizationPreview
       description: Checks if organization with specified slug exists
@@ -527,7 +527,7 @@ paths:
           description: ''
       tags:
       - api
-  /api/exists/organizations/{org_slug}/products/{slug}/:
+  /api/private/exists/organizations/{org_slug}/products/{slug}/:
     get:
       operationId: retrieveProductPreview
       description: Checks if product with specified slug exists
