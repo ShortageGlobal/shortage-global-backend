@@ -2,7 +2,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, mixins, filters, permissions, status
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
-
 from .models import Organization, Instruction, Product, OnlineStore
 from .serializers import (
     OrganizationPreviewSerializer,
@@ -65,6 +64,25 @@ class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Organization.objects.public()
     serializer_class = OrganizationSerializer
     lookup_field = "slug"
+
+
+class PrivateOrganizationSlugExistsView(viewsets.ViewSet):
+    """
+    Checks if organization with specified slug exists
+    """
+
+    schema = AutoSchema(
+        tags=["Organizations"],
+    )
+
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = "slug"
+
+    def retrieve(self, request, slug):
+        if Organization.objects.filter(slug=slug).exists():
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class PrivateOrganizationViewSet(
@@ -139,6 +157,31 @@ class ProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             queryset = queryset.filter(category=category)
 
         return queryset
+
+
+class PrivateProductsSlugExistsView(viewsets.ViewSet):
+    """
+    Checks if a product with the specified slug belongs to the given organization
+    """
+
+    schema = AutoSchema(
+        tags=["Products"],
+    )
+
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = "slug"
+
+    def get_queryset(self):
+        return Product.objects.all().filter(
+            slug=self.kwargs[self.lookup_field],
+            organization__slug=self.kwargs["org_slug"],
+        )
+
+    def retrieve(self, request, org_slug, slug):
+        if Product.objects.filter(organization__slug=org_slug, slug=slug).exists():
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class CategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):

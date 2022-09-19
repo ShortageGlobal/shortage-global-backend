@@ -167,6 +167,25 @@ paths:
           description: ''
       tags:
       - Organizations
+  /api/private/exists/organizations/{slug}/:
+    get:
+      operationId: retrievePrivateOrganizationSlugExists
+      description: Checks if organization with specified slug exists
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: ''
+      tags:
+      - Organizations
   /api/private/organizations/:
     get:
       operationId: listPrivateOrganizations
@@ -507,6 +526,32 @@ paths:
           description: ''
       tags:
       - api
+  /api/private/exists/organizations/{org_slug}/products/{slug}/:
+    get:
+      operationId: retrievePrivateProductsSlugExists
+      description: Checks if a product with the specified slug belongs to the given
+        organization
+      parameters:
+      - name: org_slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: ''
+      tags:
+      - Products
   /api/organizations/{org_slug}/products/{product_slug}/online-stores/:
     get:
       operationId: listOnlineStores
@@ -949,6 +994,19 @@ components:
             -\uFFFF0-9])?(?:\\.(?!-)[a-z\xA1-\uFFFF0-9-]{1,63}(?<!-))*\\.(?!-)(?:[a-z\xA1\
             -\uFFFF-]{2,63}|xn--[a-z0-9]{1,59})(?<!-)\\.?|localhost))(?::\\d{1,5})?(?:[/?#][^\\\
             s]*)?\\z"
+      required:
+      - slug
+    ProductOrganizationPreview:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
       required:
       - slug
     PrivateOrganization:
