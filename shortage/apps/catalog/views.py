@@ -1,9 +1,7 @@
-from rest_framework import viewsets, mixins, filters, permissions, status
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, mixins, filters, permissions, status
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
-
 from .models import Organization, Instruction, Product, OnlineStore
 from .serializers import (
     OrganizationPreviewSerializer,
@@ -15,7 +13,6 @@ from .serializers import (
     ProductSerializer,
     OnlineStoreSerializer,
     PrivateOrganizationSerializer,
-    ProductOrganizationPreviewSerializer,
 )
 
 
@@ -69,9 +66,7 @@ class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     lookup_field = "slug"
 
 
-class PrivateOrganizationSlugExistsView(
-    mixins.RetrieveModelMixin, viewsets.GenericViewSet
-):
+class PrivateOrganizationSlugExistsView(viewsets.ViewSet):
     """
     Checks if organization with specified slug exists
     """
@@ -81,15 +76,10 @@ class PrivateOrganizationSlugExistsView(
     )
 
     permission_classes = [permissions.IsAuthenticated]
-    # Serializer class is needed because otherwise some stuff like schema generation won't work
-    serializer_class = ProductOrganizationPreviewSerializer
     lookup_field = "slug"
 
-    def get_queryset(self):
-        return Organization.objects.all().filter(slug=self.kwargs[self.lookup_field])
-
-    def retrieve(self, request, *args, **kwargs):
-        if self.filter_queryset(self.get_queryset()).exists():
+    def retrieve(self, request, slug):
+        if Organization.objects.filter(slug=slug).exists():
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -169,9 +159,9 @@ class ProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         return queryset
 
 
-class PrivateProductsSlugExistsView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class PrivateProductsSlugExistsView(viewsets.ViewSet):
     """
-    Checks if product with specified slug exists
+    Checks if a product with the specified slug belongs to the given organization
     """
 
     schema = AutoSchema(
@@ -179,8 +169,6 @@ class PrivateProductsSlugExistsView(mixins.RetrieveModelMixin, viewsets.GenericV
     )
 
     permission_classes = [permissions.IsAuthenticated]
-    # Serializer class is needed because otherwise some stuff like schema generation won't work
-    serializer_class = ProductPreviewSerializer
     lookup_field = "slug"
 
     def get_queryset(self):
@@ -189,8 +177,8 @@ class PrivateProductsSlugExistsView(mixins.RetrieveModelMixin, viewsets.GenericV
             organization__slug=self.kwargs["org_slug"],
         )
 
-    def retrieve(self, request, *args, **kwargs):
-        if self.filter_queryset(self.get_queryset()).exists():
+    def retrieve(self, request, org_slug, slug):
+        if Product.objects.filter(organization__slug=org_slug, slug=slug).exists():
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)

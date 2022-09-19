@@ -169,7 +169,7 @@ paths:
       - Organizations
   /api/private/exists/organizations/{slug}/:
     get:
-      operationId: retrieveProductOrganizationPreview
+      operationId: retrievePrivateOrganizationSlugExists
       description: Checks if organization with specified slug exists
       parameters:
       - name: slug
@@ -182,8 +182,7 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ProductOrganizationPreview'
+              schema: {}
           description: ''
       tags:
       - Organizations
@@ -529,8 +528,9 @@ paths:
       - api
   /api/private/exists/organizations/{org_slug}/products/{slug}/:
     get:
-      operationId: retrieveProductPreview
-      description: Checks if product with specified slug exists
+      operationId: retrievePrivateProductsSlugExists
+      description: Checks if a product with the specified slug belongs to the given
+        organization
       parameters:
       - name: org_slug
         in: path
@@ -548,8 +548,7 @@ paths:
         '200':
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ProductPreview'
+              schema: {}
           description: ''
       tags:
       - Products
