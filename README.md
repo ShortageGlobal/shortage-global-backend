@@ -74,6 +74,11 @@ source venv/bin/activate
 
 ### Install psycopg2
 
+`psycopg2` requires `postgresql` to be installed, if you don't have one, run: 
+```
+brew install postgresql
+```
+
 At this point you have all dependencies to finally build psycopg2
 
 ```
