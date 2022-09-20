@@ -28,6 +28,7 @@ class PrivateOrganizationSerializer(serializers.ModelSerializer):
             "description",
             "photo",
             "url",
+            "tax_form_url",
             "ein_number",
             "is_verified",
             "is_draft",
@@ -97,6 +98,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             "description",
             "photo",
             "url",
+            "tax_form_url",
         ]
 
 
