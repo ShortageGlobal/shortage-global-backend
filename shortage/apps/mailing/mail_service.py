@@ -19,8 +19,7 @@ class MailingBackend:
     to = None
     bcc = None
 
-    def __init__(self):
-        self.frontend_base_url = settings.FRONTEND_BASE_URL
+    frontend_base_url = settings.FRONTEND_BASE_URL
 
     def get_subject(self):
         assert self.subject is not None, (
