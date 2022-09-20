@@ -128,8 +128,7 @@ class PackageRegistrationEmail(MailingBackend):
     def __init__(self, organization_slug, package_uuid):
         self.organization_slug = organization_slug
         self.package_uuid = package_uuid
-        super().__init__()
-
+        
     def get_context(self):
         url = "%s/organizations/%s/packages/%s" % (
             self.frontend_base_url,
@@ -153,8 +152,6 @@ class UserConfirmationEmail(MailingBackend):
         self.last_name = last_name
         self.uid = uid
         self.token = token
-
-        super().__init__()
 
     def get_context(self):
         url = "%s/users/activate?uid=%s&token=%s" % (

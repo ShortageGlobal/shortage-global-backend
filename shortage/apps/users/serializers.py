@@ -35,13 +35,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        first_name = (
-            validated_data["first_name"] if "first_name" in validated_data else None
-        )
-        last_name = (
-            validated_data["last_name"] if "last_name" in validated_data else None
-        )
-
+        first_name = validated_data.get("first_name", None)
+        last_name = validated_data.get("last_name", None)
+        
         user = User.objects.create(
             username=validated_data["email"],
             email=validated_data["email"],
