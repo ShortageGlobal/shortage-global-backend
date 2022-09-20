@@ -128,7 +128,7 @@ class PackageRegistrationEmail(MailingBackend):
     def __init__(self, organization_slug, package_uuid):
         self.organization_slug = organization_slug
         self.package_uuid = package_uuid
-        
+
     def get_context(self):
         url = "%s/organizations/%s/packages/%s" % (
             self.frontend_base_url,
