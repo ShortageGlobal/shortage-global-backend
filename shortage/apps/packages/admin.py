@@ -129,6 +129,7 @@ class CorporateDonationAdmin(admin.ModelAdmin):
     ]
     readonly_fields = [
         "created_at",
+        "photo_preview",
     ]
     search_fields = ["company_name", "first_name", "last_name"]
 
