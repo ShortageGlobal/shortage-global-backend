@@ -42,6 +42,7 @@ class Organization(models.Model):
         pregenerated_sizes=["organization_medium"],
     )
     url = models.URLField(max_length=255, null=True, blank=True)
+    tax_form_url = models.URLField(max_length=255, null=True, blank=True)
     ein_number = models.CharField(max_length=255, null=True, blank=True)
     is_verified = models.BooleanField(default=False, db_index=True)
     is_draft = models.BooleanField(default=True, db_index=True)
