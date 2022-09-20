@@ -4,7 +4,7 @@
 Thank you for your registration
 {% endif %}
 
-Please, follow {{ url }} to confirm your account. 
+Please, follow {% autoescape off %}{{ url }}{% endautoescape %} to confirm your account. 
 
 -
 

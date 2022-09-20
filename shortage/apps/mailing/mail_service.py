@@ -53,14 +53,14 @@ class MailingBackend:
         return render_to_string(self.get_text_template(), self.get_context())
 
     def get_from(self):
-        return {"name": self.from_name, "email": self.from_email}
+        return self.format_email({"name": self.from_name, "email": self.from_email})
 
     def get_to(self):
         to = self.to if type(self.to) == list else [self.to]
-        return to
+        return self.format_emails(to)
 
     def get_bcc(self):
-        return self.bcc
+        return self.format_emails(self.bcc)
 
     def add_recipient(self, email, name=""):
         self.to = self.to if self.to else []
@@ -75,17 +75,16 @@ class MailingBackend:
         Send email using SMTP
         """
 
-        recipients = self._format_recipients(self.get_to())
+        recipients = self.get_to()
         assert recipients, "Add at least one recipient using `add_recipient` method."
 
         subject = self.get_subject()
-        bcc = self._format_recipients(self.get_bcc())
         message = EmailMultiAlternatives(
             subject=subject,
             body=self.get_text(),
-            from_email=self._format_recipient(self.get_from()),
+            from_email=self.get_from(),
             to=recipients,
-            bcc=bcc,
+            bcc=self.get_bcc(),
         )
         message.attach_alternative(self.get_html(), "text/html")
         result = message.send(fail_silently=True)
@@ -100,13 +99,13 @@ class MailingBackend:
 
         return True
 
-    def _format_recipients(self, recipients: list):
+    def format_emails(self, recipients: list):
         if recipients == None:
             return None
 
-        return list(map(self._format_recipient, recipients))
+        return list(map(self.format_email, recipients))
 
-    def _format_recipient(self, recipient):
+    def format_email(self, recipient):
         name = (
             recipient["name"]
             if ("name" in recipient) and len(recipient["name"]) > 0
@@ -165,16 +164,7 @@ class UserConfirmationEmail(MailingBackend):
             self.token,
         )
 
-        return {"url": url, "full_name": self.__full_name()}
+        return {"url": url, "full_name": self.full_name()}
 
-    def __full_name(self):
-        if self.first_name == None and self.last_name == None:
-            return None
-
-        if self.first_name != None and self.last_name != None:
-            return self.first_name + " " + self.last_name
-
-        if self.first_name != None:
-            return self.first_name
-
-        return self.last_name
+    def full_name(self):
+        return " ".join(filter(None, [self.first_name, self.last_name])).strip()

@@ -35,3 +35,6 @@ hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
 INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
 
 FRONTEND_BASE_URL = os.getenv("DJANGO_FRONTEND_BASE_URL", "http://localhost:8080")
+
+EMAIL_HOST = os.getenv("DJANGO_EMAIL_HOST", "mailcatcher")
+EMAIL_PORT = os.getenv("DJANGO_EMAIL_PORT", "1025")

@@ -82,12 +82,10 @@ class ActivationSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         try:
+            uid = self.__decode_uid(validated_data["uid"])
+            user = User.objects.get(pk=uid)
+
             token = validated_data["token"]
-            uid = validated_data["uid"]
-
-            id = force_str(urlsafe_base64_decode(uid))
-            user = User.objects.get(pk=id)
-
             if not user_activation_token.check_token(user, token):
                 raise serializers.ValidationError(
                     {"token": "The given token is not valid."}
@@ -97,7 +95,11 @@ class ActivationSerializer(serializers.Serializer):
             user.save()
 
             return user
-        except (TypeError, ValueError, OverflowError):
-            raise APIException()
         except (User.DoesNotExist):
             raise NotFound("User not found.")
+
+    def __decode_uid(self, data):
+        try:
+            return force_str(urlsafe_base64_decode(data))
+        except (TypeError, ValueError, OverflowError):
+            raise serializers.ValidationError({"uid": "The given uid is not valid."})
