@@ -2,11 +2,13 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.core import exceptions
 from rest_framework import viewsets, mixins, permissions
+from rest_framework.schemas.openapi import AutoSchema
 from shortage.apps.catalog.models import Organization
 from .models import Package, Cart, CartItem
 from .package_serializers import (
     PackageSerializer,
     PackageCreationSerializer,
+    CorporateDonationSerializer,
 )
 from .cart_serializers import (
     CartSerializer,
@@ -19,6 +21,10 @@ from shortage.apps.mailing.mail_service import PackageRegistrationEmail
 
 class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """Package details for the given uuid and the given organization"""
+
+    schema = AutoSchema(
+        tags=["Packages"],
+    )
 
     serializer_class = PackageSerializer
 
@@ -33,6 +39,10 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
 class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """Create package"""
+
+    schema = AutoSchema(
+        tags=["Packages"],
+    )
 
     permission_classes = [permissions.AllowAny]
     serializer_class = PackageCreationSerializer
@@ -66,6 +76,10 @@ class CartViewSet(
 ):
     """Create or retrieve Cart object with related items"""
 
+    schema = AutoSchema(
+        tags=["Packages"],
+    )
+
     permission_classes = [permissions.AllowAny]
     queryset = Cart.objects.prefetch_related(
         "items", "items__product", "items__product__organization"
@@ -84,6 +98,10 @@ class CartItemViewSet(
     viewsets.GenericViewSet,
 ):
     """Create/remove/update CartItem connected to a given Cart"""
+
+    schema = AutoSchema(
+        tags=["Packages"],
+    )
 
     serializer_class = CartItemCreationSerializer
     permission_classes = [permissions.AllowAny]
@@ -115,3 +133,14 @@ class CartItemViewSet(
         self.check_object_permissions(self.request, obj)
 
         return obj
+
+
+class CorporateDonationsViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    """Corporate Donations"""
+
+    schema = AutoSchema(
+        tags=["Packages"],
+    )
+
+    permission_classes = [permissions.AllowAny]
+    serializer_class = CorporateDonationSerializer

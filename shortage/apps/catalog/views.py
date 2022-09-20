@@ -171,12 +171,6 @@ class PrivateProductsSlugExistsView(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
     lookup_field = "slug"
 
-    def get_queryset(self):
-        return Product.objects.all().filter(
-            slug=self.kwargs[self.lookup_field],
-            organization__slug=self.kwargs["org_slug"],
-        )
-
     def retrieve(self, request, org_slug, slug):
         if Product.objects.filter(organization__slug=org_slug, slug=slug).exists():
             return Response(status=status.HTTP_200_OK)

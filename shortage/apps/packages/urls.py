@@ -1,6 +1,12 @@
 from django.urls import include, path
 from rest_framework import routers
-from .views import PackageViewSet, PackageCreationViewSet, CartViewSet, CartItemViewSet
+from .views import (
+    PackageViewSet,
+    PackageCreationViewSet,
+    CartViewSet,
+    CartItemViewSet,
+    CorporateDonationsViewSet,
+)
 
 router = routers.DefaultRouter()
 
@@ -26,6 +32,13 @@ router.register(
     r"carts/(?P<cart_pk>[^/.]+)/items",
     CartItemViewSet,
     basename="cart_item",
+)
+
+# Corporate Donations
+router.register(
+    r"corporate-donations",
+    CorporateDonationsViewSet,
+    basename="corporate-donations",
 )
 
 # Wire up our API using automatic URL routing.

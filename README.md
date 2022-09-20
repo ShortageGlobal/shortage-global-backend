@@ -25,9 +25,15 @@ If you want to update dependencies in `django` container and keep `postgres` unt
 docker-compose build --no-cache django
 ```
 
-### Run migrations
+### Create migrations
 
 Hereafter we use `exec` instead of `run`, which means the container must be running before executing the command.
+
+```
+docker-compose exec django python manage.py makemigrations
+```
+
+### Run migrations
 
 ```
 docker-compose exec django python manage.py migrate

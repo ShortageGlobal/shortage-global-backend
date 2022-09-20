@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from shortage.helpers.serializers import AuthorizedUserOrNone
 from shortage.apps.catalog.models import Product
-from .models import Package, PackageItem
+from .models import Package, PackageItem, CorporateDonation
 
 
 class PackageSerializer(serializers.ModelSerializer):
@@ -92,3 +92,28 @@ class PackageCreationSerializer(serializers.ModelSerializer):
         PackageItem.objects.bulk_create(items)
 
         return package
+
+
+class CorporateDonationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CorporateDonation
+        fields = [
+            "company_name",
+            "department",
+            "first_name",
+            "last_name",
+            "phone_number",
+            "email",
+            "address_line1",
+            "address_line2",
+            "city",
+            "state_province_region",
+            "zip",
+            "country",
+            "description",
+            "quantity_description",
+            "number_of_pallets",
+            "estimated_value",
+            "url",
+            "photo",
+        ]
