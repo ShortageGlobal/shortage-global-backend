@@ -14,6 +14,7 @@ django-cleanup==6.0.0
 django-cors-headers==3.13.0
 django-countries==7.3.1
 django-debug-toolbar==3.6.0
+django-phonenumber-field==7.0.0
 django-split-settings==1.1.0
 django-storages==1.12.3
 django-thumbnails==0.7.0
@@ -25,11 +26,11 @@ idna==3.3
 jmespath==1.0.1
 mypy-extensions==0.4.3
 pathspec==0.9.0
+phonenumberslite==8.12.55
 Pillow==9.1.1
 platformdirs==2.5.2
 psycopg2==2.9.3
 PyJWT==2.4.0
-pysendpulse==0.1.4
 python-dateutil==2.8.2
 python3-memcached==1.51
 pytz==2022.1

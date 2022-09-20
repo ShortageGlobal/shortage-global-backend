@@ -63,3 +63,5 @@ LOGGING = {
         },
     },
 }
+
+FRONTEND_BASE_URL = os.getenv("DJANGO_FRONTEND_BASE_URL", "https://shortage.global")

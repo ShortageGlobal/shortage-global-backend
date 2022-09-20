@@ -106,3 +106,8 @@ docker compose exec django python manage.py generateschema > schema.yaml
 Schema file should be located in /static/openapi/schema.yaml
 
 Make sure you don't overwrite the file located in /static/openapi/ folder but manually merge the old and new files
+
+## MailCatcher 
+
+[MailCatcher](https://mailcatcher.me/) is `used` locally to catch emails sent through SMTP. To access the UI of the catcher, 
+open [http://127.0.0.1:1080/](http://127.0.0.1:1080/).

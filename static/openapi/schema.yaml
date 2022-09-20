@@ -917,6 +917,56 @@ paths:
           description: ''
       tags:
       - Packages
+  /api/users/register:
+    post:
+      operationId: createRegistration
+      description: 'Register a new user.'
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registration'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Registration'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Registration'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registration'
+          description: 'Exposed properties of the registered user.'
+      tags:
+      - Users
+  /api/users/activate:
+    post:
+      operationId: createActivation
+      description: 'Activate a recently registered user.'
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Activation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Activation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Activation'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Activation'
+          description: ''
+      tags:
+      - Users
 components:
   schemas:
     OrganizationPreview:
@@ -2027,3 +2077,44 @@ components:
           writeOnly: true
       required:
       - quantity
+    Registration:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          writeOnly: true
+        first_name:
+          type: string
+          writeOnly: true
+          default: ''
+          minLength: 1
+        last_name:
+          type: string
+          writeOnly: true
+          default: ''
+          minLength: 1
+        phone_number:
+          type: string
+          writeOnly: true
+          default: ''
+      required:
+      - email
+      - password
+    Activation:
+      type: object
+      properties:
+        uid:
+          type: string
+          writeOnly: true
+          pattern: ^[0-9A-Za-z_\-]+$
+        token:
+          type: string
+          writeOnly: true
+          pattern: ^[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,32}$
+      required:
+      - uid
+      - token
+

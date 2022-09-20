@@ -4,6 +4,9 @@ services:
     container_name: shortage-global-django
     build: .
     command: python /project/manage.py runserver 0.0.0.0:8080
+    environment:
+      - DJANGO_EMAIL_HOST=mailcatcher
+      - DJANGO_EMAIL_PORT=1025
     volumes:
       - .:/project
     ports:
@@ -15,7 +18,18 @@ services:
     image: postgres
     environment:
       POSTGRES_PASSWORD: postgres
+    ports: 
+      - 5432:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+
+  # for receiving emails in local environment 
+  # without using any 3rd party API
+  mailcatcher:
+    container_name: shortage-global-mailcatcher
+    image: schickling/mailcatcher
+    ports:
+      - 1080:1080
+
 volumes:
   postgres_data:

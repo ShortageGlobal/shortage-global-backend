@@ -1,8 +1,8 @@
 import logging
-from pysendpulse.pysendpulse import PySendPulse
 from django.conf import settings
 from django.template.loader import render_to_string
-
+from django.core.mail import EmailMultiAlternatives
+from email.headerregistry import Address
 
 class MailingBackend:
     """
@@ -19,10 +19,7 @@ class MailingBackend:
     bcc = None
 
     def __init__(self):
-        # instantiate SendPulse API Proxy
-        self._sp_api_proxy = PySendPulse(
-            settings.SENDPULSE_API_ID, settings.SENDPULSE_API_SECRET
-        )
+        self.frontend_base_url = settings.FRONTEND_BASE_URL
 
     def get_subject(self):
         assert self.subject is not None, (
@@ -77,26 +74,42 @@ class MailingBackend:
         Send email using SMTP
         """
 
-        assert self.to, "Add at least one recipient using `add_recipient` method."
+        recipients = self._format_recipients(self.get_to())
+        assert recipients, "Add at least one recipient using `add_recipient` method."
 
-        email = {
-            "subject": self.get_subject(),
-            "html": self.get_html(),
-            "text": self.get_text(),
-            "from": self.get_from(),
-            "to": self.get_to(),
-            "bcc": self.get_bcc(),
-        }
+        subject = self.get_subject()
+        bcc = self._format_recipients(self.get_bcc())
+        message = EmailMultiAlternatives(
+            subject=subject,
+            body=self.get_text(),
+            from_email=self._format_recipient(self.get_from()),
+            to=recipients,
+            bcc=bcc
+        )
+        message.attach_alternative(self.get_html(), "text/html")
+        result = message.send(fail_silently=True)
 
-        delivery_status = self._sp_api_proxy.smtp_send_mail(email)
-
-        if not delivery_status.get("result"):
+        if result == 0:
             logging.error(
-                "Failed to deliver email with status: {0}".format(delivery_status)
+                "Failed to send email \"{0}\" to {1}".format(
+                    subject, ','.join(recipients))
             )
             return False
 
         return True
+
+    def _format_recipients(self, recipients: list):
+        if recipients == None:
+            return None
+
+        return list(map(self._format_recipient, recipients))
+
+    def _format_recipient(self, recipient):
+        name = recipient['name'] if ('name' in recipient) and len(recipient['name']) > 0 else ""  
+        username, domain = recipient['email'].split('@')
+        address = Address(display_name=name, username=username, domain=domain)
+
+        return str(address)
 
 
 class PackageRegistrationEmail(MailingBackend):
@@ -114,8 +127,51 @@ class PackageRegistrationEmail(MailingBackend):
         super().__init__()
 
     def get_context(self):
-        url = "https://shortage.global/organizations/%s/packages/%s" % (
+        url = "%s/organizations/%s/packages/%s" % (
+            self.frontend_base_url,
             self.organization_slug,
             self.package_uuid,
         )
         return {"url": url}
+
+
+class UserConfirmationEmail(MailingBackend):
+    """
+    Email sent on user registration to confirm their email
+    """
+
+    subject = "Confirm your registration at Shortage"
+    html_template = "emails/user_confirmation.html"
+    text_template = "emails/user_confirmation.txt"
+
+    def __init__(self, first_name, last_name, uid, token):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.uid = uid
+        self.token = token
+
+        super().__init__()
+
+    def get_context(self):
+        url = "%s/users/activate?uid=%s&token=%s" % (
+            self.frontend_base_url,
+            self.uid,
+            self.token,
+        )
+
+        return {
+            "url": url,
+            "full_name": self.__full_name()
+        }
+
+    def __full_name(self):
+        if self.first_name == None and self.last_name == None:
+            return None
+
+        if self.first_name != None and self.last_name != None:
+            return self.first_name + " " + self.last_name
+
+        if self.first_name != None:
+            return self.first_name
+        
+        return self.last_name

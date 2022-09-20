@@ -1,0 +1,13 @@
+{% if full_name %}
+{{ full_name }}, thank you for your registration
+{% else %}
+Thank you for your registration
+{% endif %}
+
+Please, follow {{ url }} to confirm your account. 
+
+-
+
+Best Regards,
+
+The Shortage Team
