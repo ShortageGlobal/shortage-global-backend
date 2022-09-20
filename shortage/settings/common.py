@@ -237,12 +237,11 @@ PACKAGE_STATUS = {
     "DELIVERED": "DELIVERED",
 }
 
-FRONTEND_BASE_URL = os.getenv(
-    "DJANGO_FRONTEND_BASE_URL", "https://shortage.global")
+FRONTEND_BASE_URL = os.getenv("DJANGO_FRONTEND_BASE_URL", "https://shortage.global")
 
-EMAIL_HOST= os.getenv("DJANGO_EMAIL_HOST", "")
-EMAIL_PORT= os.getenv("DJANGO_EMAIL_PORT", "")
-EMAIL_HOST_USER=os.getenv("DJANGO_EMAIL_HOST_USER", "")
-EMAIL_HOST_PASSWORD=os.getenv("DJANGO_HOST_PASSWORD", "")
-EMAIL_USE_TLS=os.getenv("DJANGO_EMAIL_USE_TLS", "false") == "true"
-EMAIL_USE_SSL=os.getenv("DJANGO_EMAIL_USE_SSL", "false").lower() == "true"
+EMAIL_HOST = os.getenv("DJANGO_EMAIL_HOST", "")
+EMAIL_PORT = os.getenv("DJANGO_EMAIL_PORT", "")
+EMAIL_HOST_USER = os.getenv("DJANGO_EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("DJANGO_HOST_PASSWORD", "")
+EMAIL_USE_TLS = os.getenv("DJANGO_EMAIL_USE_TLS", "false") == "true"
+EMAIL_USE_SSL = os.getenv("DJANGO_EMAIL_USE_SSL", "false").lower() == "true"

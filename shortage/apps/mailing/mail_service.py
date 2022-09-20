@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from email.headerregistry import Address
 
+
 class MailingBackend:
     """
     Generic class for Mailing Backend using SendPulse
@@ -84,15 +85,16 @@ class MailingBackend:
             body=self.get_text(),
             from_email=self._format_recipient(self.get_from()),
             to=recipients,
-            bcc=bcc
+            bcc=bcc,
         )
         message.attach_alternative(self.get_html(), "text/html")
         result = message.send(fail_silently=True)
 
         if result == 0:
             logging.error(
-                "Failed to send email \"{0}\" to {1}".format(
-                    subject, ','.join(recipients))
+                'Failed to send email "{0}" to {1}'.format(
+                    subject, ",".join(recipients)
+                )
             )
             return False
 
@@ -105,8 +107,12 @@ class MailingBackend:
         return list(map(self._format_recipient, recipients))
 
     def _format_recipient(self, recipient):
-        name = recipient['name'] if ('name' in recipient) and len(recipient['name']) > 0 else ""  
-        username, domain = recipient['email'].split('@')
+        name = (
+            recipient["name"]
+            if ("name" in recipient) and len(recipient["name"]) > 0
+            else ""
+        )
+        username, domain = recipient["email"].split("@")
         address = Address(display_name=name, username=username, domain=domain)
 
         return str(address)
@@ -159,10 +165,7 @@ class UserConfirmationEmail(MailingBackend):
             self.token,
         )
 
-        return {
-            "url": url,
-            "full_name": self.__full_name()
-        }
+        return {"url": url, "full_name": self.__full_name()}
 
     def __full_name(self):
         if self.first_name == None and self.last_name == None:
@@ -173,5 +176,5 @@ class UserConfirmationEmail(MailingBackend):
 
         if self.first_name != None:
             return self.first_name
-        
+
         return self.last_name
