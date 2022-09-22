@@ -243,5 +243,5 @@ EMAIL_HOST = os.getenv("DJANGO_EMAIL_HOST", "")
 EMAIL_PORT = os.getenv("DJANGO_EMAIL_PORT", "")
 EMAIL_HOST_USER = os.getenv("DJANGO_EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("DJANGO_HOST_PASSWORD", "")
-EMAIL_USE_TLS = os.getenv("DJANGO_EMAIL_USE_TLS", "false") == "True"
-EMAIL_USE_SSL = os.getenv("DJANGO_EMAIL_USE_SSL", "false") == "True"
+EMAIL_USE_TLS = os.getenv("DJANGO_EMAIL_USE_TLS", "False") == "True"
+EMAIL_USE_SSL = os.getenv("DJANGO_EMAIL_USE_SSL", "False") == "True"
