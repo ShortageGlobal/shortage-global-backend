@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     "auditlog",
     "storages",
     "rest_framework",
-    "rest_framework.authtoken",
     "thumbnails",
     "corsheaders",
     "shortage.apps.mailing",
