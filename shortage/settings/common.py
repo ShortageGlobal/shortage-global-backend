@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     "shortage.apps.mailing",
     "shortage.apps.catalog",
     "shortage.apps.packages",
+    "shortage.apps.users",
+    "phonenumber_field",
     "django_cleanup.apps.CleanupConfig",  # should be last
 ]
 
@@ -235,6 +237,11 @@ PACKAGE_STATUS = {
     "DELIVERED": "DELIVERED",
 }
 
-# Mailing
-SENDPULSE_API_ID = os.getenv("DJANGO_SENDPULSE_API_ID", "")
-SENDPULSE_API_SECRET = os.getenv("DJANGO_SENDPULSE_API_SECRET", "")
+FRONTEND_BASE_URL = os.getenv("DJANGO_FRONTEND_BASE_URL", "https://shortage.global")
+
+EMAIL_HOST = os.getenv("DJANGO_EMAIL_HOST", "")
+EMAIL_PORT = os.getenv("DJANGO_EMAIL_PORT", "")
+EMAIL_HOST_USER = os.getenv("DJANGO_EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("DJANGO_HOST_PASSWORD", "")
+EMAIL_USE_TLS = os.getenv("DJANGO_EMAIL_USE_TLS", "False") == "True"
+EMAIL_USE_SSL = os.getenv("DJANGO_EMAIL_USE_SSL", "False") == "True"

@@ -11,6 +11,7 @@ urlpatterns = [
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("", include("shortage.apps.catalog.urls")),
     path("", include("shortage.apps.packages.urls")),
+    path("", include("shortage.apps.users.urls")),
 ]
 
 if settings.DEBUG:
