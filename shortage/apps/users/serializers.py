@@ -1,15 +1,15 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
-from .models import Profile
 from django.db import transaction
-from .tokens import user_activation_token
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
+from rest_framework.exceptions import APIException, NotFound
+from rest_framework.validators import UniqueValidator
 from shortage.apps.mailing.mail_service import UserConfirmationEmail
 from phonenumber_field.serializerfields import PhoneNumberField
-from rest_framework.exceptions import APIException, NotFound
+from .models import Profile
+from .tokens import user_activation_token
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
