@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.conf import settings
+from django.core.validators import MinValueValidator
 from auditlog.registry import auditlog
 from thumbnails.fields import ImageField
 from django_countries.fields import CountryField
@@ -60,7 +61,7 @@ class PackageItem(models.Model):
         related_name="package_items",
         on_delete=models.CASCADE,
     )
-    quantity = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -88,7 +89,7 @@ class CartItem(models.Model):
     product = models.ForeignKey(
         Product, related_name="cart_items", on_delete=models.CASCADE
     )
-    quantity = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

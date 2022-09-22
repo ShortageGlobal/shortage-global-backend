@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.core.validators import MinValueValidator
 from tinymce.models import HTMLField
 from django_countries.fields import CountryField
 from auditlog.registry import auditlog
@@ -113,8 +114,10 @@ class Product(models.Model):
         storage=storage.MediaStorage(),
         pregenerated_sizes=["product_large", "product_medium"],
     )
-    price = models.CharField(max_length=32, null=True, blank=True)
-    requested_amount = models.PositiveIntegerField(default=0)
+    price = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
+    requested_amount = models.PositiveIntegerField(
+        default=1, validators=[MinValueValidator(1)]
+    )
     description = HTMLField(null=True, blank=True)
     top_priority = models.BooleanField(default=False)
     position = models.PositiveIntegerField(
