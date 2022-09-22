@@ -3,11 +3,14 @@ name: build
 on: pull_request
 
 jobs:
-  lint:
+  lint-and-test:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v1
+      - uses: actions/setup-python@v2
       - uses: lgeiger/black-action@master
         with:
           args: ". --check"
+      - run: pip install -r requirements.txt
+      - run: DJANGO_ENV=test python manage.py test
