@@ -66,7 +66,7 @@ class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     lookup_field = "slug"
 
 
-class PrivateOrganizationSlugExistsView(viewsets.ViewSet):
+class PrivateOrganizationSlugExistsViewSet(viewsets.ViewSet):
     """
     Checks if organization with specified slug exists
     """
