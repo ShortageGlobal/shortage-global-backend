@@ -11,7 +11,7 @@ from .views import (
     ProductViewSet,
     OnlineStoresViewSet,
     PrivateOrganizationViewSet,
-    PrivateOrganizationSlugExistsView,
+    PrivateOrganizationSlugExistsViewSet,
     PrivateProductsSlugExistsView,
 )
 
@@ -34,7 +34,7 @@ router.register(
 router.register(r"organizations", OrganizationViewSet, basename="organization")
 router.register(
     r"private/exists/organizations",
-    PrivateOrganizationSlugExistsView,
+    PrivateOrganizationSlugExistsViewSet,
     basename="private_exists_organization",
 )
 router.register(

@@ -1,6 +1,10 @@
 # Shortage.Global backend
 
+[![main](https://github.com/ShortageGlobal/shortage-global-backend/actions/workflows/main.yml/badge.svg)](https://github.com/ShortageGlobal/shortage-global-backend/actions/workflows/main.yml)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 API: https://backend-wp66a.ondigitalocean.app/api/
+
 Swagger: https://backend-wp66a.ondigitalocean.app/api/swagger
 
 Admin: https://backend-wp66a.ondigitalocean.app/admin/
@@ -49,6 +53,12 @@ docker-compose exec django python manage.py createsuperuser
 
 ```
 docker-compose exec django python manage.py shell
+```
+
+### Run tests
+
+```
+docker compose exec django python manage.py test
 ```
 
 ## Installing all dependencies when starting from scratch (on macOS)

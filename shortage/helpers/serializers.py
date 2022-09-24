@@ -6,7 +6,7 @@ class AuthorizedUserOrNone(CurrentUserDefault):
 
     def __call__(self, serializer_field):
         user = serializer_field.context["request"].user
-        if user.is_authenticated:
+        if user and user.is_authenticated:
             return user
 
         return None
