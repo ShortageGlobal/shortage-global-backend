@@ -119,5 +119,5 @@ Make sure you don't overwrite the file located in /static/openapi/ folder but ma
 
 ## MailCatcher 
 
-[MailCatcher](https://mailcatcher.me/) is `used` locally to catch emails sent through SMTP. To access the UI of the catcher, 
+[MailCatcher](https://mailcatcher.me/) is used locally to catch emails sent through SMTP. To access the UI of the catcher, 
 open [http://127.0.0.1:1080/](http://127.0.0.1:1080/).
