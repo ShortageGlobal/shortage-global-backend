@@ -149,7 +149,7 @@ class CorporateDonation(models.Model):
     department = models.CharField(max_length=255, null=True, blank=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    phone_number = models.CharField(max_length=100, null=True, blank=True)
+    phone_number = PhoneNumberField(null=True, blank=True)
     email = models.EmailField(max_length=100)
     address_line1 = models.CharField(max_length=255, null=True, blank=True)
     address_line2 = models.CharField(max_length=255, null=True, blank=True)

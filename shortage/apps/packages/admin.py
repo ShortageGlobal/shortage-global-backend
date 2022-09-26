@@ -80,7 +80,7 @@ class PackageAdmin(admin.ModelAdmin):
 
 class PackageItemAdmin(admin.ModelAdmin):
     list_display = ["product", "quantity", "created_at", "package"]
-    fields = ["product", "quantity", "created_at", "package"]
+    readonly_fields = ["created_at"]
 
     def has_add_permission(self, request, obj=None):
         return False
