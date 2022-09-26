@@ -110,10 +110,12 @@ class CartAdmin(admin.ModelAdmin):
 
 class CartItemAdmin(admin.ModelAdmin):
     list_display = ["product", "quantity", "created_at", "cart"]
-    fields = ["cart", "product", "quantity", "created_at"]
-    readonly_fields = ["cart", "product", "quantity", "created_at"]
+    readonly_fields = ["created_at", "updated_at"]
 
     def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
         return False
 
 

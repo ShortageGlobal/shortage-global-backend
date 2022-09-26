@@ -129,6 +129,8 @@ class CartItem(models.Model):
         Product, related_name="cart_items", on_delete=models.CASCADE
     )
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
+
+    updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
