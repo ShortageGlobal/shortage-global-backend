@@ -3,11 +3,13 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from auditlog.registry import auditlog
+from phonenumber_field.modelfields import PhoneNumberField
 from thumbnails.fields import ImageField
 from django_countries.fields import CountryField
 from shortage.apps import storage
-from shortage.apps.file_paths import get_package_path, get_corporate_donation_path
 from shortage.apps.catalog.models import Product
+from shortage.apps.file_paths import get_package_path, get_corporate_donation_path
+from shortage.helpers import get_full_name
 
 
 class PackageStatus(models.TextChoices):
@@ -26,11 +28,27 @@ class Package(models.Model):
         null=True,
         blank=True,
     )
-    full_name = models.CharField(max_length=100, null=True, blank=True)
-    email = models.EmailField(max_length=100, blank=True)
-    phone_number = models.CharField(max_length=100, blank=True)
+
+    # donor details
+    email = models.EmailField(max_length=100)
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    phone_number = PhoneNumberField(null=True, blank=True)
+
+    # tax deduction
+    need_tax_deduction = models.BooleanField(default=False)
+    address_line1 = models.CharField(max_length=255, null=True, blank=True)
+    address_line2 = models.CharField(max_length=255, null=True, blank=True)
+    city = models.CharField(max_length=255, null=True, blank=True)
+    state_province_region = models.CharField(max_length=255, null=True, blank=True)
+    zip = models.CharField(max_length=100, null=True, blank=True)
+    country = CountryField(default="US")
+
+    # tracking details
     delivery_company = models.CharField(max_length=100)
     tracking_code = models.CharField(max_length=100)
+
+    # package details
     note = models.TextField(null=True, blank=True)
     status = models.CharField(
         max_length=32,
@@ -52,6 +70,10 @@ class Package(models.Model):
     @property
     def medium_photo(self):
         return self.photo.thumbnails.package_medium
+
+    @property
+    def full_name(self):
+        return get_full_name(first_name=self.first_name, last_name=self.last_name)
 
 
 class PackageItem(models.Model):
@@ -77,6 +99,23 @@ class Cart(models.Model):
         null=True,
         blank=True,
     )
+
+    # donor details
+    email = models.EmailField(max_length=100, null=True, blank=True)
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    phone_number = PhoneNumberField(null=True, blank=True)
+
+    # tax deduction
+    need_tax_deduction = models.BooleanField(default=False)
+    address_line1 = models.CharField(max_length=255, null=True, blank=True)
+    address_line2 = models.CharField(max_length=255, null=True, blank=True)
+    city = models.CharField(max_length=255, null=True, blank=True)
+    state_province_region = models.CharField(max_length=255, null=True, blank=True)
+    zip = models.CharField(max_length=100, null=True, blank=True)
+    country = CountryField(default="US")
+
+    updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -90,6 +129,8 @@ class CartItem(models.Model):
         Product, related_name="cart_items", on_delete=models.CASCADE
     )
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
+
+    updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -108,7 +149,7 @@ class CorporateDonation(models.Model):
     department = models.CharField(max_length=255, null=True, blank=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    phone_number = models.CharField(max_length=100, null=True, blank=True)
+    phone_number = PhoneNumberField(null=True, blank=True)
     email = models.EmailField(max_length=100)
     address_line1 = models.CharField(max_length=255, null=True, blank=True)
     address_line2 = models.CharField(max_length=255, null=True, blank=True)
@@ -132,6 +173,10 @@ class CorporateDonation(models.Model):
 
     def __str__(self):
         return self.company_name
+
+    @property
+    def full_name(self):
+        return get_full_name(first_name=self.first_name, last_name=self.last_name)
 
 
 auditlog.register(Package)
