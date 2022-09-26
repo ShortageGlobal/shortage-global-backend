@@ -49,7 +49,8 @@ class PackageCreationSerializer(serializers.ModelSerializer):
         model = Package
         fields = [
             "uuid",
-            "full_name",
+            "first_name",
+            "last_name",
             "email",
             "phone_number",
             "delivery_company",

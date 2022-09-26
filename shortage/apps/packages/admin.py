@@ -8,6 +8,7 @@ class PackageAdmin(admin.ModelAdmin):
         "status",
         "owner",
         "full_name",
+        "need_tax_deduction",
         "email",
         "phone_number",
         "delivery_company",
@@ -18,28 +19,48 @@ class PackageAdmin(admin.ModelAdmin):
     ]
     fields = [
         "owner",
-        "full_name",
-        "email",
+        "need_tax_deduction",
+        "first_name",
+        "last_name",
         "phone_number",
+        "email",
+        "address_line1",
+        "address_line2",
+        "city",
+        "state_province_region",
+        "zip",
+        "country",
         "delivery_company",
         "tracking_code",
+        "photo_preview",
+        "created_at",
+        "note",
         "status",
+    ]
+    readonly_fields = [
+        "owner",
+        "need_tax_deduction",
+        "first_name",
+        "last_name",
+        "phone_number",
+        "email",
+        "address_line1",
+        "address_line2",
+        "city",
+        "state_province_region",
+        "zip",
+        "country",
+        "delivery_company",
+        "tracking_code",
         "photo_preview",
         "created_at",
         "note",
     ]
-    readonly_fields = [
-        "uuid",
-        "owner",
-        "full_name",
+    search_fields = [
         "email",
-        "phone_number",
-        "delivery_company",
-        "tracking_code",
-        "photo_preview",
-        "created_at",
+        "first_name",
+        "last_name",
     ]
-    search_fields = ["full_name", "email"]
 
     def has_add_permission(self, request, obj=None):
         return False
@@ -59,10 +80,12 @@ class PackageAdmin(admin.ModelAdmin):
 
 class PackageItemAdmin(admin.ModelAdmin):
     list_display = ["product", "quantity", "created_at", "package"]
-    fields = ["package", "product", "quantity", "created_at"]
-    readonly_fields = ["package", "product", "quantity", "created_at"]
+    fields = ["product", "quantity", "created_at", "package"]
 
     def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
         return False
 
 
@@ -70,15 +93,15 @@ class CartAdmin(admin.ModelAdmin):
     list_display = [
         "created_at",
         "owner",
+        "email",
         "uuid",
     ]
-    readonly_fields = [
-        "uuid",
-        "owner",
-        "created_at",
-    ]
+    readonly_fields = ["created_at", "updated_at"]
 
     def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
         return False
 
     def get_ordering(self, request):

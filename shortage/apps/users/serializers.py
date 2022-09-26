@@ -8,6 +8,7 @@ from rest_framework.exceptions import APIException, NotFound
 from rest_framework.validators import UniqueValidator
 from shortage.apps.mailing.mail_service import UserConfirmationEmail
 from phonenumber_field.serializerfields import PhoneNumberField
+from shortage.helpers import get_full_name
 from .models import Profile
 from .tokens import user_activation_token
 
@@ -59,7 +60,10 @@ class RegistrationSerializer(serializers.ModelSerializer):
         email = UserConfirmationEmail(
             first_name=first_name, last_name=last_name, uid=uid, token=token
         )
-        email.add_recipient(validated_data["email"])
+        email.add_recipient(
+            validated_data["email"],
+            name=get_full_name(first_name=first_name, last_name=last_name),
+        )
         sent = email.send()
 
         if not sent:

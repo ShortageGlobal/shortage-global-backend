@@ -3,6 +3,7 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from email.headerregistry import Address
+from shortage.helpers import get_full_name
 
 
 class MailingBackend:
@@ -160,7 +161,10 @@ class UserConfirmationEmail(MailingBackend):
             self.token,
         )
 
-        return {"url": url, "full_name": self.full_name()}
-
-    def full_name(self):
-        return " ".join(filter(None, [self.first_name, self.last_name])).strip()
+        return {
+            "url": url,
+            "full_name": get_full_name(
+                first_name=self.first_name,
+                last_name=self.last_name,
+            ),
+        }
