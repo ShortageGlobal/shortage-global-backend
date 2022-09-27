@@ -1,7 +1,4 @@
-from django.shortcuts import get_object_or_404
-from django.http import Http404
-from django.core import exceptions
-from rest_framework import viewsets, mixins, permissions
+from rest_framework import generics, viewsets, mixins, permissions, exceptions
 from rest_framework.schemas.openapi import AutoSchema
 from shortage.apps.catalog.models import Organization
 from .models import Package, Cart, CartItem
@@ -13,6 +10,7 @@ from .package_serializers import (
 from .cart_serializers import (
     CartSerializer,
     CartCreationSerializer,
+    CartUpdateSerializer,
     CartItemUpdateSerializer,
     CartItemCreationSerializer,
 )
@@ -29,11 +27,12 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = PackageSerializer
 
     def get_queryset(self):
-        organization = get_object_or_404(
+        organization = generics.get_object_or_404(
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
+        user = self.request.user if self.request.user.is_authenticated else None
         return Package.objects.filter(
-            items__product__organization=organization
+            items__product__organization=organization, owner=user
         ).distinct()
 
 
@@ -50,7 +49,7 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     def create(self, request, *args, **kwargs):
         # check organization and store it into view,
         # so serializer could use it for validation
-        self.organization = get_object_or_404(
+        self.organization = generics.get_object_or_404(
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
 
@@ -72,7 +71,10 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
 
 class CartViewSet(
-    mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
 ):
     """Create or retrieve Cart object with related items"""
 
@@ -80,14 +82,24 @@ class CartViewSet(
         tags=["Packages"],
     )
 
+    http_method_names = ["get", "post", "put", "head"]
     permission_classes = [permissions.AllowAny]
-    queryset = Cart.objects.prefetch_related(
-        "items", "items__product", "items__product__organization"
-    ).order_by("-created_at")
+
+    def get_queryset(self):
+        user = self.request.user if self.request.user.is_authenticated else None
+        queryset = Cart.objects.filter(owner=user)
+
+        if self.action == "retrieve":
+            return queryset.prefetch_related(
+                "items", "items__product", "items__product__organization"
+            ).order_by("-created_at")
+        return queryset
 
     def get_serializer_class(self):
         if self.action == "create":
             return CartCreationSerializer
+        if self.action == "update":
+            return CartUpdateSerializer
         return CartSerializer
 
 
@@ -103,7 +115,7 @@ class CartItemViewSet(
         tags=["Packages"],
     )
 
-    serializer_class = CartItemCreationSerializer
+    http_method_names = ["post", "put", "delete", "head"]
     permission_classes = [permissions.AllowAny]
 
     def get_serializer_class(self):
@@ -119,20 +131,25 @@ class CartItemViewSet(
         }
 
     def get_object(self):
-        pk = self.kwargs.get("pk")
-
-        try:
-            obj = get_object_or_404(
-                CartItem.objects.all(), cart_id=self.kwargs["cart_pk"], pk=pk
-            )
-        except exceptions.ValidationError:
-            # in case of invalid uuids show 404 instead of 500
-            raise Http404()
+        user = self.request.user if self.request.user.is_authenticated else None
+        obj = generics.get_object_or_404(
+            CartItem.objects.filter(),
+            cart_id=self.kwargs["cart_pk"],
+            cart__owner=user,
+            pk=self.kwargs.get("pk"),
+        )
 
         # May raise a permission denied
         self.check_object_permissions(self.request, obj)
 
         return obj
+
+    def create(self, request, *args, **kwargs):
+        user = self.request.user if self.request.user.is_authenticated else None
+        # do not add items to a cart of another user
+        if not Cart.objects.filter(pk=self.kwargs["cart_pk"], owner=user).exists():
+            raise exceptions.NotFound()
+        return super().create(request, *args, **kwargs)
 
 
 class CorporateDonationsViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):

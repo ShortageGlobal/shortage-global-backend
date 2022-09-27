@@ -1,13 +1,12 @@
 from django.db import transaction
-from django.http import Http404
-from rest_framework import serializers
+from rest_framework import serializers, exceptions
 from shortage.helpers.serializers import AuthorizedUserOrNone
 from shortage.apps.catalog.models import Product
 from shortage.apps.catalog.serializers import ProductOrganizationPreviewSerializer
 from .models import Cart, CartItem
 
 
-class ProductCartItemSerializer(serializers.ModelSerializer):
+class CartItemProductSerializer(serializers.ModelSerializer):
     organization = ProductOrganizationPreviewSerializer()
     photo = serializers.ImageField(source="medium_photo")
 
@@ -26,24 +25,12 @@ class ProductCartItemSerializer(serializers.ModelSerializer):
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    product = ProductCartItemSerializer()
+    product = CartItemProductSerializer()
     quantity = serializers.IntegerField(min_value=1, max_value=2147483647)
 
     class Meta:
         model = CartItem
         fields = ["uuid", "product", "quantity", "created_at"]
-
-
-class CartSerializer(serializers.ModelSerializer):
-    items = CartItemSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Cart
-        fields = [
-            "uuid",
-            "created_at",
-            "items",
-        ]
 
 
 class CartItemUpdateSerializer(serializers.ModelSerializer):
@@ -71,13 +58,14 @@ class CartItemCreationSerializer(serializers.ModelSerializer):
         product_slug = attrs.get("product_slug")
         organization_slug = attrs.get("organization_slug")
 
-        # if we create/update/delete a CartItem of the existing Cart, there will be 'cart_pk' in the context
+        # if we create/update/delete a CartItem of the existing Cart, not creating a new Cart,
+        # there will be 'cart_pk' in the context
         cart_pk = self.context.get("cart_pk")  # Cart pk
         pk = self.context.get("pk")  # CartItem pk
         if cart_pk is not None:
             # check the cart exists
             if not Cart.objects.filter(pk=cart_pk).exists():
-                raise Http404()
+                raise exceptions.NotFound()
 
             # check the product/organization pair is unique for the given cart
             if (
@@ -119,6 +107,29 @@ class CartItemCreationSerializer(serializers.ModelSerializer):
         )
 
         return cart_item
+
+
+class CartSerializer(serializers.ModelSerializer):
+    items = CartItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Cart
+        fields = [
+            "uuid",
+            "created_at",
+            "items",
+            "need_tax_deduction",
+            "first_name",
+            "last_name",
+            "phone_number",
+            "email",
+            "address_line1",
+            "address_line2",
+            "city",
+            "state_province_region",
+            "zip",
+            "country",
+        ]
 
 
 class CartCreationSerializer(serializers.ModelSerializer):
@@ -171,3 +182,54 @@ class CartCreationSerializer(serializers.ModelSerializer):
         CartItem.objects.bulk_create(items)
 
         return cart
+
+
+class CartUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cart
+        fields = [
+            "need_tax_deduction",
+            "first_name",
+            "last_name",
+            "phone_number",
+            "email",
+            "address_line1",
+            "address_line2",
+            "city",
+            "state_province_region",
+            "zip",
+            "country",
+        ]
+
+    def validate(self, attrs):
+        errors = {}
+
+        # Required fields
+        required_fields = ["email"]
+        for field in required_fields:
+            if not attrs.get(field):
+                errors[field] = ["This field is required."]
+
+        # Require fields if tax deduction is required
+        required_for_tax_deduction_fields = [
+            "first_name",
+            "last_name",
+            "phone_number",
+            "address_line1",
+            "address_line2",
+            "city",
+            "state_province_region",
+            "zip",
+            "country",
+        ]
+        need_tax_deduction = attrs.get("need_tax_deduction")
+        if need_tax_deduction is True:
+            for field in required_for_tax_deduction_fields:
+                if not attrs.get(field):
+                    errors[field] = ["This field is required."]
+
+        # Raise validation errors if any
+        if len(errors):
+            raise serializers.ValidationError(errors)
+
+        return super().validate(attrs)
