@@ -134,7 +134,7 @@ class CartSerializer(serializers.ModelSerializer):
 
 class CartCreationSerializer(serializers.ModelSerializer):
     items = CartItemCreationSerializer(
-        write_only=True, many=True, required=False, allow_empty=False
+        write_only=True, many=True, required=False, allow_empty=True
     )
     owner = serializers.HiddenField(default=AuthorizedUserOrNone())
 
