@@ -1,5 +1,12 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, mixins, filters, permissions, status
+from rest_framework import (
+    generics,
+    viewsets,
+    mixins,
+    filters,
+    permissions,
+    exceptions,
+    status,
+)
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 from .models import Organization, Instruction, Product, OnlineStore
@@ -14,6 +21,7 @@ from .serializers import (
     OnlineStoreSerializer,
     PrivateOrganizationSerializer,
 )
+from .exceptions import OneOrganizationPerUser
 
 
 class PromotedOrganizationsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -82,7 +90,7 @@ class PrivateOrganizationSlugExistsViewSet(viewsets.ViewSet):
         if Organization.objects.filter(slug=slug).exists():
             return Response(status=status.HTTP_200_OK)
         else:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            raise exceptions.NotFound()
 
 
 class PrivateOrganizationViewSet(
@@ -107,14 +115,14 @@ class PrivateOrganizationViewSet(
             return Organization.objects.active().filter(owner=self.request.user)
         else:
             # Prevent changes to organizations which you don't own and which are already verified
-            return Organization.objects.all().filter(
+            return Organization.objects.filter(
                 owner=self.request.user, is_verified=False
             )
 
     def create(self, request, *args, **kwargs):
         # Allow only one organization per user
-        if Organization.objects.all().filter(owner=self.request.user).exists():
-            return Response(status=status.HTTP_409_CONFLICT)
+        if Organization.objects.filter(owner=self.request.user).exists():
+            raise OneOrganizationPerUser()
 
         # Todo: Send an email about organization's creation
         return super().create(request, *args, **kwargs)
@@ -131,7 +139,7 @@ class InstructionsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     paginator = None
 
     def get_queryset(self):
-        organization = get_object_or_404(
+        organization = generics.get_object_or_404(
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
         return Instruction.objects.filter(organization=organization)
@@ -146,7 +154,7 @@ class ProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     ordering = ["-top_priority", "position", "-created_at"]
 
     def get_queryset(self):
-        organization = get_object_or_404(
+        organization = generics.get_object_or_404(
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
         queryset = Product.objects.filter(organization=organization)
@@ -175,7 +183,7 @@ class PrivateProductsSlugExistsView(viewsets.ViewSet):
         if Product.objects.filter(organization__slug=org_slug, slug=slug).exists():
             return Response(status=status.HTTP_200_OK)
         else:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            raise exceptions.NotFound()
 
 
 class CategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -185,7 +193,7 @@ class CategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     paginator = None
 
     def get_queryset(self):
-        organization = get_object_or_404(
+        organization = generics.get_object_or_404(
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
         return (
@@ -202,7 +210,7 @@ class ProductViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     lookup_field = "slug"
 
     def get_queryset(self):
-        organization = get_object_or_404(
+        organization = generics.get_object_or_404(
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
         return Product.objects.filter(organization=organization)
@@ -217,7 +225,7 @@ class OnlineStoresViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     paginator = None
 
     def get_queryset(self):
-        product = get_object_or_404(
+        product = generics.get_object_or_404(
             Product,
             slug=self.kwargs["product_slug"],
             organization__slug=self.kwargs["org_slug"],
