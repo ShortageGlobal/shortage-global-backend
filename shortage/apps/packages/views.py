@@ -82,7 +82,7 @@ class CartViewSet(
         tags=["Packages"],
     )
 
-    http_method_names = ["get", "post", "put", "head"]
+    http_method_names = ["get", "post", "put", "head", "options"]
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
@@ -115,7 +115,7 @@ class CartItemViewSet(
         tags=["Packages"],
     )
 
-    http_method_names = ["post", "put", "delete", "head"]
+    http_method_names = ["post", "put", "delete", "head", "options"]
     permission_classes = [permissions.AllowAny]
 
     def get_serializer_class(self):
