@@ -134,7 +134,7 @@ class CartSerializer(serializers.ModelSerializer):
 
 class CartCreationSerializer(serializers.ModelSerializer):
     items = CartItemCreationSerializer(
-        write_only=True, many=True, required=True, allow_empty=False
+        write_only=True, many=True, required=False, allow_empty=False
     )
     owner = serializers.HiddenField(default=AuthorizedUserOrNone())
 
@@ -143,7 +143,7 @@ class CartCreationSerializer(serializers.ModelSerializer):
         fields = ["items", "owner", "uuid"]
 
     def validate(self, attrs):
-        items = attrs.get("items")
+        items = attrs.get("items", [])
 
         # check all product_slug and organization_slug pairs are unique
         slug_pairs_set = set()
@@ -162,7 +162,9 @@ class CartCreationSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        validated_items_data = validated_data.pop("items")
+        validated_items_data = (
+            validated_data.pop("items") if "items" in validated_data else []
+        )
 
         # create cart
         cart = Cart.objects.create(**validated_data)
