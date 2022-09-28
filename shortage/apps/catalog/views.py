@@ -167,25 +167,6 @@ class ProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         return queryset
 
 
-class PrivateProductsSlugExistsView(viewsets.ViewSet):
-    """
-    Checks if a product with the specified slug belongs to the given organization
-    """
-
-    schema = AutoSchema(
-        tags=["Products"],
-    )
-
-    permission_classes = [permissions.IsAuthenticated]
-    lookup_field = "slug"
-
-    def retrieve(self, request, org_slug, slug):
-        if Product.objects.filter(organization__slug=org_slug, slug=slug).exists():
-            return Response(status=status.HTTP_200_OK)
-        else:
-            raise exceptions.NotFound()
-
-
 class CategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """A list of categories of the given organization's products"""
 
