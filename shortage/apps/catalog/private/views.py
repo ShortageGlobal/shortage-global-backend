@@ -55,8 +55,6 @@ class PrivateProductsViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-
-
 class PrivateProductsSlugExistsView(viewsets.ViewSet):
     """
     Checks if a product with the specified slug belongs to the given organization

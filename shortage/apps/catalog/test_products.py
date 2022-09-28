@@ -162,9 +162,7 @@ class PrivateProductsTestCase(APITestCase):
         route = self.get_request_route() + "/" + product.slug
 
         test_data["name"] = "new_name"
-        request = self.requestFactory.patch(
-            route, data=test_data, format="json"
-        )
+        request = self.requestFactory.patch(route, data=test_data, format="json")
         force_authenticate(request, user=self.user)
         response = PrivateProductsViewSet.as_view({"patch": "update"})(
             request, org_slug=self.organization.slug, slug=product.slug
@@ -194,9 +192,7 @@ class PrivateProductsTestCase(APITestCase):
         route = self.get_request_route() + "/" + product.slug
 
         test_data["name"] = "new_name"
-        request = self.requestFactory.delete(
-            route, data=test_data, format="json"
-        )
+        request = self.requestFactory.delete(route, data=test_data, format="json")
         force_authenticate(request, user=self.user)
         response = PrivateProductsViewSet.as_view({"delete": "destroy"})(
             request, org_slug=self.organization.slug, slug=product.slug
