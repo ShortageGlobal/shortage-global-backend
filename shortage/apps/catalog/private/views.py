@@ -15,6 +15,7 @@ class PrivateProductsViewSet(viewsets.ModelViewSet):
 
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = PrivateProductSerializer
+    lookup_field = "slug"
 
     def __init__(self):
         super().__init__()
@@ -35,12 +36,25 @@ class PrivateProductsViewSet(viewsets.ModelViewSet):
         return queryset
 
     def create(self, request, *args, **kwargs):
-        # Todo: Change filter to active orgs only!!!!
         self.organization = get_object_or_404(
-            Organization.objects.all(), slug=self.kwargs["org_slug"]
+            Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
 
         return super().create(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        # Do a soft delete
+        self.organization = get_object_or_404(
+            Organization.objects.public(), slug=self.kwargs["org_slug"]
+        )
+
+        product = self.get_object()
+        product.is_deleted = True
+        product.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 
 
 class PrivateProductsSlugExistsView(viewsets.ViewSet):

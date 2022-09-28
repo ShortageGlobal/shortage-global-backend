@@ -20,10 +20,7 @@ class PrivateProductSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        print(validated_data)
-
         organization = self.context["view"].organization
         validated_data["organization"] = organization
 
         return Product.objects.create(**validated_data)
-

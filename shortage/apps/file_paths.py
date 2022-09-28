@@ -14,7 +14,6 @@ def get_organization_path(instance, filename):
 
 
 def get_product_path(instance, filename):
-    print(instance)
     return get_uuid_path(f"photo/product/{str(instance.slug)}/", filename)
 
 
