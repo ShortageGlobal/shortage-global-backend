@@ -18,8 +18,6 @@ class PrivateProductsViewSet(viewsets.ModelViewSet):
     lookup_field = "slug"
 
     def __init__(self):
-        super().__init__()
-
         self.organization = None
 
     def get_queryset(self):
