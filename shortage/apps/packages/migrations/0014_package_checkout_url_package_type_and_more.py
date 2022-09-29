@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='package',
             name='type',
-            field=models.CharField(choices=[('SELF_DONATION', 'Self-donation'), ('FUNDING_DONATION', 'Funding donation')], default='SELF_DONATION', max_length=32),
+            field=models.CharField(choices=[('SENT_BY_DONOR', 'Sent by donor'), ('FUNDED_BY_DONOR', 'Funded by donor')], default='SENT_BY_DONOR', max_length=32),
         ),
         migrations.AlterField(
             model_name='package',

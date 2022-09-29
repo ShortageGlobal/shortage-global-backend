@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 from django.core.management.utils import get_random_secret_key
-import ast
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -257,5 +256,5 @@ EMAIL_USE_SSL = os.getenv("DJANGO_EMAIL_USE_SSL", "False") == "True"
 
 STRIPE_SECRET_KEY = os.getenv("DJANGO_STRIPE_SECRET_KEY", "")
 
-MANAGERS = ast.literal_eval(os.getenv("DJANGO_MANAGERS", "[]"))
+MANAGERS = [("", email) for email in os.getenv("DJANGO_MANAGERS", "").split(",")]
 SERVER_EMAIL = os.getenv("DJANGO_SERVER_EMAIL", "")

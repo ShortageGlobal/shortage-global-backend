@@ -70,7 +70,7 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
             package_registration_email = PackageRegistrationEmail(
                 organization_slug=self.kwargs["org_slug"],
                 package_uuid=package.uuid,
-                funded_by_donor=package.type == PackageType.FUNDED_BY_DONOR,
+                package_type=package.type,
             )
             package_registration_email.add_recipient(
                 email=package.email, name=package.full_name

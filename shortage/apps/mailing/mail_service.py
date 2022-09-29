@@ -138,10 +138,10 @@ class PackageRegistrationEmail(MailingBackend):
     html_template = "emails/package_registration.html"
     text_template = "emails/package_registration.txt"
 
-    def __init__(self, organization_slug, package_uuid, funded_by_donor):
+    def __init__(self, organization_slug, package_uuid, package_type):
         self.organization_slug = organization_slug
         self.package_uuid = package_uuid
-        self.funded_by_donor = funded_by_donor
+        self.package_type = package_type
 
     def get_context(self):
         url = "%s/organizations/%s/packages/%s" % (
@@ -150,7 +150,7 @@ class PackageRegistrationEmail(MailingBackend):
             self.package_uuid,
         )
 
-        return {"url": url, "funded_by_donor": self.funded_by_donor}
+        return {"url": url, "package_type": self.package_type}
 
 
 class PackagePaymentStatusUpdatedServiceEmail(MailingBackend):
