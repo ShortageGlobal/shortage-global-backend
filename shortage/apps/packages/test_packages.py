@@ -29,7 +29,8 @@ class PackageTestCase(APITestCase):
         }
 
         request = self.requestFactory.post(
-            "api/organization/{}/packages".format(self.organization.slug), data=test_data,
+            "api/organization/{}/packages".format(self.organization.slug),
+            data=test_data,
             format="json",
         )
         force_authenticate(request, user=self.user)
@@ -51,7 +52,8 @@ class PackageTestCase(APITestCase):
         }
 
         request = self.requestFactory.post(
-            "api/organization/{}/packages".format(self.organization.slug), data=test_data,
+            "api/organization/{}/packages".format(self.organization.slug),
+            data=test_data,
             format="json",
         )
         response = PackageCreationViewSet.as_view({"post": "create"})(
@@ -82,7 +84,8 @@ class PrivatePackageTestCase(APITestCase):
         }
 
         request = self.requestFactory.post(
-            "api/organization/{}/packages".format(self.organization.slug), data=test_data,
+            "api/organization/{}/packages".format(self.organization.slug),
+            data=test_data,
             format="json",
         )
         force_authenticate(request, user=self.user)
