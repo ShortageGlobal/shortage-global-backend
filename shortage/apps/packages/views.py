@@ -1,8 +1,14 @@
 import logging
+from django.db import transaction
 from rest_framework import generics, viewsets, mixins, permissions, exceptions
+from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 from shortage.apps.catalog.models import Organization
 from shortage.apps.packages.payments import deserialize_stripe_event
+from shortage.apps.mailing.mail_service import (
+    PackagePaymentStatusUpdatedServiceEmail,
+    PackageRegistrationEmail,
+)
 from .models import Package, Cart, CartItem, PackageType
 from .package_serializers import (
     PackageSerializer,
@@ -16,13 +22,6 @@ from .cart_serializers import (
     CartItemUpdateSerializer,
     CartItemCreationSerializer,
 )
-from shortage.apps.mailing.mail_service import (
-    PackagePaymentStatusUpdatedServiceEmail,
-    PackageRegistrationEmail,
-)
-from rest_framework.response import Response
-import logging
-from django.db import transaction
 
 
 class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -180,7 +179,7 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
     def create(self, request, pk=None):
         event = deserialize_stripe_event(request.body)
         if event is None:
-            return Response(status=400)
+            raise exceptions.ParseError()
 
         if event.type == "payment_intent.succeeded":
             payment_intent = event.data.object

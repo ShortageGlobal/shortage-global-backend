@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
 from django.conf import settings
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, URLValidator
 from auditlog.registry import auditlog
 from phonenumber_field.modelfields import PhoneNumberField
 from thumbnails.fields import ImageField
@@ -10,7 +10,6 @@ from shortage.apps import storage
 from shortage.apps.catalog.models import Organization, Product
 from shortage.apps.file_paths import get_package_path, get_corporate_donation_path
 from shortage.helpers import get_full_name
-from django.core.validators import URLValidator
 
 
 class PackageStatus(models.TextChoices):

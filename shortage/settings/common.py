@@ -253,8 +253,7 @@ EMAIL_HOST_USER = os.getenv("DJANGO_EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("DJANGO_HOST_PASSWORD", "")
 EMAIL_USE_TLS = os.getenv("DJANGO_EMAIL_USE_TLS", "False") == "True"
 EMAIL_USE_SSL = os.getenv("DJANGO_EMAIL_USE_SSL", "False") == "True"
+SERVER_EMAIL = os.getenv("DJANGO_SERVER_EMAIL", "")
+MANAGERS = [("", email) for email in os.getenv("DJANGO_MANAGERS", "").split(",")]
 
 STRIPE_SECRET_KEY = os.getenv("DJANGO_STRIPE_SECRET_KEY", "")
-
-MANAGERS = [("", email) for email in os.getenv("DJANGO_MANAGERS", "").split(",")]
-SERVER_EMAIL = os.getenv("DJANGO_SERVER_EMAIL", "")
