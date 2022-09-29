@@ -258,3 +258,4 @@ EMAIL_USE_SSL = os.getenv("DJANGO_EMAIL_USE_SSL", "False") == "True"
 STRIPE_SECRET_KEY = os.getenv("DJANGO_STRIPE_SECRET_KEY", "")
 
 MANAGERS = ast.literal_eval(os.getenv("DJANGO_MANAGERS", "[]"))
+SERVER_EMAIL = os.getenv("DJANGO_SERVER_EMAIL", "")

@@ -17,7 +17,7 @@ from .cart_serializers import (
     CartItemCreationSerializer,
 )
 from shortage.apps.mailing.mail_service import (
-    PackagePaymentStatusUpdatedEmail,
+    PackagePaymentStatusUpdatedServiceEmail,
     PackageRegistrationEmail,
 )
 from rest_framework.response import Response
@@ -190,8 +190,7 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
 
             package.save()
 
-            email = PackagePaymentStatusUpdatedEmail(package.uuid, package.status)
-            email.to_managers()
+            email = PackagePaymentStatusUpdatedServiceEmail(package.uuid, package.status)
             email.send()
         elif event.type == "payment_intent.payment_failed":
             payment_intent = event.data.object
@@ -201,8 +200,7 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
 
             package.save()
 
-            email = PackagePaymentStatusUpdatedEmail(package.uuid, package.status)
-            email.to_managers()
+            email = PackagePaymentStatusUpdatedServiceEmail(package.uuid, package.status)
             email.send()
         else:
             logging.info("Unhandled Stripe event type %s", event.type)
