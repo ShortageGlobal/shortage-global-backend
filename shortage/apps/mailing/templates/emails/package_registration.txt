@@ -1,6 +1,11 @@
 Thank you for your donation
 
+{% if checkout_url %}
+We've registered a shortage goods package with your email address. Once you pay for it, we will buy the goods and deliver to those in need.
+Pay here: {{ checkout_url }}. Please, ignore if you have already paid. 
+{% else %}
 We've registered a shortage goods package with your email address. We will track it using the provided tracking number and see it delivered to those in need.
+{% endif %}
 
 We appreciate all the help.
 

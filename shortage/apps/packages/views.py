@@ -60,7 +60,9 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
         if package.email:
             package_registration_email = PackageRegistrationEmail(
-                organization_slug=self.kwargs["org_slug"], package_uuid=package.uuid
+                organization_slug=self.kwargs["org_slug"], 
+                package_uuid=package.uuid, 
+                checkout_url=package.checkout_url,
             )
             package_registration_email.add_recipient(
                 email=package.email, name=package.full_name

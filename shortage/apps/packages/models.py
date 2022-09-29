@@ -7,16 +7,24 @@ from phonenumber_field.modelfields import PhoneNumberField
 from thumbnails.fields import ImageField
 from django_countries.fields import CountryField
 from shortage.apps import storage
-from shortage.apps.catalog.models import Product
+from shortage.apps.catalog.models import Organization, Product
 from shortage.apps.file_paths import get_package_path, get_corporate_donation_path
 from shortage.helpers import get_full_name
+from django.core.validators import URLValidator
 
 
 class PackageStatus(models.TextChoices):
     REGISTERED = settings.PACKAGE_STATUS["REGISTERED"], "Registered"
+    UNPAID = settings.PACKAGE_STATUS["UNPAID"], "Unpaid"
+    PAYMENT_FAILED = settings.PACKAGE_STATUS["PAYMENT_FAILED"], "Payment failed"
+    PAYMENT_CANCELLED = settings.PACKAGE_STATUS["PAYMENT_CANCELLED"], "Payment cancelled"    
+    PAID = settings.PACKAGE_STATUS["PAID"], "Paid"
     CONFIRMED = settings.PACKAGE_STATUS["CONFIRMED"], "Confirmed"
     DELIVERED = settings.PACKAGE_STATUS["DELIVERED"], "Delivered"
-
+    
+class PackageType(models.TextChoices):
+    SELF_DONATION = settings.PACKAGE_TYPE["SELF_DONATION"], "Self-donation"
+    FUNDING_DONATION = settings.PACKAGE_TYPE["FUNDING_DONATION"], "Funding donation"
 
 class Package(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -45,11 +53,19 @@ class Package(models.Model):
     country = CountryField(default="US")
 
     # tracking details
-    delivery_company = models.CharField(max_length=100)
-    tracking_code = models.CharField(max_length=100)
+    delivery_company = models.CharField(max_length=100, null=True, blank=True)
+    tracking_code = models.CharField(max_length=100, null=True, blank=True)
+
+    # payment details, only relevant for donations funded by donor
+    checkout_url = models.TextField(null=True, blank=True, validators=[URLValidator()])
 
     # package details
     note = models.TextField(null=True, blank=True)
+    type = models.CharField(        
+        max_length=32,        
+        choices=PackageType.choices,            
+        default=PackageType.SELF_DONATION,
+    )
     status = models.CharField(
         max_length=32,
         choices=PackageStatus.choices,
@@ -75,6 +91,13 @@ class Package(models.Model):
     def full_name(self):
         return get_full_name(first_name=self.first_name, last_name=self.last_name)
 
+    @property
+    def total_price(self):         
+        sum = 0 
+        for item in self.items.all(): 
+            sum += item.product.price
+
+        return sum
 
 class PackageItem(models.Model):
     package = models.ForeignKey(Package, related_name="items", on_delete=models.CASCADE)
