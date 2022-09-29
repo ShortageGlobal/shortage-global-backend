@@ -61,6 +61,7 @@ class ProductPreviewSerializer(serializers.ModelSerializer):
             "top_priority",
             "position",
         ]
+        read_only_fields = fields
 
 
 class ProductOrganizationPreviewSerializer(serializers.ModelSerializer):

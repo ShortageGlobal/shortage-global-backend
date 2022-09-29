@@ -169,7 +169,7 @@ paths:
       - Organizations
   /api/private/exists/organizations/{slug}/:
     get:
-      operationId: retrievePrivateOrganizationSlugExists
+      operationId: retrievePrivateOrganizationSlugExistsViewSet
       description: Checks if organization with specified slug exists
       parameters:
       - name: slug
@@ -189,7 +189,7 @@ paths:
   /api/private/organizations/:
     get:
       operationId: listPrivateOrganizations
-      description: ''
+      description: Retrieve/create/update organization owned by a current user
       parameters:
       - name: limit
         required: false
@@ -233,7 +233,7 @@ paths:
       - Organizations
     post:
       operationId: createPrivateOrganization
-      description: ''
+      description: Retrieve/create/update organization owned by a current user
       parameters: []
       requestBody:
         content:
@@ -259,7 +259,7 @@ paths:
   /api/private/organizations/{slug}/:
     get:
       operationId: retrievePrivateOrganization
-      description: ''
+      description: Retrieve/create/update organization owned by a current user
       parameters:
       - name: slug
         in: path
@@ -279,7 +279,7 @@ paths:
       - Organizations
     put:
       operationId: updatePrivateOrganization
-      description: ''
+      description: Retrieve/create/update organization owned by a current user
       parameters:
       - name: slug
         in: path
@@ -310,7 +310,7 @@ paths:
       - Organizations
     patch:
       operationId: partialUpdatePrivateOrganization
-      description: ''
+      description: Retrieve/create/update organization owned by a current user
       parameters:
       - name: slug
         in: path
@@ -526,6 +526,211 @@ paths:
           description: ''
       tags:
       - api
+  /api/private/organizations/{org_slug}/products/:
+    get:
+      operationId: listPrivateProducts
+      description: ''
+      parameters:
+      - name: org_slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?offset=400&limit=100
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?offset=200&limit=100
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PrivateProduct'
+          description: ''
+      tags:
+      - Private
+      - Products
+    post:
+      operationId: createPrivateProduct
+      description: ''
+      parameters:
+      - name: org_slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrivateProduct'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PrivateProduct'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PrivateProduct'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateProduct'
+          description: ''
+      tags:
+      - Private
+      - Products
+  /api/private/organizations/{org_slug}/products/{slug}/:
+    get:
+      operationId: retrievePrivateProduct
+      description: ''
+      parameters:
+      - name: org_slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateProduct'
+          description: ''
+      tags:
+      - Private
+      - Products
+    put:
+      operationId: updatePrivateProduct
+      description: ''
+      parameters:
+      - name: org_slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrivateProduct'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PrivateProduct'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PrivateProduct'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateProduct'
+          description: ''
+      tags:
+      - Private
+      - Products
+    patch:
+      operationId: partialUpdatePrivateProduct
+      description: ''
+      parameters:
+      - name: org_slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrivateProduct'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PrivateProduct'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PrivateProduct'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateProduct'
+          description: ''
+      tags:
+      - Private
+      - Products
+    delete:
+      operationId: destroyPrivateProduct
+      description: ''
+      parameters:
+      - name: org_slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: slug
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - Private
+      - Products
   /api/private/exists/organizations/{org_slug}/products/{slug}/:
     get:
       operationId: retrievePrivateProductsSlugExists
@@ -551,6 +756,7 @@ paths:
               schema: {}
           description: ''
       tags:
+      - Private
       - Products
   /api/organizations/{org_slug}/products/{product_slug}/online-stores/:
     get:
@@ -634,16 +840,16 @@ paths:
                 $ref: '#/components/schemas/Package'
           description: ''
       tags:
-      - api
-  /api/carts/{uuid}/:
+      - Packages
+  /api/carts/{id}/:
     get:
       operationId: retrieveCart
       description: Create or retrieve Cart object with related items
       parameters:
-      - name: uuid
+      - name: id
         in: path
         required: true
-        description: A UUID string identifying this cart.
+        description: ''
         schema:
           type: string
       responses:
@@ -652,6 +858,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cart'
+          description: ''
+      tags:
+      - Packages
+    put:
+      operationId: updateCartUpdate
+      description: Create or retrieve Cart object with related items
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CartUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CartUpdate'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartUpdate'
           description: ''
       tags:
       - Packages
@@ -744,7 +980,7 @@ paths:
       - Packages
   /api/carts/:
     post:
-      operationId: createCart
+      operationId: createCartCreation
       description: Create or retrieve Cart object with related items
       parameters: []
       requestBody:
@@ -823,6 +1059,56 @@ paths:
           description: ''
       tags:
       - Packages
+  /api/users/register:
+    post:
+      operationId: createRegistration
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registration'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Registration'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Registration'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registration'
+          description: ''
+      tags:
+      - api
+  /api/users/activate:
+    post:
+      operationId: createActivation
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Activation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Activation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Activation'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Activation'
+          description: ''
+      tags:
+      - api
   /api/carts/{cart_pk}/items/{id}/:
     put:
       operationId: updateCartItemUpdate
@@ -860,42 +1146,6 @@ paths:
           description: ''
       tags:
       - Packages
-    patch:
-      operationId: partialUpdateCartItemCreation
-      description: Create/remove/update CartItem connected to a given Cart
-      parameters:
-      - name: cart_pk
-        in: path
-        required: true
-        description: ''
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        description: ''
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CartItemCreation'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/CartItemCreation'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/CartItemCreation'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CartItemCreation'
-          description: ''
-      tags:
-      - Packages
     delete:
       operationId: destroyCartItemCreation
       description: Create/remove/update CartItem connected to a given Cart
@@ -917,56 +1167,6 @@ paths:
           description: ''
       tags:
       - Packages
-  /api/users/register:
-    post:
-      operationId: createRegistration
-      description: 'Register a new user.'
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Registration'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Registration'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Registration'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Registration'
-          description: 'Exposed properties of the registered user.'
-      tags:
-      - Users
-  /api/users/activate:
-    post:
-      operationId: createActivation
-      description: 'Activate a recently registered user.'
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Activation'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Activation'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Activation'
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Activation'
-          description: ''
-      tags:
-      - Users
 components:
   schemas:
     OrganizationPreview:
@@ -1009,13 +1209,13 @@ components:
           format: binary
           readOnly: true
         price:
-          type: string
-          nullable: true
-          maxLength: 32
+          type: integer
+          maximum: 2147483647
+          minimum: 1
         requested_amount:
           type: integer
           maximum: 2147483647
-          minimum: 0
+          minimum: 1
         top_priority:
           type: boolean
         position:
@@ -1069,6 +1269,17 @@ components:
             -\uFFFF0-9])?(?:\\.(?!-)[a-z\xA1-\uFFFF0-9-]{1,63}(?<!-))*\\.(?!-)(?:[a-z\xA1\
             -\uFFFF-]{2,63}|xn--[a-z0-9]{1,59})(?<!-)\\.?|localhost))(?::\\d{1,5})?(?:[/?#][^\\\
             s]*)?\\z"
+        tax_form_url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 255
+          pattern: "^(?:[a-z0-9.+-]*)://(?:[^\\s:@/]+(?::[^\\s:@/]*)?@)?(?:(?:0|25[0-5]|2[0-4]\\\
+            d|1\\d?\\d?|[1-9]\\d?)(?:\\.(?:0|25[0-5]|2[0-4]\\d|1\\d?\\d?|[1-9]\\d?)){3}|\\\
+            [[0-9a-f:.]+\\]|([a-z\xA1-\uFFFF0-9](?:[a-z\xA1-\uFFFF0-9-]{0,61}[a-z\xA1\
+            -\uFFFF0-9])?(?:\\.(?!-)[a-z\xA1-\uFFFF0-9-]{1,63}(?<!-))*\\.(?!-)(?:[a-z\xA1\
+            -\uFFFF-]{2,63}|xn--[a-z0-9]{1,59})(?<!-)\\.?|localhost))(?::\\d{1,5})?(?:[/?#][^\\\
+            s]*)?\\z"
       required:
       - slug
     PrivateOrganization:
@@ -1099,6 +1310,17 @@ components:
             -\uFFFF0-9])?(?:\\.(?!-)[a-z\xA1-\uFFFF0-9-]{1,63}(?<!-))*\\.(?!-)(?:[a-z\xA1\
             -\uFFFF-]{2,63}|xn--[a-z0-9]{1,59})(?<!-)\\.?|localhost))(?::\\d{1,5})?(?:[/?#][^\\\
             s]*)?\\z"
+        tax_form_url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 255
+          pattern: "^(?:[a-z0-9.+-]*)://(?:[^\\s:@/]+(?::[^\\s:@/]*)?@)?(?:(?:0|25[0-5]|2[0-4]\\\
+            d|1\\d?\\d?|[1-9]\\d?)(?:\\.(?:0|25[0-5]|2[0-4]\\d|1\\d?\\d?|[1-9]\\d?)){3}|\\\
+            [[0-9a-f:.]+\\]|([a-z\xA1-\uFFFF0-9](?:[a-z\xA1-\uFFFF0-9-]{0,61}[a-z\xA1\
+            -\uFFFF0-9])?(?:\\.(?!-)[a-z\xA1-\uFFFF0-9-]{1,63}(?<!-))*\\.(?!-)(?:[a-z\xA1\
+            -\uFFFF-]{2,63}|xn--[a-z0-9]{1,59})(?<!-)\\.?|localhost))(?::\\d{1,5})?(?:[/?#][^\\\
+            s]*)?\\z"
         ein_number:
           type: string
           nullable: true
@@ -1110,7 +1332,6 @@ components:
           type: boolean
       required:
       - slug
-      - photo
     Instruction:
       type: object
       properties:
@@ -1379,10 +1600,10 @@ components:
       properties:
         name:
           type: string
-          maxLength: 255
+          readOnly: true
         slug:
           type: string
-          maxLength: 255
+          readOnly: true
           pattern: ^[-a-zA-Z0-9_]+$
         category:
           enum:
@@ -1392,28 +1613,23 @@ components:
           - BABY_CARE
           - SAVE_ANIMALS
           type: string
+          readOnly: true
         photo:
           type: string
           format: binary
           readOnly: true
         price:
-          type: string
-          nullable: true
-          maxLength: 32
+          type: integer
+          readOnly: true
         requested_amount:
           type: integer
-          maximum: 2147483647
-          minimum: 0
+          readOnly: true
         top_priority:
           type: boolean
+          readOnly: true
         position:
           type: integer
-          maximum: 2147483647
-          minimum: 0
-      required:
-      - name
-      - slug
-      - category
+          readOnly: true
     Product:
       type: object
       properties:
@@ -1437,13 +1653,13 @@ components:
           format: binary
           readOnly: true
         price:
-          type: string
-          nullable: true
-          maxLength: 32
+          type: integer
+          maximum: 2147483647
+          minimum: 1
         requested_amount:
           type: integer
           maximum: 2147483647
-          minimum: 0
+          minimum: 1
         description:
           type: string
           nullable: true
@@ -1463,6 +1679,44 @@ components:
           required:
           - slug
           readOnly: true
+      required:
+      - name
+      - slug
+      - category
+    PrivateProduct:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        category:
+          enum:
+          - VITAL_GOODS
+          - HEALTHCARE
+          - EDUCATION
+          - BABY_CARE
+          - SAVE_ANIMALS
+          type: string
+        photo:
+          type: string
+          format: binary
+        price:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+        requested_amount:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+        description:
+          type: string
+          nullable: true
+        top_priority:
+          type: boolean
       required:
       - name
       - slug
@@ -1553,13 +1807,13 @@ components:
                     type: string
                     format: binary
                   price:
-                    type: string
-                    nullable: true
-                    maxLength: 32
+                    type: integer
+                    maximum: 2147483647
+                    minimum: 1
                   requested_amount:
                     type: integer
                     maximum: 2147483647
-                    minimum: 0
+                    minimum: 1
                   top_priority:
                     type: boolean
                   organization:
@@ -1593,6 +1847,297 @@ components:
             - product
             - quantity
           readOnly: true
+        need_tax_deduction:
+          type: boolean
+        first_name:
+          type: string
+          nullable: true
+          maxLength: 255
+        last_name:
+          type: string
+          nullable: true
+          maxLength: 255
+        phone_number:
+          type: string
+          nullable: true
+          maxLength: 128
+        email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 100
+        address_line1:
+          type: string
+          nullable: true
+          maxLength: 255
+        address_line2:
+          type: string
+          nullable: true
+          maxLength: 255
+        city:
+          type: string
+          nullable: true
+          maxLength: 255
+        state_province_region:
+          type: string
+          nullable: true
+          maxLength: 255
+        zip:
+          type: string
+          nullable: true
+          maxLength: 100
+        country:
+          enum:
+          - AF
+          - AX
+          - AL
+          - DZ
+          - AS
+          - AD
+          - AO
+          - AI
+          - AQ
+          - AG
+          - AR
+          - AM
+          - AW
+          - AU
+          - AT
+          - AZ
+          - BS
+          - BH
+          - BD
+          - BB
+          - BY
+          - BE
+          - BZ
+          - BJ
+          - BM
+          - BT
+          - BO
+          - BQ
+          - BA
+          - BW
+          - BV
+          - BR
+          - IO
+          - BN
+          - BG
+          - BF
+          - BI
+          - CV
+          - KH
+          - CM
+          - CA
+          - KY
+          - CF
+          - TD
+          - CL
+          - CN
+          - CX
+          - CC
+          - CO
+          - KM
+          - CG
+          - CD
+          - CK
+          - CR
+          - CI
+          - HR
+          - CU
+          - CW
+          - CY
+          - CZ
+          - DK
+          - DJ
+          - DM
+          - DO
+          - EC
+          - EG
+          - SV
+          - GQ
+          - ER
+          - EE
+          - SZ
+          - ET
+          - FK
+          - FO
+          - FJ
+          - FI
+          - FR
+          - GF
+          - PF
+          - TF
+          - GA
+          - GM
+          - GE
+          - DE
+          - GH
+          - GI
+          - GR
+          - GL
+          - GD
+          - GP
+          - GU
+          - GT
+          - GG
+          - GN
+          - GW
+          - GY
+          - HT
+          - HM
+          - VA
+          - HN
+          - HK
+          - HU
+          - IS
+          - IN
+          - ID
+          - IR
+          - IQ
+          - IE
+          - IM
+          - IL
+          - IT
+          - JM
+          - JP
+          - JE
+          - JO
+          - KZ
+          - KE
+          - KI
+          - KW
+          - KG
+          - LA
+          - LV
+          - LB
+          - LS
+          - LR
+          - LY
+          - LI
+          - LT
+          - LU
+          - MO
+          - MG
+          - MW
+          - MY
+          - MV
+          - ML
+          - MT
+          - MH
+          - MQ
+          - MR
+          - MU
+          - YT
+          - MX
+          - FM
+          - MD
+          - MC
+          - MN
+          - ME
+          - MS
+          - MA
+          - MZ
+          - MM
+          - NA
+          - NR
+          - NP
+          - NL
+          - NC
+          - NZ
+          - NI
+          - NE
+          - NG
+          - NU
+          - NF
+          - KP
+          - MK
+          - MP
+          - 'NO'
+          - OM
+          - PK
+          - PW
+          - PS
+          - PA
+          - PG
+          - PY
+          - PE
+          - PH
+          - PN
+          - PL
+          - PT
+          - PR
+          - QA
+          - RE
+          - RO
+          - RU
+          - RW
+          - BL
+          - SH
+          - KN
+          - LC
+          - MF
+          - PM
+          - VC
+          - WS
+          - SM
+          - ST
+          - SA
+          - SN
+          - RS
+          - SC
+          - SL
+          - SG
+          - SX
+          - SK
+          - SI
+          - SB
+          - SO
+          - ZA
+          - GS
+          - KR
+          - SS
+          - ES
+          - LK
+          - SD
+          - SR
+          - SJ
+          - SE
+          - CH
+          - SY
+          - TW
+          - TJ
+          - TZ
+          - TH
+          - TL
+          - TG
+          - TK
+          - TO
+          - TT
+          - TN
+          - TR
+          - TM
+          - TC
+          - TV
+          - UG
+          - UA
+          - AE
+          - GB
+          - UM
+          - US
+          - UY
+          - UZ
+          - VU
+          - VE
+          - VN
+          - VG
+          - VI
+          - WF
+          - EH
+          - YE
+          - ZM
+          - ZW
+          type: string
     TokenObtainPair:
       type: object
       properties:
@@ -1621,17 +2166,22 @@ components:
           type: string
           format: uuid
           readOnly: true
-        full_name:
+        first_name:
           type: string
           nullable: true
-          maxLength: 100
+          maxLength: 255
+        last_name:
+          type: string
+          nullable: true
+          maxLength: 255
         email:
           type: string
           format: email
           maxLength: 100
         phone_number:
           type: string
-          maxLength: 100
+          nullable: true
+          maxLength: 128
         delivery_company:
           type: string
           maxLength: 100
@@ -1668,6 +2218,7 @@ components:
             - quantity
           writeOnly: true
       required:
+      - email
       - delivery_company
       - tracking_code
       - items
@@ -1705,8 +2256,6 @@ components:
           type: string
           format: uuid
           readOnly: true
-      required:
-      - items
     CartItemCreation:
       type: object
       properties:
@@ -1750,7 +2299,7 @@ components:
         phone_number:
           type: string
           nullable: true
-          maxLength: 100
+          maxLength: 128
         email:
           type: string
           format: email
@@ -2063,20 +2612,6 @@ components:
       - email
       - description
       - estimated_value
-    CartItemUpdate:
-      type: object
-      properties:
-        uuid:
-          type: string
-          format: uuid
-          readOnly: true
-        quantity:
-          type: integer
-          maximum: 2147483647
-          minimum: 1
-          writeOnly: true
-      required:
-      - quantity
     Registration:
       type: object
       properties:
@@ -2117,4 +2652,311 @@ components:
       required:
       - uid
       - token
-
+    CartUpdate:
+      type: object
+      properties:
+        need_tax_deduction:
+          type: boolean
+        first_name:
+          type: string
+          nullable: true
+          maxLength: 255
+        last_name:
+          type: string
+          nullable: true
+          maxLength: 255
+        phone_number:
+          type: string
+          nullable: true
+          maxLength: 128
+        email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 100
+        address_line1:
+          type: string
+          nullable: true
+          maxLength: 255
+        address_line2:
+          type: string
+          nullable: true
+          maxLength: 255
+        city:
+          type: string
+          nullable: true
+          maxLength: 255
+        state_province_region:
+          type: string
+          nullable: true
+          maxLength: 255
+        zip:
+          type: string
+          nullable: true
+          maxLength: 100
+        country:
+          enum:
+          - AF
+          - AX
+          - AL
+          - DZ
+          - AS
+          - AD
+          - AO
+          - AI
+          - AQ
+          - AG
+          - AR
+          - AM
+          - AW
+          - AU
+          - AT
+          - AZ
+          - BS
+          - BH
+          - BD
+          - BB
+          - BY
+          - BE
+          - BZ
+          - BJ
+          - BM
+          - BT
+          - BO
+          - BQ
+          - BA
+          - BW
+          - BV
+          - BR
+          - IO
+          - BN
+          - BG
+          - BF
+          - BI
+          - CV
+          - KH
+          - CM
+          - CA
+          - KY
+          - CF
+          - TD
+          - CL
+          - CN
+          - CX
+          - CC
+          - CO
+          - KM
+          - CG
+          - CD
+          - CK
+          - CR
+          - CI
+          - HR
+          - CU
+          - CW
+          - CY
+          - CZ
+          - DK
+          - DJ
+          - DM
+          - DO
+          - EC
+          - EG
+          - SV
+          - GQ
+          - ER
+          - EE
+          - SZ
+          - ET
+          - FK
+          - FO
+          - FJ
+          - FI
+          - FR
+          - GF
+          - PF
+          - TF
+          - GA
+          - GM
+          - GE
+          - DE
+          - GH
+          - GI
+          - GR
+          - GL
+          - GD
+          - GP
+          - GU
+          - GT
+          - GG
+          - GN
+          - GW
+          - GY
+          - HT
+          - HM
+          - VA
+          - HN
+          - HK
+          - HU
+          - IS
+          - IN
+          - ID
+          - IR
+          - IQ
+          - IE
+          - IM
+          - IL
+          - IT
+          - JM
+          - JP
+          - JE
+          - JO
+          - KZ
+          - KE
+          - KI
+          - KW
+          - KG
+          - LA
+          - LV
+          - LB
+          - LS
+          - LR
+          - LY
+          - LI
+          - LT
+          - LU
+          - MO
+          - MG
+          - MW
+          - MY
+          - MV
+          - ML
+          - MT
+          - MH
+          - MQ
+          - MR
+          - MU
+          - YT
+          - MX
+          - FM
+          - MD
+          - MC
+          - MN
+          - ME
+          - MS
+          - MA
+          - MZ
+          - MM
+          - NA
+          - NR
+          - NP
+          - NL
+          - NC
+          - NZ
+          - NI
+          - NE
+          - NG
+          - NU
+          - NF
+          - KP
+          - MK
+          - MP
+          - 'NO'
+          - OM
+          - PK
+          - PW
+          - PS
+          - PA
+          - PG
+          - PY
+          - PE
+          - PH
+          - PN
+          - PL
+          - PT
+          - PR
+          - QA
+          - RE
+          - RO
+          - RU
+          - RW
+          - BL
+          - SH
+          - KN
+          - LC
+          - MF
+          - PM
+          - VC
+          - WS
+          - SM
+          - ST
+          - SA
+          - SN
+          - RS
+          - SC
+          - SL
+          - SG
+          - SX
+          - SK
+          - SI
+          - SB
+          - SO
+          - ZA
+          - GS
+          - KR
+          - SS
+          - ES
+          - LK
+          - SD
+          - SR
+          - SJ
+          - SE
+          - CH
+          - SY
+          - TW
+          - TJ
+          - TZ
+          - TH
+          - TL
+          - TG
+          - TK
+          - TO
+          - TT
+          - TN
+          - TR
+          - TM
+          - TC
+          - TV
+          - UG
+          - UA
+          - AE
+          - GB
+          - UM
+          - US
+          - UY
+          - UZ
+          - VU
+          - VE
+          - VN
+          - VG
+          - VI
+          - WF
+          - EH
+          - YE
+          - ZM
+          - ZW
+          type: string
+    CartItemUpdate:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        quantity:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          writeOnly: true
+      required:
+      - quantity
