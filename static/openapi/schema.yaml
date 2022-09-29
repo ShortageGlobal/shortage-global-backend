@@ -742,7 +742,27 @@ paths:
           description: ''
       tags:
       - Packages
-  /api/carts/:
+  /api/packages/payments/webhook/:
+    post:
+      operationId: createPackagePaymentsWebhookViewSet
+      description: 'Handle Stripe payment webhooks'
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: {}
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: ''
+      tags:
+      - api  /api/carts/:
     post:
       operationId: createCart
       description: Create or retrieve Cart object with related items
@@ -1621,22 +1641,29 @@ components:
           type: string
           format: uuid
           readOnly: true
-        full_name:
+        first_name:
           type: string
           nullable: true
-          maxLength: 100
+          maxLength: 255
+        last_name:
+          type: string
+          nullable: true
+          maxLength: 255
         email:
           type: string
           format: email
           maxLength: 100
         phone_number:
           type: string
-          maxLength: 100
+          nullable: true
+          maxLength: 128
         delivery_company:
           type: string
+          nullable: true
           maxLength: 100
         tracking_code:
           type: string
+          nullable: true
           maxLength: 100
         note:
           type: string
@@ -1644,6 +1671,8 @@ components:
         status:
           enum:
           - REGISTERED
+          - PAYMENT_FAILED
+          - PAID
           - CONFIRMED
           - DELIVERED
           type: string
@@ -1667,9 +1696,23 @@ components:
             - product
             - quantity
           writeOnly: true
+        type:
+          enum:
+          - SENT_BY_DONOR
+          - FUNDED_BY_DONOR
+          type: string
+        checkout_url:
+          type: string
+          nullable: true
+          format: uri
+          pattern: "^(?:[a-z0-9.+-]*)://(?:[^\\s:@/]+(?::[^\\s:@/]*)?@)?(?:(?:0|25[0-5]|2[0-4]\\\
+            d|1\\d?\\d?|[1-9]\\d?)(?:\\.(?:0|25[0-5]|2[0-4]\\d|1\\d?\\d?|[1-9]\\d?)){3}|\\\
+            [[0-9a-f:.]+\\]|([a-z\xA1-\uFFFF0-9](?:[a-z\xA1-\uFFFF0-9-]{0,61}[a-z\xA1\
+            -\uFFFF0-9])?(?:\\.(?!-)[a-z\xA1-\uFFFF0-9-]{1,63}(?<!-))*\\.(?!-)(?:[a-z\xA1\
+            -\uFFFF-]{2,63}|xn--[a-z0-9]{1,59})(?<!-)\\.?|localhost))(?::\\d{1,5})?(?:[/?#][^\\\
+            s]*)?\\z"
       required:
-      - delivery_company
-      - tracking_code
+      - email
       - items
     CartCreation:
       type: object

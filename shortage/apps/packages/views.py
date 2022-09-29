@@ -16,9 +16,13 @@ from .cart_serializers import (
     CartItemUpdateSerializer,
     CartItemCreationSerializer,
 )
-from shortage.apps.mailing.mail_service import PackageRegistrationEmail
+from shortage.apps.mailing.mail_service import (
+    PackagePaymentStatusUpdatedEmail,
+    PackageRegistrationEmail,
+)
 from rest_framework.response import Response
 import logging
+from django.db import transaction
 
 
 class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -172,6 +176,7 @@ class CorporateDonationsViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet
 class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
     permission_classes = [permissions.AllowAny]
 
+    @transaction.atomic
     def create(self, request, pk=None):
         event = deserialize_stripe_event(request.body)
         if event is None:
@@ -184,6 +189,10 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
             package.payment_succeeded()
 
             package.save()
+
+            email = PackagePaymentStatusUpdatedEmail(package.uuid, package.status)
+            email.to_managers()
+            email.send()
         elif event.type == "payment_intent.payment_failed":
             payment_intent = event.data.object
 
@@ -191,6 +200,10 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
             package.payment_failed()
 
             package.save()
+
+            email = PackagePaymentStatusUpdatedEmail(package.uuid, package.status)
+            email.to_managers()
+            email.send()
         else:
             logging.info("Unhandled Stripe event type %s", event.type)
 

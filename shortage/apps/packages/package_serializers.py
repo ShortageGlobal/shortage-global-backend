@@ -3,7 +3,7 @@ from rest_framework import serializers
 from shortage.apps.packages.payments import generate_package_checkout_url
 from shortage.helpers.serializers import AuthorizedUserOrNone
 from shortage.apps.catalog.models import Product
-from .models import Package, PackageItem, CorporateDonation, PackageType, PackageStatus
+from .models import Package, PackageItem, CorporateDonation, PackageType
 
 
 class PackageSerializer(serializers.ModelSerializer):

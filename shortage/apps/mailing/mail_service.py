@@ -66,6 +66,11 @@ class MailingBackend:
         self.to = self.to if self.to else []
         self.to.append({"name": name, "email": email})
 
+    def to_managers(self):
+        self.to = self.to if self.to else []
+        for manager in settings.MANAGERS:
+            self.to.append({"name": manager[0], "email": manager[1]})
+
     def add_bcc_recipient(self, email, name=""):
         self.bcc = self.bcc if self.bcc else []
         self.bcc.append({"name": name, "email": email})
@@ -139,6 +144,23 @@ class PackageRegistrationEmail(MailingBackend):
         )
 
         return {"url": url, "funded_by_donor": self.funded_by_donor}
+
+
+class PackagePaymentStatusUpdatedEmail(MailingBackend):
+    """
+    Email sent on package payment status updated
+    """
+
+    subject = "[Requires action] Package payment status is updated"
+    html_template = "emails/package_payment_status_updated.html"
+    text_template = "emails/package_payment_status_updated.txt"
+
+    def __init__(self, package_uuid, new_status):
+        self.package_uuid = package_uuid
+        self.new_status = new_status
+
+    def get_context(self):
+        return {"package_uuid": self.package_uuid, "new_status": self.new_status}
 
 
 class UserConfirmationEmail(MailingBackend):
