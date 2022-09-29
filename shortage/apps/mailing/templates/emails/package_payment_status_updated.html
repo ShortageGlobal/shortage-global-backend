@@ -88,7 +88,7 @@
                           font-family: Arial, sans-serif;
                         "
                       >
-                        Thank you for your donation
+                        A package status has been updated
                       </h1>
                       <p
                         style="
@@ -98,67 +98,8 @@
                           font-family: Arial, sans-serif;
                         "
                       >
-                        {% if package_type == 'FUNDED_BY_DONOR' %}
-                        We've registered a shortage goods package with your email address. Once you pay for it, we will buy the goods and deliver to those in need.
-                        {% else %}
-                        We've registered a shortage goods package with your email address. We will track it using the provided tracking number and see it delivered to those in need.
-                        {% endif %}
-                      </p>
-                      <p
-                        style="
-                          margin: 0 0 12px 0;
-                          font-size: 16px;
-                          line-height: 24px;
-                          font-family: Arial, sans-serif;
-                        "
-                      >
-                        We appreciate all the help.
-                      </p>
-                      <p
-                        style="
-                          margin: 0 0 12px 0;
-                          font-size: 16px;
-                          line-height: 24px;
-                          font-family: Arial, sans-serif;
-                        "
-                      >
-                        Track your package
-                        <a
-                          href="{{ url }}"
-                          style="color: #0085ff; text-decoration: underline"
-                          >here</a
-                        >.
-                      </p>
-                      <p
-                        style="
-                          margin: 0 0 0 0;
-                          font-size: 16px;
-                          line-height: 24px;
-                          font-family: Arial, sans-serif;
-                        "
-                      >
-                        -
-                      </p>
-                      <p
-                        style="
-                          margin: 0 0 0 0;
-                          font-size: 16px;
-                          line-height: 24px;
-                          font-family: Arial, sans-serif;
-                        "
-                      >
-                        Best Regards,
-                      </p>
-                      <p
-                        style="
-                          margin: 0 0 0 0;
-                          font-size: 16px;
-                          line-height: 24px;
-                          font-family: Arial, sans-serif;
-                        "
-                      >
-                        The Shortage Team
-                      </p>
+                        A status of the package {{ package_uuid }} has been updated to {{ new_status }}.
+                      </p>                    
                     </td>
                   </tr>
                 </table>

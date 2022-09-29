@@ -1,7 +1,15 @@
+import logging
+from django.db import transaction
 from rest_framework import generics, viewsets, mixins, permissions, exceptions
+from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 from shortage.apps.catalog.models import Organization
-from .models import Package, Cart, CartItem
+from shortage.apps.packages.payments import deserialize_stripe_event
+from shortage.apps.mailing.mail_service import (
+    PackagePaymentStatusUpdatedServiceEmail,
+    PackageRegistrationEmail,
+)
+from .models import Package, Cart, CartItem, PackageType
 from .package_serializers import (
     PackageSerializer,
     PackageCreationSerializer,
@@ -14,7 +22,6 @@ from .cart_serializers import (
     CartItemUpdateSerializer,
     CartItemCreationSerializer,
 )
-from shortage.apps.mailing.mail_service import PackageRegistrationEmail
 
 
 class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -60,7 +67,9 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
         if package.email:
             package_registration_email = PackageRegistrationEmail(
-                organization_slug=self.kwargs["org_slug"], package_uuid=package.uuid
+                organization_slug=self.kwargs["org_slug"],
+                package_uuid=package.uuid,
+                package_type=package.type,
             )
             package_registration_email.add_recipient(
                 email=package.email, name=package.full_name
@@ -161,3 +170,42 @@ class CorporateDonationsViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet
 
     permission_classes = [permissions.AllowAny]
     serializer_class = CorporateDonationSerializer
+
+
+class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.AllowAny]
+
+    @transaction.atomic
+    def create(self, request, pk=None):
+        event = deserialize_stripe_event(request.body)
+        if event is None:
+            raise exceptions.ParseError()
+
+        if event.type == "payment_intent.succeeded":
+            payment_intent = event.data.object
+
+            package = Package.objects.get(uuid=payment_intent.metadata.package_uuid)
+            package.payment_succeeded()
+
+            package.save()
+
+            email = PackagePaymentStatusUpdatedServiceEmail(
+                package.uuid, package.status
+            )
+            email.send()
+        elif event.type == "payment_intent.payment_failed":
+            payment_intent = event.data.object
+
+            package = Package.objects.get(uuid=payment_intent.metadata.package_uuid)
+            package.payment_failed()
+
+            package.save()
+
+            email = PackagePaymentStatusUpdatedServiceEmail(
+                package.uuid, package.status
+            )
+            email.send()
+        else:
+            logging.info("Unhandled Stripe event type %s", event.type)
+
+        return Response(status=200)

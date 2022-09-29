@@ -41,3 +41,10 @@ FRONTEND_BASE_URL = os.getenv("DJANGO_FRONTEND_BASE_URL", "http://localhost:3000
 
 EMAIL_HOST = os.getenv("DJANGO_EMAIL_HOST", "mailcatcher")
 EMAIL_PORT = os.getenv("DJANGO_EMAIL_PORT", "1025")
+SERVER_EMAIL = os.getenv("DJANGO_SERVER_EMAIL", "notifications@shortage.global")
+MANAGERS = [
+    ("", email)
+    for email in os.getenv(
+        "DJANGO_MANAGERS", "manager1@shortage.global,manager2@shortage.global"
+    ).split(",")
+]
