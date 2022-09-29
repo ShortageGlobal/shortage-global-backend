@@ -177,7 +177,9 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
 
     @transaction.atomic
     def create(self, request, pk=None):
-        event = deserialize_stripe_event(request.body)
+        event = deserialize_stripe_event(
+            request.body, request.META["HTTP_STRIPE_SIGNATURE"]
+        )
         if event is None:
             raise exceptions.ParseError()
 
