@@ -1,14 +1,14 @@
 import stripe
-import json
 import logging
 from django.conf import settings
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+endpoint_secret = settings.STRIPE_ENDPOINT_SECRET
 
 
-def deserialize_stripe_event(payload):
+def deserialize_stripe_event(payload, signature):
     try:
-        return stripe.Event.construct_from(json.loads(payload), stripe.api_key)
+        return stripe.Webhook.construct_event(payload, signature, endpoint_secret)
     except ValueError as e:
         # Invalid payload
         logging.error("Failed to construct Stripe event. Invalid payload %s", e)

@@ -257,3 +257,4 @@ SERVER_EMAIL = os.getenv("DJANGO_SERVER_EMAIL", "")
 MANAGERS = [("", email) for email in os.getenv("DJANGO_MANAGERS", "").split(",")]
 
 STRIPE_SECRET_KEY = os.getenv("DJANGO_STRIPE_SECRET_KEY", "")
+STRIPE_ENDPOINT_SECRET = os.getenv("DJANGO_STRIPE_ENDPOINT_SECRET", "")
