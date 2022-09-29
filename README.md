@@ -126,7 +126,14 @@ open [http://127.0.0.1:1080/](http://127.0.0.1:1080/).
 
 To configure `/api/packages/payments/webhook/` endpoint in the Stripe Dashboard, go to the [webhook settings](https://dashboard.stripe.com/webhooks).
 
-To test webhooks locally follow [the Stripe guide](https://stripe.com/docs/payments/handling-payment-events#use-cli). 
+To test webhooks locally follow [the Stripe guide](https://stripe.com/docs/payments/handling-payment-events#use-cli). Or try to install with the next 2 commands: 
+
+```
+brew install stripe/stripe-cli/stripe
+
+# Connect the CLI to your dashboard
+stripe login
+```
 
 Run locally (**not in Docker**): 
 ```
