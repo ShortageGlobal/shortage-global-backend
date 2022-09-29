@@ -128,7 +128,7 @@ To configure `/api/packages/payments/webhook/` endpoint in the Stripe Dashboard,
 
 To test webhooks locally follow [the Stripe guide](https://stripe.com/docs/payments/handling-payment-events#use-cli). 
 
-Forward to: 
+Run locally (**not in Docker**): 
 ```
 stripe listen --forward-to http://localhost:8080/api/packages/payments/webhook/
 ```
