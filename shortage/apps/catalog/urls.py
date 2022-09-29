@@ -12,8 +12,8 @@ from .views import (
     OnlineStoresViewSet,
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
-    PrivateProductsSlugExistsView,
 )
+from .private.views import PrivateProductsSlugExistsViewSet, PrivateProductsViewSet
 
 router = routers.DefaultRouter()
 
@@ -70,8 +70,13 @@ router.register(
     basename="product",
 )
 router.register(
+    r"private/organizations/(?P<org_slug>[^/.]+)/products",
+    PrivateProductsViewSet,
+    basename="private_products",
+)
+router.register(
     r"private/exists/organizations/(?P<org_slug>[^/.]+)/products",
-    PrivateProductsSlugExistsView,
+    PrivateProductsSlugExistsViewSet,
     basename="private_exists_products",
 )
 
