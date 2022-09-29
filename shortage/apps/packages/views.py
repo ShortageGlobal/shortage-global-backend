@@ -1,7 +1,9 @@
+import logging
 from rest_framework import generics, viewsets, mixins, permissions, exceptions
 from rest_framework.schemas.openapi import AutoSchema
 from shortage.apps.catalog.models import Organization
-from .models import Package, Cart, CartItem
+from shortage.apps.packages.payments import deserialize_stripe_event
+from .models import Package, Cart, CartItem, PackageType
 from .package_serializers import (
     PackageSerializer,
     PackageCreationSerializer,
@@ -15,6 +17,8 @@ from .cart_serializers import (
     CartItemCreationSerializer,
 )
 from shortage.apps.mailing.mail_service import PackageRegistrationEmail
+from rest_framework.response import Response
+import logging
 
 
 class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -62,7 +66,7 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
             package_registration_email = PackageRegistrationEmail(
                 organization_slug=self.kwargs["org_slug"],
                 package_uuid=package.uuid,
-                checkout_url=package.checkout_url,
+                funded_by_donor=package.type == PackageType.FUNDED_BY_DONOR,
             )
             package_registration_email.add_recipient(
                 email=package.email, name=package.full_name
@@ -163,3 +167,31 @@ class CorporateDonationsViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet
 
     permission_classes = [permissions.AllowAny]
     serializer_class = CorporateDonationSerializer
+
+
+class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.AllowAny]
+
+    def create(self, request, pk=None):
+        event = deserialize_stripe_event(request.body)
+        if event is None:
+            return Response(status=400)
+
+        if event.type == "payment_intent.succeeded":
+            payment_intent = event.data.object
+
+            package = Package.objects.get(uuid=payment_intent.metadata.package_uuid)
+            package.payment_succeeded()
+
+            package.save()
+        elif event.type == "payment_intent.payment_failed":
+            payment_intent = event.data.object
+
+            package = Package.objects.get(uuid=payment_intent.metadata.package_uuid)
+            package.payment_failed()
+
+            package.save()
+        else:
+            logging.info("Unhandled Stripe event type %s", event.type)
+
+        return Response(status=200)

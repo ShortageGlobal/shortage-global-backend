@@ -98,12 +98,8 @@
                           font-family: Arial, sans-serif;
                         "
                       >
-                        {% if checkout_url %}
+                        {% if funded_by_donor %}
                         We've registered a shortage goods package with your email address. Once you pay for it, we will buy the goods and deliver to those in need.
-                        Pay <a
-                          href="{{ checkout_url }}"
-                          style="color: #0085ff; text-decoration: underline"
-                          >here</a>. Please, ignore if you have already paid. 
                         {% else %}
                         We've registered a shortage goods package with your email address. We will track it using the provided tracking number and see it delivered to those in need.
                         {% endif %}

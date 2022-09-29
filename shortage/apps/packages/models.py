@@ -15,20 +15,15 @@ from django.core.validators import URLValidator
 
 class PackageStatus(models.TextChoices):
     REGISTERED = settings.PACKAGE_STATUS["REGISTERED"], "Registered"
-    UNPAID = settings.PACKAGE_STATUS["UNPAID"], "Unpaid"
     PAYMENT_FAILED = settings.PACKAGE_STATUS["PAYMENT_FAILED"], "Payment failed"
-    PAYMENT_CANCELLED = (
-        settings.PACKAGE_STATUS["PAYMENT_CANCELLED"],
-        "Payment cancelled",
-    )
     PAID = settings.PACKAGE_STATUS["PAID"], "Paid"
     CONFIRMED = settings.PACKAGE_STATUS["CONFIRMED"], "Confirmed"
     DELIVERED = settings.PACKAGE_STATUS["DELIVERED"], "Delivered"
 
 
 class PackageType(models.TextChoices):
-    SELF_DONATION = settings.PACKAGE_TYPE["SELF_DONATION"], "Self-donation"
-    FUNDING_DONATION = settings.PACKAGE_TYPE["FUNDING_DONATION"], "Funding donation"
+    SENT_BY_DONOR = settings.PACKAGE_TYPE["SENT_BY_DONOR"], "Sent by donor"
+    FUNDED_BY_DONOR = settings.PACKAGE_TYPE["FUNDED_BY_DONOR"], "Funded by donor"
 
 
 class Package(models.Model):
@@ -62,6 +57,7 @@ class Package(models.Model):
     tracking_code = models.CharField(max_length=100, null=True, blank=True)
 
     # payment details, only relevant for donations funded by donor
+    # valid for 24 hours
     checkout_url = models.TextField(null=True, blank=True, validators=[URLValidator()])
 
     # package details
@@ -69,7 +65,7 @@ class Package(models.Model):
     type = models.CharField(
         max_length=32,
         choices=PackageType.choices,
-        default=PackageType.SELF_DONATION,
+        default=PackageType.SENT_BY_DONOR,
     )
     status = models.CharField(
         max_length=32,
@@ -96,13 +92,12 @@ class Package(models.Model):
     def full_name(self):
         return get_full_name(first_name=self.first_name, last_name=self.last_name)
 
-    @property
-    def total_price(self):
-        sum = 0
-        for item in self.items.all():
-            sum += item.product.price
+    def payment_succeeded(self):
+        self.status = PackageStatus.PAID
+        self.checkout_url = None
 
-        return sum
+    def payment_failed(self):
+        self.status = PackageStatus.PAYMENT_FAILED
 
 
 class PackageItem(models.Model):

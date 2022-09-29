@@ -1,7 +1,17 @@
 from django.conf import settings
 import stripe
+import json
+import logging
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+
+def deserialize_stripe_event(payload):
+    try:
+        return stripe.Event.construct_from(json.loads(payload), stripe.api_key)
+    except ValueError as e:
+        logging.error("Failed to construct Stripe even from payload: %s", e)
+        return None
 
 
 def generate_package_checkout_url(
@@ -28,8 +38,11 @@ def generate_package_checkout_url(
             }
         ],
         mode="payment",
-        success_url=package_status_url + "?payment_status=succeed",
+        success_url=package_status_url + "?payment_status=succeeded",
         cancel_url=package_status_url + "?payment_status=cancelled",
+        metadata={
+            "package_uuid": package_uuid,
+        },
     )
 
     return session.url

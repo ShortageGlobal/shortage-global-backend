@@ -121,3 +121,28 @@ Make sure you don't overwrite the file located in /static/openapi/ folder but ma
 
 [MailCatcher](https://mailcatcher.me/) is used locally to catch emails sent through SMTP. To access the UI of the catcher, 
 open [http://127.0.0.1:1080/](http://127.0.0.1:1080/).
+
+## Stripe 
+
+To configure `/api/packages/payments/webhook/` endpoint in the Stripe Dashboard, go to the [webhook settings](https://dashboard.stripe.com/webhooks).
+
+To test webhooks locally follow [the Stripe guide](https://stripe.com/docs/payments/handling-payment-events#use-cli). 
+
+Forward to: 
+```
+stripe listen --forward-to http://localhost:8080/api/packages/payments/webhook/
+```
+
+After forward you can test successful payment with: 
+
+```
+stripe trigger payment_intent.succeeded --add "payment_intent:metadata[package_uuid]=09d1a548-786d-4083-a849-1916a5af14d0"
+```
+
+Or failed payment: 
+
+```
+stripe trigger payment_intent.payment_failed --add "payment_intent:metadata[package_uuid]=09d1a548-786d-4083-a849-1916a5af14d0"
+```
+
+The list of [Stripe test cards](https://stripe.com/docs/testing).

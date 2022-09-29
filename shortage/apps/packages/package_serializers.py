@@ -95,16 +95,19 @@ class PackageCreationSerializer(serializers.ModelSerializer):
         ]
         PackageItem.objects.bulk_create(items)
 
-        if package.type == PackageType.FUNDING_DONATION:
+        if package.type == PackageType.FUNDED_BY_DONOR:
             organization = self.context["view"].organization
             organization_slug = organization.slug
 
-            package.status = PackageStatus.UNPAID
+            total_price = 0
+            for item in items:
+                total_price += item.product.price
+
             package.checkout_url = generate_package_checkout_url(
                 organization_slug,
                 package.uuid,
                 "Donation for %s" % organization.name,
-                package.total_price,
+                total_price,
                 package.email,
             )
             package.save()
