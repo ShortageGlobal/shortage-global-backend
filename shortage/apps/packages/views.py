@@ -190,7 +190,9 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
 
             package.save()
 
-            email = PackagePaymentStatusUpdatedServiceEmail(package.uuid, package.status)
+            email = PackagePaymentStatusUpdatedServiceEmail(
+                package.uuid, package.status
+            )
             email.send()
         elif event.type == "payment_intent.payment_failed":
             payment_intent = event.data.object
@@ -200,7 +202,9 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
 
             package.save()
 
-            email = PackagePaymentStatusUpdatedServiceEmail(package.uuid, package.status)
+            email = PackagePaymentStatusUpdatedServiceEmail(
+                package.uuid, package.status
+            )
             email.send()
         else:
             logging.info("Unhandled Stripe event type %s", event.type)

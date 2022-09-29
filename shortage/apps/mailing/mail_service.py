@@ -5,6 +5,7 @@ from django.core.mail import EmailMultiAlternatives, mail_managers
 from email.headerregistry import Address
 from shortage.helpers import get_full_name
 
+
 class MailingBackend:
     """
     Generic class for Mailing Backend using SendPulse
@@ -77,11 +78,18 @@ class MailingBackend:
         """
 
         result = None
-        if self.service_email:         
-            result = mail_managers(subject=self.get_subject(), message=self.get_text(), html_message=self.get_html(), fail_silently=True)
-        else: 
+        if self.service_email:
+            result = mail_managers(
+                subject=self.get_subject(),
+                message=self.get_text(),
+                html_message=self.get_html(),
+                fail_silently=True,
+            )
+        else:
             recipients = self.get_to()
-            assert recipients, "Add at least one recipient using `add_recipient` method."        
+            assert (
+                recipients
+            ), "Add at least one recipient using `add_recipient` method."
 
             message = EmailMultiAlternatives(
                 subject=self.get_subject(),
