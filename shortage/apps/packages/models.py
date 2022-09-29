@@ -17,14 +17,19 @@ class PackageStatus(models.TextChoices):
     REGISTERED = settings.PACKAGE_STATUS["REGISTERED"], "Registered"
     UNPAID = settings.PACKAGE_STATUS["UNPAID"], "Unpaid"
     PAYMENT_FAILED = settings.PACKAGE_STATUS["PAYMENT_FAILED"], "Payment failed"
-    PAYMENT_CANCELLED = settings.PACKAGE_STATUS["PAYMENT_CANCELLED"], "Payment cancelled"    
+    PAYMENT_CANCELLED = (
+        settings.PACKAGE_STATUS["PAYMENT_CANCELLED"],
+        "Payment cancelled",
+    )
     PAID = settings.PACKAGE_STATUS["PAID"], "Paid"
     CONFIRMED = settings.PACKAGE_STATUS["CONFIRMED"], "Confirmed"
     DELIVERED = settings.PACKAGE_STATUS["DELIVERED"], "Delivered"
-    
+
+
 class PackageType(models.TextChoices):
     SELF_DONATION = settings.PACKAGE_TYPE["SELF_DONATION"], "Self-donation"
     FUNDING_DONATION = settings.PACKAGE_TYPE["FUNDING_DONATION"], "Funding donation"
+
 
 class Package(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -61,9 +66,9 @@ class Package(models.Model):
 
     # package details
     note = models.TextField(null=True, blank=True)
-    type = models.CharField(        
-        max_length=32,        
-        choices=PackageType.choices,            
+    type = models.CharField(
+        max_length=32,
+        choices=PackageType.choices,
         default=PackageType.SELF_DONATION,
     )
     status = models.CharField(
@@ -92,12 +97,13 @@ class Package(models.Model):
         return get_full_name(first_name=self.first_name, last_name=self.last_name)
 
     @property
-    def total_price(self):         
-        sum = 0 
-        for item in self.items.all(): 
+    def total_price(self):
+        sum = 0
+        for item in self.items.all():
             sum += item.product.price
 
         return sum
+
 
 class PackageItem(models.Model):
     package = models.ForeignKey(Package, related_name="items", on_delete=models.CASCADE)

@@ -137,7 +137,7 @@ class PackageRegistrationEmail(MailingBackend):
             self.organization_slug,
             self.package_uuid,
         )
-        
+
         return {"url": url, "checkout_url": self.checkout_url}
 
 

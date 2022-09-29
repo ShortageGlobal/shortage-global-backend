@@ -5,6 +5,7 @@ from shortage.helpers.serializers import AuthorizedUserOrNone
 from shortage.apps.catalog.models import Product
 from .models import Package, PackageItem, CorporateDonation, PackageType, PackageStatus
 
+
 class PackageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Package
@@ -61,7 +62,7 @@ class PackageCreationSerializer(serializers.ModelSerializer):
             "owner",
             "items",
             "type",
-            "checkout_url"
+            "checkout_url",
         ]
         read_only_fields = ["status"]
 
@@ -81,7 +82,7 @@ class PackageCreationSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
 
     @transaction.atomic
-    def create(self, validated_data):        
+    def create(self, validated_data):
         validated_items_data = validated_data.pop("items")
 
         # create package
@@ -93,21 +94,21 @@ class PackageCreationSerializer(serializers.ModelSerializer):
             for validated_item_data in validated_items_data
         ]
         PackageItem.objects.bulk_create(items)
-                 
+
         if package.type == PackageType.FUNDING_DONATION:
             organization = self.context["view"].organization
             organization_slug = organization.slug
-            
+
             package.status = PackageStatus.UNPAID
             package.checkout_url = generate_package_checkout_url(
-                organization_slug, 
-                package.uuid, 
-                'Donation for %s' % organization.name, 
+                organization_slug,
+                package.uuid,
+                "Donation for %s" % organization.name,
                 package.total_price,
-                package.email
-            )     
+                package.email,
+            )
             package.save()
-        
+
         return package
 
 

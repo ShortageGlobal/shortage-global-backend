@@ -16,7 +16,7 @@ class PackageAdmin(admin.ModelAdmin):
         "tracking_code",
         "status",
         "photo_preview",
-        "created_at",        
+        "created_at",
     ]
     fields = [
         "type",

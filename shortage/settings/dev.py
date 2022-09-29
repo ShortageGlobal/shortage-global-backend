@@ -42,4 +42,7 @@ FRONTEND_BASE_URL = os.getenv("DJANGO_FRONTEND_BASE_URL", "http://localhost:3000
 EMAIL_HOST = os.getenv("DJANGO_EMAIL_HOST", "mailcatcher")
 EMAIL_PORT = os.getenv("DJANGO_EMAIL_PORT", "1025")
 
-STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "sk_test_51LmrETBjVvsej0sHFVBdaPWH7XwuQO8hJwiwdmaenylt6Gs4Z32aYUSzYfQnDG9Rqlch9elJAUeCAisZSkGisAtX006SlZm91z")
+STRIPE_SECRET_KEY = os.getenv(
+    "STRIPE_SECRET_KEY",
+    "sk_test_51LmrETBjVvsej0sHFVBdaPWH7XwuQO8hJwiwdmaenylt6Gs4Z32aYUSzYfQnDG9Rqlch9elJAUeCAisZSkGisAtX006SlZm91z",
+)
