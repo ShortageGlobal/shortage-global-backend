@@ -6,7 +6,7 @@ from rest_framework.utils import json
 from shortage.apps.catalog.models import Organization, Product
 from shortage.apps.catalog.private.views import (
     PrivateProductsViewSet,
-    PrivateProductsSlugExistsView,
+    PrivateProductsSlugExistsViewSet,
 )
 
 
@@ -237,7 +237,7 @@ class PrivateProductsSlugCheckerTests(APITestCase):
     def test_auth(self):
         # Start slug checker tests
         request = self.requestFactory.get(self.get_request_route())
-        response = PrivateProductsSlugExistsView.as_view({"get": "retrieve"})(
+        response = PrivateProductsSlugExistsViewSet.as_view({"get": "retrieve"})(
             request, org_slug=self.organization.slug, slug=self.product.slug
         )
 
@@ -246,7 +246,7 @@ class PrivateProductsSlugCheckerTests(APITestCase):
     def test_positive_case(self):
         request = self.requestFactory.get(self.get_request_route())
         force_authenticate(request, user=self.user)
-        response = PrivateProductsSlugExistsView.as_view({"get": "retrieve"})(
+        response = PrivateProductsSlugExistsViewSet.as_view({"get": "retrieve"})(
             request, org_slug=self.organization.slug, slug=self.product.slug
         )
 
@@ -259,7 +259,7 @@ class PrivateProductsSlugCheckerTests(APITestCase):
             )
         )
         force_authenticate(request, user=self.user)
-        response = PrivateProductsSlugExistsView.as_view({"get": "retrieve"})(
+        response = PrivateProductsSlugExistsViewSet.as_view({"get": "retrieve"})(
             request, org_slug=self.organization.slug, slug="wrong_slug"
         )
 
@@ -270,7 +270,7 @@ class PrivateProductsSlugCheckerTests(APITestCase):
 
         request = self.requestFactory.get(self.get_request_route())
         force_authenticate(request, user=wrong_user)
-        response = PrivateProductsSlugExistsView.as_view({"get": "retrieve"})(
+        response = PrivateProductsSlugExistsViewSet.as_view({"get": "retrieve"})(
             request, org_slug=self.organization.slug, slug=self.product.slug
         )
 
