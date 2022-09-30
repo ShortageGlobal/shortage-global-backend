@@ -3,6 +3,7 @@ from rest_framework import routers
 
 from .private.views import PrivateOrganizationPackagesViewSet
 from .views import (
+    PackagePaymentsWebhookViewSet,
     PackageViewSet,
     PackageCreationViewSet,
     CartViewSet,
@@ -28,6 +29,12 @@ router.register(
     PrivateOrganizationPackagesViewSet,
     basename="private_organization_packages",
 )
+router.register(
+    r"packages/payments/webhook",
+    PackagePaymentsWebhookViewSet,
+    basename="package_payments_webhook",
+)
+
 # Cart
 router.register(
     r"carts",

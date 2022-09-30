@@ -7,6 +7,7 @@ class PackageAdmin(admin.ModelAdmin):
     list_display = [
         "status",
         "owner",
+        "type",
         "full_name",
         "need_tax_deduction",
         "email",
@@ -18,6 +19,7 @@ class PackageAdmin(admin.ModelAdmin):
         "created_at",
     ]
     fields = [
+        "type",
         "owner",
         "need_tax_deduction",
         "first_name",
@@ -36,8 +38,10 @@ class PackageAdmin(admin.ModelAdmin):
         "created_at",
         "note",
         "status",
+        "checkout_url",
     ]
     readonly_fields = [
+        "type",
         "owner",
         "need_tax_deduction",
         "first_name",
@@ -55,6 +59,7 @@ class PackageAdmin(admin.ModelAdmin):
         "photo_preview",
         "created_at",
         "note",
+        "checkout_url",
     ]
     search_fields = [
         "email",

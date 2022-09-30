@@ -978,6 +978,27 @@ paths:
           description: ''
       tags:
       - Packages
+  /api/packages/payments/webhook/:
+    post:
+      operationId: createPackagePaymentsWebhookViewSet
+      description: 'Handle Stripe payment webhooks'
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: {}
+          application/x-www-form-urlencoded:
+            schema: {}
+          multipart/form-data:
+            schema: {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: ''
+      tags:
+      - api  
   /api/carts/:
     post:
       operationId: createCartCreation
@@ -2184,9 +2205,11 @@ components:
           maxLength: 128
         delivery_company:
           type: string
+          nullable: true
           maxLength: 100
         tracking_code:
           type: string
+          nullable: true
           maxLength: 100
         note:
           type: string
@@ -2194,6 +2217,8 @@ components:
         status:
           enum:
           - REGISTERED
+          - PAYMENT_FAILED
+          - PAID
           - CONFIRMED
           - DELIVERED
           type: string
@@ -2217,10 +2242,23 @@ components:
             - product
             - quantity
           writeOnly: true
+        type:
+          enum:
+          - SENT_BY_DONOR
+          - FUNDED_BY_DONOR
+          type: string
+        checkout_url:
+          type: string
+          nullable: true
+          format: uri
+          pattern: "^(?:[a-z0-9.+-]*)://(?:[^\\s:@/]+(?::[^\\s:@/]*)?@)?(?:(?:0|25[0-5]|2[0-4]\\\
+            d|1\\d?\\d?|[1-9]\\d?)(?:\\.(?:0|25[0-5]|2[0-4]\\d|1\\d?\\d?|[1-9]\\d?)){3}|\\\
+            [[0-9a-f:.]+\\]|([a-z\xA1-\uFFFF0-9](?:[a-z\xA1-\uFFFF0-9-]{0,61}[a-z\xA1\
+            -\uFFFF0-9])?(?:\\.(?!-)[a-z\xA1-\uFFFF0-9-]{1,63}(?<!-))*\\.(?!-)(?:[a-z\xA1\
+            -\uFFFF-]{2,63}|xn--[a-z0-9]{1,59})(?<!-)\\.?|localhost))(?::\\d{1,5})?(?:[/?#][^\\\
+            s]*)?\\z"
       required:
       - email
-      - delivery_company
-      - tracking_code
       - items
     CartCreation:
       type: object
