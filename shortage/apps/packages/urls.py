@@ -1,6 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 from .views import (
+    PackagePaymentsWebhookViewSet,
     PackageViewSet,
     PackageCreationViewSet,
     CartViewSet,
@@ -20,6 +21,12 @@ router.register(
     r"organizations/(?P<org_slug>[^/.]+)/packages",
     PackageCreationViewSet,
     basename="organization_package",
+)
+
+router.register(
+    r"packages/payments/webhook",
+    PackagePaymentsWebhookViewSet,
+    basename="package_payments_webhook",
 )
 
 # Cart

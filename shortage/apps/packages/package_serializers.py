@@ -2,7 +2,8 @@ from django.db import transaction
 from rest_framework import serializers
 from shortage.helpers.serializers import AuthorizedUserOrNone
 from shortage.apps.catalog.models import Product
-from .models import Package, PackageItem, CorporateDonation
+from .models import Package, PackageItem, CorporateDonation, PackageType
+from .payments import generate_package_checkout_url
 
 
 class PackageSerializer(serializers.ModelSerializer):
@@ -60,6 +61,8 @@ class PackageCreationSerializer(serializers.ModelSerializer):
             "photo",
             "owner",
             "items",
+            "type",
+            "checkout_url",
         ]
         read_only_fields = ["status"]
 
@@ -91,6 +94,23 @@ class PackageCreationSerializer(serializers.ModelSerializer):
             for validated_item_data in validated_items_data
         ]
         PackageItem.objects.bulk_create(items)
+
+        if package.type == PackageType.FUNDED_BY_DONOR:
+            organization = self.context["view"].organization
+            organization_slug = organization.slug
+
+            total_price = 0
+            for item in items:
+                total_price += item.product.price
+
+            package.checkout_url = generate_package_checkout_url(
+                organization_slug,
+                package.uuid,
+                "Donation for %s" % organization.name,
+                total_price,
+                package.email,
+            )
+            package.save()
 
         return package
 

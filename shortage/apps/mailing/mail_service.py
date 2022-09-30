@@ -1,7 +1,7 @@
 import logging
 from django.conf import settings
 from django.template.loader import render_to_string
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, mail_managers
 from email.headerregistry import Address
 from shortage.helpers import get_full_name
 
@@ -19,6 +19,8 @@ class MailingBackend:
     text_template = None
     to = None
     bcc = None
+
+    service_email = False
 
     frontend_base_url = settings.FRONTEND_BASE_URL
 
@@ -75,24 +77,34 @@ class MailingBackend:
         Send email using SMTP
         """
 
-        recipients = self.get_to()
-        assert recipients, "Add at least one recipient using `add_recipient` method."
+        result = None
+        if self.service_email:
+            result = mail_managers(
+                subject=self.get_subject(),
+                message=self.get_text(),
+                html_message=self.get_html(),
+                fail_silently=True,
+            )
+        else:
+            recipients = self.get_to()
+            assert (
+                recipients
+            ), "Add at least one recipient using `add_recipient` method."
 
-        subject = self.get_subject()
-        message = EmailMultiAlternatives(
-            subject=subject,
-            body=self.get_text(),
-            from_email=self.get_from(),
-            to=recipients,
-            bcc=self.get_bcc(),
-        )
-        message.attach_alternative(self.get_html(), "text/html")
-        result = message.send(fail_silently=True)
+            message = EmailMultiAlternatives(
+                subject=self.get_subject(),
+                body=self.get_text(),
+                from_email=self.get_from(),
+                to=recipients,
+                bcc=self.get_bcc(),
+            )
+            message.attach_alternative(self.get_html(), "text/html")
+            result = message.send(fail_silently=True)
 
         if result == 0:
             logging.error(
                 'Failed to send email "{0}" to {1}'.format(
-                    subject, ",".join(recipients)
+                    self.get_subject(), ",".join(recipients)
                 )
             )
             return False
@@ -126,9 +138,10 @@ class PackageRegistrationEmail(MailingBackend):
     html_template = "emails/package_registration.html"
     text_template = "emails/package_registration.txt"
 
-    def __init__(self, organization_slug, package_uuid):
+    def __init__(self, organization_slug, package_uuid, package_type):
         self.organization_slug = organization_slug
         self.package_uuid = package_uuid
+        self.package_type = package_type
 
     def get_context(self):
         url = "%s/organizations/%s/packages/%s" % (
@@ -136,7 +149,27 @@ class PackageRegistrationEmail(MailingBackend):
             self.organization_slug,
             self.package_uuid,
         )
-        return {"url": url}
+
+        return {"url": url, "package_type": self.package_type}
+
+
+class PackagePaymentStatusUpdatedServiceEmail(MailingBackend):
+    """
+    Email sent on package payment status updated
+    """
+
+    subject = "[Requires action] Package payment status is updated"
+    html_template = "emails/package_payment_status_updated.html"
+    text_template = "emails/package_payment_status_updated.txt"
+
+    service_email = True
+
+    def __init__(self, package_uuid, new_status):
+        self.package_uuid = package_uuid
+        self.new_status = new_status
+
+    def get_context(self):
+        return {"package_uuid": self.package_uuid, "new_status": self.new_status}
 
 
 class UserConfirmationEmail(MailingBackend):

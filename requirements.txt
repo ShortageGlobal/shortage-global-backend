@@ -32,6 +32,7 @@ pytz==2022.1
 s3transfer==0.6.0
 shortuuid==1.0.9
 six==1.16.0
+stripe==4.1.0
 sqlparse==0.4.2
 tomli==2.0.1
 typing_extensions==4.3.0
