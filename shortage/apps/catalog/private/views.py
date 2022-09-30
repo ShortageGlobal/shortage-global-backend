@@ -1,10 +1,11 @@
-from rest_framework import viewsets, mixins, filters, permissions, status
+from rest_framework import viewsets, permissions, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 from rest_framework import exceptions
 from shortage.apps.catalog.models import Product, Organization
 from shortage.apps.catalog.private.serializers import PrivateProductSerializer
+from shortage.helpers.permissions import IsObjectOwner
 
 
 class PrivateProductsViewSet(viewsets.ModelViewSet):
@@ -13,7 +14,7 @@ class PrivateProductsViewSet(viewsets.ModelViewSet):
         tags=["Private", "Products"],
     )
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsObjectOwner]
     serializer_class = PrivateProductSerializer
     lookup_field = "slug"
 
@@ -40,17 +41,10 @@ class PrivateProductsViewSet(viewsets.ModelViewSet):
 
         return super().create(request, *args, **kwargs)
 
-    def destroy(self, request, *args, **kwargs):
+    def perform_destroy(self, instance):
         # Do a soft delete
-        self.organization = get_object_or_404(
-            Organization.objects.public(), slug=self.kwargs["org_slug"]
-        )
-
-        product = self.get_object()
-        product.is_deleted = True
-        product.save()
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        instance.is_deleted = True
+        instance.save()
 
 
 class PrivateProductsSlugExistsViewSet(viewsets.ViewSet):
@@ -62,7 +56,7 @@ class PrivateProductsSlugExistsViewSet(viewsets.ViewSet):
         tags=["Private", "Products"],
     )
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsObjectOwner]
     lookup_field = "slug"
 
     def retrieve(self, request, org_slug, slug):

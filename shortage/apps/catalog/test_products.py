@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from django.db.models import Count
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.utils import json
 
@@ -40,6 +39,44 @@ class PrivateProductsTestCase(APITestCase):
 
     def get_request_route(self):
         return "/api/private/organizations/{}/products".format(self.organization.slug)
+
+    def test_permissions(self):
+        test_data = {
+            "name": "Test Product",
+            "slug": "tprod",
+            "category": "VITAL_GOODS",
+            "price": 999,
+            "requested_amount": 20,
+            "top_priority": False,
+            "position": 1,
+        }
+        request = self.requestFactory.post(
+            self.get_request_route(), data=test_data, format="json"
+        )
+        response = PrivateProductsViewSet.as_view({"post": "create"})(
+            request, org_slug=self.organization.slug
+        )
+
+        self.assertEqual(response.status_code, 401)
+
+        force_authenticate(request, user=self.user)
+        response = PrivateProductsViewSet.as_view({"post": "create"})(
+            request, org_slug=self.organization.slug
+        )
+
+        self.assertEqual(response.status_code, 201)
+
+        # Access from a different user
+        request = self.requestFactory.get(self.get_request_route(), format="json")
+
+        other_user = User.objects.create_user(username="other_user", password="12345")
+        force_authenticate(request, user=other_user)
+
+        response = PrivateProductsViewSet.as_view({"get": "list"})(
+            request, org_slug=self.organization.slug
+        )
+
+        self.assertEqual(response.status_code, 403)
 
     def test_create(self):
         test_data = {
@@ -88,6 +125,7 @@ class PrivateProductsTestCase(APITestCase):
 
         content = json.loads(response.render().content)
 
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(content["count"], 1)
         self.assertEqual(content["results"][0]["slug"], product1.slug)
 
@@ -109,6 +147,7 @@ class PrivateProductsTestCase(APITestCase):
 
         content = json.loads(response.render().content)
 
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(content["count"], 2)
         self.assertEqual(content["results"][0]["slug"], product1.slug)
         self.assertEqual(content["results"][1]["slug"], product2.slug)
@@ -140,6 +179,7 @@ class PrivateProductsTestCase(APITestCase):
 
         content = json.loads(response.render().content)
 
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(content["slug"], product.slug)
 
     def test_update(self):
@@ -170,6 +210,7 @@ class PrivateProductsTestCase(APITestCase):
 
         content = json.loads(response.render().content)
 
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(content["name"], "new_name")
 
     def test_delete(self):
@@ -274,8 +315,4 @@ class PrivateProductsSlugCheckerTests(APITestCase):
             request, org_slug=self.organization.slug, slug=self.product.slug
         )
 
-        self.assertEqual(
-            response.status_code,
-            200,
-            "Slug check takes user into account but shouldn't",
-        )
+        self.assertEqual(response.status_code, 403)
