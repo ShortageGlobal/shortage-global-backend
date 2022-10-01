@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from shortage.helpers.serializers import AuthorizedUserOrNone
 from shortage.apps.catalog.models import Product
-from .models import Package, PackageItem, CorporateDonation, PackageType
+from .models import Package, PackageItem, CorporateDonation, PackageType, PackageStatus
 from .payments import generate_package_checkout_url
 
 
@@ -91,6 +91,13 @@ class PackageCreationSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         validated_items_data = validated_data.pop("items")
+
+        # If package is sent instead of paid for, we instantly register it
+        # Instead we only register it on successful payment
+        if validated_items_data["type"] == PackageType.SENT_BY_DONOR:
+            validated_items_data["status"] = PackageStatus.REGISTERED
+        elif validated_items_data["type"] == PackageType.FUNDED_BY_DONOR:
+            validated_items_data["status"] = PackageStatus.PAYMENT_PENDING
 
         # create package
         package = Package.objects.create(**validated_data)

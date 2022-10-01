@@ -13,7 +13,9 @@ from shortage.helpers import get_full_name
 
 
 class PackageStatus(models.TextChoices):
+    CREATED = settings.PACKAGE_STATUS["CREATED"], "Created"
     REGISTERED = settings.PACKAGE_STATUS["REGISTERED"], "Registered"
+    PAYMENT_PENDING = settings.PACKAGE_STATUS["PAYMENT_PENDING"], "Payment pending"
     PAYMENT_FAILED = settings.PACKAGE_STATUS["PAYMENT_FAILED"], "Payment failed"
     PAID = settings.PACKAGE_STATUS["PAID"], "Paid"
     CONFIRMED = settings.PACKAGE_STATUS["CONFIRMED"], "Confirmed"
@@ -69,7 +71,7 @@ class Package(models.Model):
     status = models.CharField(
         max_length=32,
         choices=PackageStatus.choices,
-        default=PackageStatus.REGISTERED,
+        default=PackageStatus.CREATED,
     )
     photo = ImageField(
         upload_to=get_package_path,

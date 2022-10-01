@@ -9,7 +9,7 @@ from shortage.apps.mailing.mail_service import (
     PackagePaymentStatusUpdatedServiceEmail,
     PackageRegistrationEmail,
 )
-from .models import Package, Cart, CartItem, PackageType
+from .models import Package, Cart, CartItem, PackageStatus
 from .package_serializers import (
     PackageSerializer,
     PackageCreationSerializer,
@@ -22,6 +22,31 @@ from .cart_serializers import (
     CartItemUpdateSerializer,
     CartItemCreationSerializer,
 )
+
+
+def send_email_on_package_status_change(package, organization=None):
+    if not package.email:
+        return
+
+    if package.status == PackageStatus.REGISTERED:
+        package_registration_email = PackageRegistrationEmail(
+            organization_slug=organization["org_slug"],
+            package_uuid=package.uuid,
+            package_type=package.type,
+        )
+        package_registration_email.add_recipient(
+            email=package.email, name=package.full_name
+        )
+        package_registration_email.send()
+    elif package.status == PackageStatus.PAID or package.status == PackageStatus.PAYMENT_FAILED:
+        email = PackagePaymentStatusUpdatedServiceEmail(package.uuid, package.status)
+        email.send()
+    elif package.status == PackageStatus.CONFIRMED:
+        # Todo: Sent email
+        pass
+    elif package.status == PackageStatus.DELIVERED:
+        # Todo: Send email
+        pass
 
 
 class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -53,6 +78,10 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     permission_classes = [permissions.AllowAny]
     serializer_class = PackageCreationSerializer
 
+    def __init__(self, **kwargs):
+        super().__init__(kwargs)
+        self.organization = None
+
     def create(self, request, *args, **kwargs):
         # check organization and store it into view,
         # so serializer could use it for validation
@@ -65,16 +94,7 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         uuid = package_response.data["uuid"]
         package = Package.objects.get(uuid=uuid)
 
-        if package.email:
-            package_registration_email = PackageRegistrationEmail(
-                organization_slug=self.kwargs["org_slug"],
-                package_uuid=package.uuid,
-                package_type=package.type,
-            )
-            package_registration_email.add_recipient(
-                email=package.email, name=package.full_name
-            )
-            package_registration_email.send()
+        send_email_on_package_status_change(package, self.organization)
 
         return package_response
 
@@ -195,8 +215,6 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
         else:
             logging.info("Unhandled Stripe event type %s", event.type)
 
-        # send email to managers
-        email = PackagePaymentStatusUpdatedServiceEmail(package.uuid, package.status)
-        email.send()
+        send_email_on_package_status_change(package)
 
         return Response(status=200)
