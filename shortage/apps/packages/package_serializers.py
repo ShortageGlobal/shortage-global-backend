@@ -99,15 +99,10 @@ class PackageCreationSerializer(serializers.ModelSerializer):
             organization = self.context["view"].organization
             organization_slug = organization.slug
 
-            total_price = 0
-            for item in items:
-                total_price += item.product.price
-
             package.checkout_url = generate_package_checkout_url(
                 organization_slug,
                 package.uuid,
-                "Donation for %s" % organization.name,
-                total_price,
+                items,
                 package.email,
             )
             package.save()
