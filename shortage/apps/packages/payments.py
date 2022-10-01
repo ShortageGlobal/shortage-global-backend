@@ -46,8 +46,8 @@ def generate_package_checkout_url(
             for item in items
         ],
         mode="payment",
-        success_url=package_status_url + "?payment_status=succeeded",
-        cancel_url=cart_url + "?payment_status=cancelled",
+        success_url=package_status_url + "?paymentStatus=succeeded",
+        cancel_url=cart_url + "?paymentStatus=cancelled",
         metadata={
             "package_uuid": package_uuid,
         },
