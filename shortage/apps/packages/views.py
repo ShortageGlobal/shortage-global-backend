@@ -38,7 +38,10 @@ def send_email_on_package_status_change(package, organization=None):
             email=package.email, name=package.full_name
         )
         package_registration_email.send()
-    elif package.status == PackageStatus.PAID or package.status == PackageStatus.PAYMENT_FAILED:
+    elif (
+        package.status == PackageStatus.PAID
+        or package.status == PackageStatus.PAYMENT_FAILED
+    ):
         email = PackagePaymentStatusUpdatedServiceEmail(package.uuid, package.status)
         email.send()
     elif package.status == PackageStatus.CONFIRMED:
