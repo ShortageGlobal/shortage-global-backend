@@ -183,31 +183,20 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
         if event is None:
             raise exceptions.ParseError()
 
+        package_uuid = event["data"]["object"]["metadata"]["package_uuid"]
+        package = Package.objects.get(uuid=package_uuid)
+
         if event.type == "payment_intent.succeeded":
-            payment_intent = event.data.object
-
-            package = Package.objects.get(uuid=payment_intent.metadata.package_uuid)
             package.payment_succeeded()
-
             package.save()
-
-            email = PackagePaymentStatusUpdatedServiceEmail(
-                package.uuid, package.status
-            )
-            email.send()
         elif event.type == "payment_intent.payment_failed":
-            payment_intent = event.data.object
-
-            package = Package.objects.get(uuid=payment_intent.metadata.package_uuid)
             package.payment_failed()
-
             package.save()
-
-            email = PackagePaymentStatusUpdatedServiceEmail(
-                package.uuid, package.status
-            )
-            email.send()
         else:
             logging.info("Unhandled Stripe event type %s", event.type)
+
+        # send email to managers
+        email = PackagePaymentStatusUpdatedServiceEmail(package.uuid, package.status)
+        email.send()
 
         return Response(status=200)
