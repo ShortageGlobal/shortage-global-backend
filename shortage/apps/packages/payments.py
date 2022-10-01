@@ -20,13 +20,14 @@ def deserialize_stripe_event(payload, signature):
 
 
 def generate_package_checkout_url(
-    organization_slug, package_uuid, product_name, price, customer_email
+    organization_slug, package_uuid, items, customer_email
 ):
     package_status_url = "%s/organizations/%s/packages/%s" % (
         settings.FRONTEND_BASE_URL,
         organization_slug,
         package_uuid,
     )
+    cart_url = "%s/donation/details/cart" % settings.FRONTEND_BASE_URL
 
     session = stripe.checkout.Session.create(
         customer_email=customer_email,
@@ -35,16 +36,18 @@ def generate_package_checkout_url(
                 "price_data": {
                     "currency": "usd",
                     "product_data": {
-                        "name": product_name,
+                        "name": "Donation: %s" % item.product.name,
+                        "metadata": {"product_slug": item.product.slug},
                     },
-                    "unit_amount": price * 100,
+                    "unit_amount": item.product.price * 100,
                 },
-                "quantity": 1,
+                "quantity": item.quantity,
             }
+            for item in items
         ],
         mode="payment",
         success_url=package_status_url + "?payment_status=succeeded",
-        cancel_url=package_status_url + "?payment_status=cancelled",
+        cancel_url=cart_url + "?payment_status=cancelled",
         metadata={
             "package_uuid": package_uuid,
         },
