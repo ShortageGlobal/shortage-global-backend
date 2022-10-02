@@ -29,6 +29,11 @@ def generate_package_checkout_url(
     )
     cart_url = "%s/donation/details/cart" % settings.FRONTEND_BASE_URL
 
+    metadata = {
+        "organization_slug": organization_slug,
+        "package_uuid": package_uuid,
+    }
+
     session = stripe.checkout.Session.create(
         customer_email=customer_email,
         line_items=[
@@ -48,12 +53,8 @@ def generate_package_checkout_url(
         mode="payment",
         success_url=package_status_url + "?paymentStatus=succeeded",
         cancel_url=cart_url + "?paymentStatus=cancelled",
-        payment_intent_data={
-            "metadata": {
-                "organization_slug": organization_slug,
-                "package_uuid": package_uuid,
-            }
-        },
+        metadata=metadata,
+        payment_intent_data={"metadata": metadata},
     )
 
     return session.url
