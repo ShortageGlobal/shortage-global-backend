@@ -1,7 +1,30 @@
+from io import BytesIO
+
+from PIL import Image
 from django.contrib.auth.models import User
+from django.core.files.base import ContentFile
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.utils import json
 from .views import PrivateOrganizationViewSet, PrivateOrganizationSlugExistsViewSet
+from django.core.files.uploadedfile import SimpleUploadedFile
+
+# Todo: Move to test helpers after the merge
+def create_image(
+    storage, filename, size=(100, 100), image_mode="RGB", image_format="PNG"
+):
+    """
+    Generate a test image, returning the filename that it was saved as.
+
+    If ``storage`` is ``None``, the BytesIO containing the image data
+    will be passed instead.
+    """
+    data = BytesIO()
+    Image.new(image_mode, size).save(data, image_format)
+    data.seek(0)
+    if not storage:
+        return data
+    image_file = ContentFile(data.read())
+    return storage.save(filename, image_file)
 
 
 class PrivateOrganizationTestCase(APITestCase):
@@ -88,6 +111,22 @@ class PrivateOrganizationTestCase(APITestCase):
         self.assertEqual(False, json_response["is_verified"])
         self.assertEqual(True, json_response["is_draft"])
         self.assertEqual(None, json_response["photo"])
+
+    def test_image_upload(self):
+        image = create_image(None, "test_image.png")
+        file = SimpleUploadedFile("test_image.png", image.getvalue())
+
+        test_data = self.testData.copy()
+
+        test_data["photo"] = file
+
+        request = self.requestFactory.post(
+            "/api/private/organizations/", data=test_data
+        )
+        force_authenticate(request, user=self.user)
+        response = PrivateOrganizationViewSet.as_view({"post": "create"})(request)
+
+        self.assertEqual(response.status_code, 201, "Organization was not created")
 
 
 class PrivateOrganizationSlugCheckerTests(APITestCase):
