@@ -143,13 +143,13 @@ stripe listen --forward-to http://localhost:8080/api/packages/payments/webhook/
 After forward you can test successful payment with: 
 
 ```
-stripe trigger payment_intent.succeeded --add "payment_intent:metadata[package_uuid]=09d1a548-786d-4083-a849-1916a5af14d0"
+stripe trigger payment_intent.succeeded --add "payment_intent:metadata[package_uuid]=8213fea8-0866-412b-8cf9-0cebc173b2f5" --add "payment_intent:metadata[cart_uuid]=8c635140-22c0-4e72-9196-1ce675ddbc69"
 ```
 
 Or failed payment: 
 
 ```
-stripe trigger payment_intent.payment_failed --add "payment_intent:metadata[package_uuid]=09d1a548-786d-4083-a849-1916a5af14d0"
+stripe trigger payment_intent.payment_failed --add "payment_intent:metadata[package_uuid]=8213fea8-0866-412b-8cf9-0cebc173b2f5" --add "payment_intent:metadata[cart_uuid]=8c635140-22c0-4e72-9196-1ce675ddbc69"
 ```
 
 The list of [Stripe test cards](https://stripe.com/docs/testing).

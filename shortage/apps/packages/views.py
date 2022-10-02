@@ -1,4 +1,5 @@
 import logging
+import uuid
 from django.db import transaction
 from rest_framework import generics, viewsets, mixins, permissions, exceptions
 from rest_framework.response import Response
@@ -189,6 +190,11 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
         if event.type == "payment_intent.succeeded":
             package.payment_succeeded()
             package.save()
+
+            if "cart_uuid" in event["data"]["object"]["metadata"]:
+                cart_uuid = event["data"]["object"]["metadata"]["cart_uuid"]
+                Cart.objects.filter(uuid=cart_uuid).delete()
+
         elif event.type == "payment_intent.payment_failed":
             package.payment_failed()
             package.save()

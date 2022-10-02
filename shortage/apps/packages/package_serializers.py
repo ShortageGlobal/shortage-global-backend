@@ -45,6 +45,7 @@ class PackageCreationSerializer(serializers.ModelSerializer):
         write_only=True, many=True, required=True, allow_empty=False
     )
     owner = serializers.HiddenField(default=AuthorizedUserOrNone())
+    cart_uuid = serializers.UUIDField(write_only=True, required=True)
 
     class Meta:
         model = Package
@@ -70,6 +71,7 @@ class PackageCreationSerializer(serializers.ModelSerializer):
             "items",
             "type",
             "checkout_url",
+            "cart_uuid",
         ]
         read_only_fields = ["status"]
 
@@ -92,6 +94,9 @@ class PackageCreationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_items_data = validated_data.pop("items")
 
+        cart_uuid = validated_data["cart_uuid"]
+        del validated_data["cart_uuid"]
+
         # create package
         package = Package.objects.create(**validated_data)
 
@@ -111,6 +116,7 @@ class PackageCreationSerializer(serializers.ModelSerializer):
                 package.uuid,
                 items,
                 package.email,
+                cart_uuid,
             )
             package.save()
 

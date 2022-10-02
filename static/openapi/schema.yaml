@@ -2257,9 +2257,14 @@ components:
             -\uFFFF0-9])?(?:\\.(?!-)[a-z\xA1-\uFFFF0-9-]{1,63}(?<!-))*\\.(?!-)(?:[a-z\xA1\
             -\uFFFF-]{2,63}|xn--[a-z0-9]{1,59})(?<!-)\\.?|localhost))(?::\\d{1,5})?(?:[/?#][^\\\
             s]*)?\\z"
+        cart_uuid:
+          type: string
+          format: uuid
+          writeOnly: true
       required:
       - email
       - items
+      - cart_uuid
     CartCreation:
       type: object
       properties:
