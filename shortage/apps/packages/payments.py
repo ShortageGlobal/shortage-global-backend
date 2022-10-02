@@ -51,6 +51,11 @@ def generate_package_checkout_url(
         metadata={
             "package_uuid": package_uuid,
         },
+        payment_intent_data={
+            "metadata": {
+                "package_uuid": package_uuid,
+            }
+        },
     )
 
     return session.url
