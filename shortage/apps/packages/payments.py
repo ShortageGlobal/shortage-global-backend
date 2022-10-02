@@ -48,9 +48,11 @@ def generate_package_checkout_url(
         mode="payment",
         success_url=package_status_url + "?paymentStatus=succeeded",
         cancel_url=cart_url + "?paymentStatus=cancelled",
-        metadata={
-            "organization_slug": organization_slug,
-            "package_uuid": package_uuid,
+        payment_intent_data={
+            "metadata": {
+                "organization_slug": organization_slug,
+                "package_uuid": package_uuid,
+            }
         },
     )
 
