@@ -1,5 +1,6 @@
 import logging
 from django.db import transaction
+from django.conf import settings
 from rest_framework import generics, viewsets, mixins, permissions, exceptions
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
@@ -65,7 +66,9 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         uuid = package_response.data["uuid"]
         package = Package.objects.get(uuid=uuid)
 
-        if package.email:
+        # if package sent by donor - email him right away
+        # if package funded by donor - email him on payment success
+        if package.type == settings.PACKAGE_TYPE["SENT_BY_DONOR"]:
             package_registration_email = PackageRegistrationEmail(
                 organization_slug=self.kwargs["org_slug"],
                 package_uuid=package.uuid,
@@ -183,12 +186,23 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
         if event is None:
             raise exceptions.ParseError()
 
+        organization_slug = event["data"]["object"]["metadata"]["organization_slug"]
         package_uuid = event["data"]["object"]["metadata"]["package_uuid"]
         package = Package.objects.get(uuid=package_uuid)
 
         if event.type == "payment_intent.succeeded":
             package.payment_succeeded()
             package.save()
+            # notify donor about the successful package registration
+            package_registration_email = PackageRegistrationEmail(
+                organization_slug=organization_slug,
+                package_uuid=package.uuid,
+                package_type=package.type,
+            )
+            package_registration_email.add_recipient(
+                email=package.email, name=package.full_name
+            )
+            package_registration_email.send()
         elif event.type == "payment_intent.payment_failed":
             package.payment_failed()
             package.save()
