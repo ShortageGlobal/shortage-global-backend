@@ -6,11 +6,8 @@ from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 from shortage.apps.catalog.models import Organization
 from shortage.apps.packages.payments import deserialize_stripe_event
-from shortage.apps.mailing.mail_service import (
-    PackagePaymentStatusUpdatedServiceEmail,
-    PackageRegistrationEmail,
-)
-from .models import Package, Cart, CartItem, PackageType
+from shortage.apps.mailing.mail_service import PackageRegistrationEmail
+from .models import Package, Cart, CartItem
 from .package_serializers import (
     PackageSerializer,
     PackageCreationSerializer,
@@ -188,7 +185,8 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
 
         organization_slug = event["data"]["object"]["metadata"]["organization_slug"]
         package_uuid = event["data"]["object"]["metadata"]["package_uuid"]
-        package = Package.objects.get(uuid=package_uuid)
+
+        package = generics.get_object_or_404(Package.objects.all(), uuid=package_uuid)
 
         if event.type == "payment_intent.succeeded":
             package.payment_succeeded()
@@ -208,9 +206,5 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
             package.save()
         else:
             logging.info("Unhandled Stripe event type %s", event.type)
-
-        # send email to managers
-        email = PackagePaymentStatusUpdatedServiceEmail(package.uuid, package.status)
-        email.send()
 
         return Response(status=200)

@@ -8,8 +8,7 @@ from shortage.helpers import get_full_name
 
 class MailingBackend:
     """
-    Generic class for Mailing Backend using SendPulse
-    See: https://login.sendpulse.com/manual/rest-api/#send-email-smtp
+    Generic class for Mailing Backend
     """
 
     from_email = "notifications@shortage.global"

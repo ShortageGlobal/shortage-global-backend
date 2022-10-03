@@ -231,6 +231,7 @@ PRODUCT_CATEGORY = {
     "SAVE_ANIMALS": "SAVE_ANIMALS",
 }
 
+# IMPORTANT: the list of package statuses must be synchronized with frontend
 PACKAGE_STATUS = {
     "REGISTERED": "REGISTERED",
     "UNPAID": "UNPAID",

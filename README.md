@@ -140,16 +140,29 @@ Run locally (**not in Docker**):
 stripe listen --forward-to http://localhost:8080/api/packages/payments/webhook/
 ```
 
-After forward you can test successful payment with: 
+It will give you a webhook signing secret:
+```
+> Ready! You are using Stripe API Version [2022-08-01]. Your webhook signing secret is {{YOUR_ENDPOINT_SECRET}}
+```
+
+Store it in `shortage/settings/local.py` to forward events from stripe to your local machine:
+```py
+# local.py
+STRIPE_ENDPOINT_SECRET={{YOUR_ENDPOINT_SECRET}}
+```
+
+You can manually trigger events: 
+
+- successful payment:
 
 ```
-stripe trigger payment_intent.succeeded --add "payment_intent:metadata[package_uuid]=09d1a548-786d-4083-a849-1916a5af14d0"
+stripe trigger payment_intent.succeeded --add "payment_intent:metadata[package_uuid]={{package_uuid}}" --add "payment_intent:metadata[orgnization_slug]={{orgnization_slug}}"
 ```
 
-Or failed payment: 
+- failed payment: 
 
 ```
-stripe trigger payment_intent.payment_failed --add "payment_intent:metadata[package_uuid]=09d1a548-786d-4083-a849-1916a5af14d0"
+stripe trigger payment_intent.payment_failed --add "payment_intent:metadata[package_uuid]={{package_uuid}}" --add "payment_intent:metadata[orgnization_slug]={{orgnization_slug}}"
 ```
 
 The list of [Stripe test cards](https://stripe.com/docs/testing).
