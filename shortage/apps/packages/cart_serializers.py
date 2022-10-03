@@ -212,13 +212,12 @@ class CartUpdateSerializer(serializers.ModelSerializer):
             if not attrs.get(field):
                 errors[field] = ["This field is required."]
 
-        # Require fields if tax deduction is required
+        # Require fields if tax deduction is requested
         required_for_tax_deduction_fields = [
             "first_name",
             "last_name",
             "phone_number",
             "address_line1",
-            "address_line2",
             "city",
             "state_province_region",
             "zip",
