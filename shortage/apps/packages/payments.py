@@ -42,7 +42,10 @@ def generate_package_checkout_url(
                     "currency": "usd",
                     "product_data": {
                         "name": "Donation: %s" % item.product.name,
-                        "metadata": {"product_slug": item.product.slug},
+                        "metadata": {
+                            "product_slug": item.product.slug,
+                            "organization_slug": organization_slug,
+                        },
                     },
                     "unit_amount": item.product.price * 100,
                 },
