@@ -183,15 +183,39 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
         if event is None:
             raise exceptions.ParseError()
 
+        # retrieve metadata
         organization_slug = event["data"]["object"]["metadata"]["organization_slug"]
         package_uuid = event["data"]["object"]["metadata"]["package_uuid"]
 
+        # get package object
         package = generics.get_object_or_404(Package.objects.all(), uuid=package_uuid)
+        initial_status = package.status
+        should_notify_donor = False
 
-        if event.type == "payment_intent.succeeded":
+        # Handle the event
+        if event["type"] == "payment_intent.canceled":
+            package.payment_canceled()
+            package.save()
+        elif event["type"] == "payment_intent.payment_failed":
+            package.payment_failed()
+            package.save()
+        elif event["type"] == "payment_intent.processing":
+            package.payment_processing()
+            package.save()
+            should_notify_donor = True
+        elif event["type"] == "payment_intent.succeeded":
             package.payment_succeeded()
             package.save()
-            # notify donor about the successful package registration
+            # in case we somehow skipped "payment_processing" status
+            # and jumped straight to "succeeded"
+            should_notify_donor = (
+                initial_status != settings.PACKAGE_STATUS["PAYMENT_PROCESSING"]
+            )
+        else:
+            print("Unhandled event type {}".format(event["type"]))
+
+        if should_notify_donor:
+            # notify the donor about his payment and registered package
             package_registration_email = PackageRegistrationEmail(
                 organization_slug=organization_slug,
                 package_uuid=package.uuid,
@@ -201,10 +225,5 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
                 email=package.email, name=package.full_name
             )
             package_registration_email.send()
-        elif event.type == "payment_intent.payment_failed":
-            package.payment_failed()
-            package.save()
-        else:
-            logging.info("Unhandled Stripe event type %s", event.type)
 
         return Response(status=200)

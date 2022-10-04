@@ -14,8 +14,16 @@ from shortage.helpers import get_full_name
 
 class PackageStatus(models.TextChoices):
     REGISTERED = settings.PACKAGE_STATUS["REGISTERED"], "Registered"
-    PAYMENT_FAILED = settings.PACKAGE_STATUS["PAYMENT_FAILED"], "Payment failed"
-    PAID = settings.PACKAGE_STATUS["PAID"], "Paid"
+    PAYMENT_CANCELED = settings.PACKAGE_STATUS["PAYMENT_CANCELED"], "Payment Canceled"
+    PAYMENT_FAILED = settings.PACKAGE_STATUS["PAYMENT_FAILED"], "Payment Failed"
+    PAYMENT_PROCESSING = (
+        settings.PACKAGE_STATUS["PAYMENT_PROCESSING"],
+        "Payment Processing",
+    )
+    PAYMENT_SUCCEEDED = (
+        settings.PACKAGE_STATUS["PAYMENT_SUCCEEDED"],
+        "Payment Succeeded",
+    )
     CONFIRMED = settings.PACKAGE_STATUS["CONFIRMED"], "Confirmed"
     DELIVERED = settings.PACKAGE_STATUS["DELIVERED"], "Delivered"
 
@@ -91,12 +99,23 @@ class Package(models.Model):
     def full_name(self):
         return get_full_name(first_name=self.first_name, last_name=self.last_name)
 
-    def payment_succeeded(self):
-        self.status = PackageStatus.PAID
-        self.checkout_url = None
+    def payment_canceled(self):
+        self.status = PackageStatus.PAYMENT_CANCELED
 
     def payment_failed(self):
         self.status = PackageStatus.PAYMENT_FAILED
+
+    def payment_processing(self):
+        self.status = PackageStatus.PAYMENT_PROCESSING
+
+    def payment_succeeded(self):
+        self.status = PackageStatus.PAYMENT_SUCCEEDED
+
+    def payment_confirmed(self):
+        self.status = PackageStatus.CONFIRMED
+
+    def payment_delivered(self):
+        self.status = PackageStatus.DELIVERED
 
 
 class PackageItem(models.Model):
