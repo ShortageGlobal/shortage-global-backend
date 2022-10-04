@@ -54,6 +54,7 @@ def generate_package_checkout_url(
             for item in items
         ],
         mode="payment",
+        submit_type="donate",
         success_url=package_status_url + "?paymentStatus=succeeded",
         cancel_url=cart_url + "?paymentStatus=cancelled",
         metadata=metadata,
