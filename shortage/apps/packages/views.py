@@ -67,9 +67,9 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         # if package funded by donor - email him on payment success
         if package.type == settings.PACKAGE_TYPE["SENT_BY_DONOR"]:
             package_registration_email = PackageRegistrationEmail(
-                organization_slug=self.kwargs["org_slug"],
-                package_uuid=package.uuid,
-                package_type=package.type,
+                package=package,
+                organization_slug=self.organization.slug,
+                organization_name=self.organization.name,
             )
             package_registration_email.add_recipient(
                 email=package.email, name=package.full_name

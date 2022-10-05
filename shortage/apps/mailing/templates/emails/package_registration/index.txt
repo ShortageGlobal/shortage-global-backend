@@ -7,7 +7,7 @@ Important Note: Once your order has been processed, you will receive 2 communica
 1. Confirmation email to acknowledge your donation has been received and your card has been charged.
 2. Shipment notification email to let you know when the donation has been shipped.
 {% else %}
-We've registered a shortage goods package with your email address. We will track it using the provided tracking number and see it delivered to those in need.
+We have received your donation details and will send you another email when your package is delivered to {{organization_name}}.
 {% endif %}
 Please contact us at support@shortage.global if you have any questions or concerns.
 
