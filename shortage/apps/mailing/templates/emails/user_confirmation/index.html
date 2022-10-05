@@ -61,9 +61,10 @@
                 "
               >
                 <img
-                  src="https://shortage-global.sfo3.digitaloceanspaces.com/shortage-global/static/emails/ShortageGlobal-black.png"
-                  alt="ShortageGlobal logo"
-                  width="210"
+                  src="https://shortage-global.sfo3.digitaloceanspaces.com/shortage-global/static/emails/Shortage.png"
+                  alt="Shortage logo"
+                  width="131"
+                  height="32"
                   style="height: auto; display: block"
                 />
               </td>
@@ -86,24 +87,15 @@
                           font-size: 24px;
                           margin: 0 0 20px 0;
                           font-family: Arial, sans-serif;
+                          word-break: break-word;
                         "
                       >
-                        Thank you for your donation
-                      </h1>
-                      <p
-                        style="
-                          margin: 0 0 12px 0;
-                          font-size: 16px;
-                          line-height: 24px;
-                          font-family: Arial, sans-serif;
-                        "
-                      >
-                        {% if package_type == 'FUNDED_BY_DONOR' %}
-                        We've registered a shortage goods package with your email address. Once we process the payment, we will buy the goods and deliver to those in need.
+                        {% if full_name %}
+                        {{ full_name }}, thank you for your registration
                         {% else %}
-                        We've registered a shortage goods package with your email address. We will track it using the provided tracking number and see it delivered to those in need.
+                        Thank you for your registration
                         {% endif %}
-                      </p>
+                      </h1>                    
                       <p
                         style="
                           margin: 0 0 12px 0;
@@ -111,23 +103,12 @@
                           line-height: 24px;
                           font-family: Arial, sans-serif;
                         "
-                      >
-                        We appreciate all the help.
-                      </p>
-                      <p
-                        style="
-                          margin: 0 0 12px 0;
-                          font-size: 16px;
-                          line-height: 24px;
-                          font-family: Arial, sans-serif;
-                        "
-                      >
-                        Track your package
-                        <a
+                      >                        
+                        Please, follow <a
                           href="{{ url }}"
                           style="color: #0085ff; text-decoration: underline"
-                          >here</a
-                        >.
+                          >the link</a
+                        > to confirm your account. 
                       </p>
                       <p
                         style="
@@ -188,7 +169,7 @@
                           color: #767576;
                         "
                       >
-                        &copy; {% now 'Y' %} All rights reserved. ShortageGlobal
+                        &copy; {% now 'Y' %} All rights reserved. Shortage
                       </p>
                     </td>
                   </tr>

@@ -1,0 +1,15 @@
+Thank you for the donation you made via Shortage.
+
+View the donation status: {{package_status_url}}
+{% if package.type == 'FUNDED_BY_DONOR' %}
+Important Note: Once your order has been processed, you will receive 2 communications:
+
+1. Confirmation email to acknowledge your donation has been received and your card has been charged.
+2. Shipment notification email to let you know when the donation has been shipped.
+{% else %}
+We've registered a shortage goods package with your email address. We will track it using the provided tracking number and see it delivered to those in need.
+{% endif %}
+Please contact us at support@shortage.global if you have any questions or concerns.
+
+With love,
+The Shortage Team

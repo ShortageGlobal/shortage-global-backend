@@ -1,0 +1,68 @@
+{% extends "emails/base.html" %}
+
+{% block body_content %}
+<h1 style="font-size: 20px; margin: 0 0 0 0; font-family: Arial, sans-serif;">
+  Thank you for the donation you made via Shortage.
+</h1>
+
+<p
+  style="
+    margin: 0 0 0 0;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+  "
+>
+  <a 
+    href="{{ package_status_url }}"
+    style="
+      margin: 42px 0 42px 0;
+      background-color:#00b657;
+      color:#ffffff;
+      display:inline-block;
+      font-family: Arial, sans-serif;
+      font-size:18px;
+      font-weight:bold;
+      line-height:60px;
+      text-align:center;
+      text-decoration:none;
+      width:250px;
+      -webkit-text-size-adjust:none;"
+    >
+      View the donation status
+    </a>
+</p>
+
+{% if package.type == 'FUNDED_BY_DONOR' %}
+  <p
+    style="
+      margin: 0 0 12px 0;
+      font-size: 16px;
+      line-height: 24px;
+      font-family: Arial, sans-serif;
+    "
+  >
+    <span style="font-weight: 700">Important Note:</span> Once your order has been processed, you will receive 2 communications: 
+  </p>
+  <ol>
+    <li style="margin: 0 0 8px 0;">
+      Confirmation email to acknowledge your donation has been received and your card has been charged.
+    </li>
+    <li>
+      Shipment notification email to let you know when the donation has been shipped.
+    </li>
+  </ol>
+  {% else %} 
+  <p
+    style="
+      margin: 0 0 12px 0;
+      font-size: 16px;
+      line-height: 24px;
+      font-family: Arial, sans-serif;
+    "
+  >
+  We have received your donation details and will send you another email when your package is delivered to <a href="{{ organization_url }}" style="color: #00b657; text-decoration: underline">{{organization_name}}</a
+  </p>
+{% endif %}
+
+{% endblock %}

@@ -184,8 +184,9 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
             raise exceptions.ParseError()
 
         # retrieve metadata
-        organization_slug = event["data"]["object"]["metadata"]["organization_slug"]
         package_uuid = event["data"]["object"]["metadata"]["package_uuid"]
+        organization_slug = event["data"]["object"]["metadata"]["organization_slug"]
+        organization_name = event["data"]["object"]["metadata"]["organization_name"]
 
         # get package object
         package = generics.get_object_or_404(Package.objects.all(), uuid=package_uuid)
@@ -217,9 +218,9 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
         if should_notify_donor:
             # notify the donor about his payment and registered package
             package_registration_email = PackageRegistrationEmail(
+                package=package,
                 organization_slug=organization_slug,
-                package_uuid=package.uuid,
-                package_type=package.type,
+                organization_name=organization_name,
             )
             package_registration_email.add_recipient(
                 email=package.email, name=package.full_name
