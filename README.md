@@ -156,13 +156,19 @@ You can manually trigger events:
 - successful payment:
 
 ```
-stripe trigger payment_intent.succeeded --add "payment_intent:metadata[package_uuid]={{package_uuid}}" --add "payment_intent:metadata[orgnization_slug]={{orgnization_slug}}"
+stripe trigger payment_intent.succeeded \
+  --add "payment_intent:metadata[package_uuid]={{package_uuid}}" \
+  --add "payment_intent:metadata[organization_slug]={{organization_slug}}" \
+  --add "payment_intent:metadata[organization_name]={{organization_name}}" 
 ```
 
 - failed payment: 
 
 ```
-stripe trigger payment_intent.payment_failed --add "payment_intent:metadata[package_uuid]={{package_uuid}}" --add "payment_intent:metadata[orgnization_slug]={{orgnization_slug}}"
+stripe trigger payment_intent.payment_failed \
+  --add "payment_intent:metadata[package_uuid]={{package_uuid}}" \
+  --add "payment_intent:metadata[organization_slug]={{organization_slug}}" \
+  --add "payment_intent:metadata[organization_name]={{organization_name}}" 
 ```
 
 The list of [Stripe test cards](https://stripe.com/docs/testing).

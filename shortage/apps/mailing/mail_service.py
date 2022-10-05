@@ -134,22 +134,31 @@ class PackageRegistrationEmail(MailingBackend):
     """
 
     subject = "Donation is registered"
-    html_template = "emails/package_registration.html"
-    text_template = "emails/package_registration.txt"
+    html_template = "emails/package_registration/index.html"
+    text_template = "emails/package_registration/index.txt"
 
-    def __init__(self, organization_slug, package_uuid, package_type):
+    def __init__(self, package, organization_slug, organization_name):
+        self.package = package
         self.organization_slug = organization_slug
-        self.package_uuid = package_uuid
-        self.package_type = package_type
+        self.organization_name = organization_name
 
     def get_context(self):
-        url = "%s/organizations/%s/packages/%s" % (
+        package_status_url = "%s/organizations/%s/packages/%s" % (
             self.frontend_base_url,
             self.organization_slug,
-            self.package_uuid,
+            self.package.uuid,
+        )
+        organization_url = "%s/organizations/%s" % (
+            self.frontend_base_url,
+            self.organization_slug,
         )
 
-        return {"url": url, "package_type": self.package_type}
+        return {
+            "package_status_url": package_status_url,
+            "organization_url": organization_url,
+            "organization_name": self.organization_name,
+            "package": self.package,
+        }
 
 
 class PackagePaymentStatusUpdatedServiceEmail(MailingBackend):
@@ -158,8 +167,8 @@ class PackagePaymentStatusUpdatedServiceEmail(MailingBackend):
     """
 
     subject = "[Requires action] Package payment status is updated"
-    html_template = "emails/package_payment_status_updated.html"
-    text_template = "emails/package_payment_status_updated.txt"
+    html_template = "emails/package_payment_status_updated/index.html"
+    text_template = "emails/package_payment_status_updated/index.txt"
 
     service_email = True
 
@@ -177,8 +186,8 @@ class UserConfirmationEmail(MailingBackend):
     """
 
     subject = "Confirm your registration at Shortage"
-    html_template = "emails/user_confirmation.html"
-    text_template = "emails/user_confirmation.txt"
+    html_template = "emails/user_confirmation/index.html"
+    text_template = "emails/user_confirmation/index.txt"
 
     def __init__(self, first_name, last_name, uid, token):
         self.first_name = first_name
