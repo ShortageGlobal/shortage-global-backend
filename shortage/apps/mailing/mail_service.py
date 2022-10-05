@@ -133,7 +133,7 @@ class PackageRegistrationEmail(MailingBackend):
     Email sent on package registration
     """
 
-    subject = "Package is registered"
+    subject = "Donation is registered"
     html_template = "emails/package_registration.html"
     text_template = "emails/package_registration.txt"
 
