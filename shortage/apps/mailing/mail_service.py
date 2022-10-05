@@ -11,7 +11,7 @@ class MailingBackend:
     Generic class for Mailing Backend
     """
 
-    from_email = "notifications@shortage.global"
+    from_email = "support@shortage.global"
     from_name = "Shortage Team"
     subject = None
     html_template = None
