@@ -1,0 +1,6 @@
+{% block body_content %}{% endblock %}{% block body_contact_support %}Please contact us at support@shortage.global if you have any questions or concerns.{% endblock %}
+
+{% block body_signature %}
+With love,
+The Shortage Team
+{% endblock %}
