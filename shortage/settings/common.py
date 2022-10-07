@@ -166,12 +166,22 @@ THUMBNAILS = {
         # You can also use Amazon S3 or any other Django storage backends
     },
     "SIZES": {
-        "organization_medium": {
+        "organization_logo_medium": {
             "PROCESSORS": [
                 {
                     "PATH": "thumbnails.processors.resize",
                     "width": 300,
                     "height": 300,
+                    "method": "fill",
+                },
+            ],
+        },
+        "organization_banner_medium": {
+            "PROCESSORS": [
+                {
+                    "PATH": "thumbnails.processors.resize",
+                    "width": 400,
+                    "height": 500,
                     "method": "fill",
                 },
             ],
