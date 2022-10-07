@@ -63,7 +63,7 @@ class PrivateOrganizationTestCase(APITestCase):
         self.assertEqual(response.status_code, 400, "URL was not validated correctly")
 
         test_data = self.testData.copy()
-        test_data["photo"] = "random_data"
+        test_data["logo"] = "random_logo_data"
 
         request = self.requestFactory.post(
             "/api/private/organizations/", data=test_data, format="json"
@@ -71,7 +71,7 @@ class PrivateOrganizationTestCase(APITestCase):
         force_authenticate(request, user=self.user)
         response = PrivateOrganizationViewSet.as_view({"post": "create"})(request)
 
-        self.assertEqual(response.status_code, 400, "Photo was not validated correctly")
+        self.assertEqual(response.status_code, 400, "Logo was not validated correctly")
 
     def test_create_organization(self):
         request = self.requestFactory.post(
@@ -92,7 +92,8 @@ class PrivateOrganizationTestCase(APITestCase):
         self.assertEqual(self.testData["ein_number"], json_response["ein_number"])
         self.assertEqual(False, json_response["is_verified"])
         self.assertEqual(True, json_response["is_draft"])
-        self.assertEqual(None, json_response["photo"])
+        self.assertEqual(None, json_response["logo"])
+        self.assertEqual(None, json_response["banner"])
 
         # Verify that GET returns the same data as was POSTed
         request = self.requestFactory.get("/api/private/organizations/")
@@ -110,15 +111,18 @@ class PrivateOrganizationTestCase(APITestCase):
         self.assertEqual(self.testData["ein_number"], json_response["ein_number"])
         self.assertEqual(False, json_response["is_verified"])
         self.assertEqual(True, json_response["is_draft"])
-        self.assertEqual(None, json_response["photo"])
+        self.assertEqual(None, json_response["logo"])
+        self.assertEqual(None, json_response["banner"])
 
     def test_image_upload(self):
         image = create_image(None, "test_image.png")
-        file = SimpleUploadedFile("test_image.png", image.getvalue())
+        logo_file = SimpleUploadedFile("test_image.png", image.getvalue())
+        banner_file = SimpleUploadedFile("test_image.png", image.getvalue())
 
         test_data = self.testData.copy()
 
-        test_data["photo"] = file
+        test_data["logo"] = logo_file
+        test_data["banner"] = banner_file
 
         request = self.requestFactory.post(
             "/api/private/organizations/", data=test_data

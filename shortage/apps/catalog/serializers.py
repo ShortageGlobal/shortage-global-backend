@@ -16,7 +16,8 @@ class OrganizationPreviewSerializer(serializers.ModelSerializer):
 
 
 class PrivateOrganizationSerializer(serializers.ModelSerializer):
-    photo = serializers.ImageField(required=False)
+    logo = serializers.ImageField(required=False)
+    banner = serializers.ImageField(required=False)
     owner = serializers.HiddenField(default=AuthorizedUserOrNone())
 
     class Meta:
@@ -26,7 +27,8 @@ class PrivateOrganizationSerializer(serializers.ModelSerializer):
             "name",
             "slug",
             "description",
-            "photo",
+            "logo",
+            "banner",
             "url",
             "ein_number",
             "is_verified",
