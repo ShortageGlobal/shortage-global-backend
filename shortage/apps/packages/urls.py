@@ -1,5 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
+
+from .private.views import PrivateOrganizationPackagesViewSet
 from .views import (
     PackagePaymentsWebhookViewSet,
     PackageViewSet,
@@ -15,14 +17,18 @@ router = routers.DefaultRouter()
 router.register(
     r"organizations/(?P<org_slug>[^/.]+)/packages",
     PackageViewSet,
-    basename="organization_package",
+    basename="organization_packages",
 )
 router.register(
     r"organizations/(?P<org_slug>[^/.]+)/packages",
     PackageCreationViewSet,
-    basename="organization_package",
+    basename="organization_packages",
 )
-
+router.register(
+    r"private/organizations/(?P<org_slug>[^/.]+)/packages",
+    PrivateOrganizationPackagesViewSet,
+    basename="private_organization_packages",
+)
 router.register(
     r"packages/payments/webhook",
     PackagePaymentsWebhookViewSet,

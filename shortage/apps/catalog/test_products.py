@@ -2,30 +2,15 @@ from django.contrib.auth.models import User
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.utils import json
 
-from shortage.apps.catalog.models import Organization, Product
+from shortage.apps.catalog.models import Product
 from shortage.apps.catalog.private.views import (
     PrivateProductsViewSet,
     PrivateProductsSlugExistsViewSet,
 )
-
-
-def create_test_org(owner):
-    testdata = {
-        "name": "TestName",
-        "slug": "testslug",
-        "description": "Some description",
-        "url": "https://www.someurl.com",
-        "ein_number": "12345",
-        "owner": owner,
-    }
-
-    organization = Organization(**testdata)
-    organization.is_verified = True
-    organization.is_draft = False
-
-    organization.save()
-
-    return organization
+from shortage.helpers.test_utilities import (
+    create_test_organization,
+    create_test_product,
+)
 
 
 class PrivateProductsTestCase(APITestCase):
@@ -33,7 +18,7 @@ class PrivateProductsTestCase(APITestCase):
         self.user = User.objects.create_user(username="testuser", password="12345")
         self.requestFactory = APIRequestFactory()
 
-        self.organization = create_test_org(self.user)
+        self.organization = create_test_organization(self.user)
 
         self.assertNotEqual(self.organization.id, None, "Organization was not created")
 
@@ -100,24 +85,11 @@ class PrivateProductsTestCase(APITestCase):
 
     def test_list(self):
         # Create test product
-        test_data = {
-            "name": "Test Product",
-            "slug": "tprod",
-            "category": "VITAL_GOODS",
-            "price": 999,
-            "requested_amount": 20,
-            "top_priority": False,
-            "position": 1,
-            "organization_id": self.organization.id,
-        }
-        product1 = Product(**test_data)
-        product1.save()
+        product1 = create_test_product(self.organization)
 
         self.assertNotEqual(product1.id, None)
 
-        request = self.requestFactory.get(
-            self.get_request_route(), data=test_data, format="json"
-        )
+        request = self.requestFactory.get(self.get_request_route(), format="json")
         force_authenticate(request, user=self.user)
         response = PrivateProductsViewSet.as_view({"get": "list"})(
             request, org_slug=self.organization.slug
@@ -130,16 +102,11 @@ class PrivateProductsTestCase(APITestCase):
         self.assertEqual(content["results"][0]["slug"], product1.slug)
 
         # Create another product
-        test_data["slug"] = "other_slug"
-
-        product2 = Product(**test_data)
-        product2.save()
+        product2 = create_test_product(self.organization, "other_slug")
 
         self.assertNotEqual(product2.id, None)
 
-        request = self.requestFactory.get(
-            self.get_request_route(), data=test_data, format="json"
-        )
+        request = self.requestFactory.get(self.get_request_route(), format="json")
         force_authenticate(request, user=self.user)
         response = PrivateProductsViewSet.as_view({"get": "list"})(
             request, org_slug=self.organization.slug
@@ -251,7 +218,7 @@ class PrivateProductsSlugCheckerTests(APITestCase):
         self.user = User.objects.create_user(username="testuser", password="12345")
         self.requestFactory = APIRequestFactory()
 
-        self.organization = create_test_org(self.user)
+        self.organization = create_test_organization(self.user)
 
         self.assertNotEqual(self.organization.id, None, "Organization was not created")
 
