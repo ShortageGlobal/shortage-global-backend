@@ -4,19 +4,20 @@ from shortage.helpers.serializers import AuthorizedUserOrNone
 
 
 class OrganizationPreviewSerializer(serializers.ModelSerializer):
-    photo = serializers.ImageField(source="medium_photo", read_only=True)
+    logo = serializers.ImageField(source="medium_logo_photo", read_only=True)
 
     class Meta:
         model = Organization
         fields = [
             "name",
             "slug",
-            "photo",
+            "logo",
         ]
 
 
 class PrivateOrganizationSerializer(serializers.ModelSerializer):
-    photo = serializers.ImageField(required=False)
+    logo = serializers.ImageField(required=False)
+    banner = serializers.ImageField(required=False)
     owner = serializers.HiddenField(default=AuthorizedUserOrNone())
 
     class Meta:
@@ -26,7 +27,8 @@ class PrivateOrganizationSerializer(serializers.ModelSerializer):
             "name",
             "slug",
             "description",
-            "photo",
+            "logo",
+            "banner",
             "url",
             "ein_number",
             "is_verified",
@@ -88,7 +90,8 @@ class CategorySerializer(serializers.BaseSerializer):
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
-    photo = serializers.ImageField(source="medium_photo", read_only=True)
+    logo = serializers.ImageField(source="medium_logo_photo", read_only=True)
+    banner = serializers.ImageField(source="medium_banner_photo", read_only=True)
 
     class Meta:
         model = Organization
@@ -96,7 +99,8 @@ class OrganizationSerializer(serializers.ModelSerializer):
             "name",
             "slug",
             "description",
-            "photo",
+            "logo",
+            "banner",
             "url",
         ]
 

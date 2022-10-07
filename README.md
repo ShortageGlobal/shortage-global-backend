@@ -61,6 +61,17 @@ docker-compose exec django python manage.py shell
 docker compose exec django python manage.py test
 ```
 
+### Regenerate image thumbnails
+
+```
+docker-compose exec django python manage.py delete_thumbnails \
+  --model=catalog.Organization \
+  --field=banner \
+  --size=organization_banner_medium
+```
+[django-thumbnails docs](https://github.com/ui/django-thumbnails#management-commands)
+
+
 ## Installing all dependencies when starting from scratch (on macOS)
 
 ### Install XCode tools

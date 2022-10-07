@@ -35,12 +35,19 @@ class Organization(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True)
     slug = models.SlugField(max_length=255, unique=True)
     description = HTMLField(null=True, blank=True)
-    photo = ImageField(
+    logo = ImageField(
         upload_to=get_organization_path,
         null=True,
         blank=True,
         storage=storage.MediaStorage(),
-        pregenerated_sizes=["organization_medium"],
+        pregenerated_sizes=["organization_logo_medium"],
+    )
+    banner = ImageField(
+        upload_to=get_organization_path,
+        null=True,
+        blank=True,
+        storage=storage.MediaStorage(),
+        pregenerated_sizes=["organization_banner_medium"],
     )
     url = models.URLField(max_length=255, null=True, blank=True)
     ein_number = models.CharField(max_length=255, null=True, blank=True)
@@ -55,8 +62,12 @@ class Organization(models.Model):
         return self.name
 
     @property
-    def medium_photo(self):
-        return self.photo.thumbnails.organization_medium
+    def medium_logo_photo(self):
+        return self.logo.thumbnails.organization_logo_medium
+
+    @property
+    def medium_banner_photo(self):
+        return self.banner.thumbnails.organization_banner_medium
 
 
 class Instruction(models.Model):
