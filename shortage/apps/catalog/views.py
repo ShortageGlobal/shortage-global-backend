@@ -20,6 +20,7 @@ from .serializers import (
     ProductSerializer,
     OnlineStoreSerializer,
     PrivateOrganizationSerializer,
+    OrganizationRegistrationRequestSerializer,
 )
 from .exceptions import OneOrganizationPerUser
 
@@ -212,3 +213,16 @@ class OnlineStoresViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             organization__slug=self.kwargs["org_slug"],
         )
         return OnlineStore.objects.filter(product=product)
+
+
+class OrganizationRegistrationRequestViewSet(
+    mixins.CreateModelMixin, viewsets.GenericViewSet
+):
+    """Organization Registration Request"""
+
+    schema = AutoSchema(
+        tags=["Organizations"],
+    )
+
+    permission_classes = [permissions.AllowAny]
+    serializer_class = OrganizationRegistrationRequestSerializer
