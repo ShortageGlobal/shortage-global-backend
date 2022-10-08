@@ -4,9 +4,11 @@ from django.core.validators import MinValueValidator
 from tinymce.models import HTMLField
 from django_countries.fields import CountryField
 from auditlog.registry import auditlog
+from phonenumber_field.modelfields import PhoneNumberField
 from thumbnails.fields import ImageField
 from shortage.apps import storage
 from shortage.apps.file_paths import get_organization_path, get_product_path
+from shortage.helpers import get_full_name
 
 
 class OrganizationManager(models.Manager):
@@ -171,7 +173,26 @@ class OnlineStore(models.Model):
         return self.url
 
 
+class OrganizationRegistrationRequest(models.Model):
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    phone_number = PhoneNumberField(null=True, blank=True)
+    email = models.EmailField(max_length=100)
+    organization_name = models.CharField(max_length=255, null=True, blank=True)
+    ein_number = models.CharField(max_length=255, null=True, blank=True)
+    url = models.URLField(max_length=255, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.full_name
+
+    @property
+    def full_name(self):
+        return get_full_name(first_name=self.first_name, last_name=self.last_name)
+
+
 auditlog.register(Organization)
 auditlog.register(Instruction)
 auditlog.register(Product)
 auditlog.register(OnlineStore)
+auditlog.register(OrganizationRegistrationRequest)

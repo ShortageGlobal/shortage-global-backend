@@ -12,6 +12,7 @@ from .views import (
     OnlineStoresViewSet,
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
+    OrganizationRegistrationRequestViewSet,
 )
 from .private.views import PrivateProductsSlugExistsViewSet, PrivateProductsViewSet
 
@@ -85,6 +86,13 @@ router.register(
     r"organizations/(?P<org_slug>[^/.]+)/products/(?P<product_slug>[^/.]+)/online-stores",
     OnlineStoresViewSet,
     basename="online_stores",
+)
+
+# Request for nonprofits
+router.register(
+    r"register-nonprofit",
+    OrganizationRegistrationRequestViewSet,
+    basename="register_nonprofit",
 )
 
 # Wire up our API using automatic URL routing.

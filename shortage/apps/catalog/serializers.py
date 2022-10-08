@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import Organization, Instruction, Product, OnlineStore
+from .models import (
+    Organization,
+    Instruction,
+    Product,
+    OnlineStore,
+    OrganizationRegistrationRequest,
+)
 from shortage.helpers.serializers import AuthorizedUserOrNone
 
 
@@ -128,3 +134,17 @@ class OnlineStoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = OnlineStore
         fields = ["url", "name"]
+
+
+class OrganizationRegistrationRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrganizationRegistrationRequest
+        fields = [
+            "first_name",
+            "last_name",
+            "phone_number",
+            "email",
+            "organization_name",
+            "ein_number",
+            "url",
+        ]

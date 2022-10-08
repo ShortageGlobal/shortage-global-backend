@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import Organization, Product, Instruction, OnlineStore
+from .models import (
+    Organization,
+    Product,
+    Instruction,
+    OnlineStore,
+    OrganizationRegistrationRequest,
+)
 
 
 class OrganizationAdmin(admin.ModelAdmin):
@@ -37,7 +43,41 @@ class OnlineStoreAdmin(admin.ModelAdmin):
     autocomplete_fields = ["product"]
 
 
+class OrganizationRegistrationRequestAdmin(admin.ModelAdmin):
+    list_display = [
+        "full_name",
+        "phone_number",
+        "email",
+        "organization_name",
+        "ein_number",
+        "created_at",
+    ]
+    fields = [
+        "first_name",
+        "last_name",
+        "phone_number",
+        "email",
+        "organization_name",
+        "ein_number",
+        "url",
+        "created_at",
+    ]
+    readonly_fields = [
+        "created_at",
+    ]
+    search_fields = ["organization_name", "first_name", "last_name"]
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def get_ordering(self, request):
+        return super().get_ordering(request) or ["-created_at"]
+
+
 admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(Instruction, InstructionAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(OnlineStore, OnlineStoreAdmin)
+admin.site.register(
+    OrganizationRegistrationRequest, OrganizationRegistrationRequestAdmin
+)

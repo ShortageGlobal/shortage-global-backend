@@ -7,7 +7,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from thumbnails.fields import ImageField
 from django_countries.fields import CountryField
 from shortage.apps import storage
-from shortage.apps.catalog.models import Organization, Product
+from shortage.apps.catalog.models import Product
 from shortage.apps.file_paths import get_package_path, get_corporate_donation_path
 from shortage.helpers import get_full_name
 
