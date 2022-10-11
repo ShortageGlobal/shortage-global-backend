@@ -19,7 +19,7 @@ def create_test_organization(**kwargs):
     test_data = {
         "owner": None,
         "name": "TestName",
-        "slug": "test_slug",
+        "slug": "test_organization",
         "description": "Some description",
         "url": "https://www.someurl.com",
         "ein_number": "12345",

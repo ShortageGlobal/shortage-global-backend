@@ -11,9 +11,8 @@ from shortage.helpers.test_utilities import (
 
 class PackageTestCase(APITestCase):
     def setUp(self) -> None:
-        self.user = create_test_user()
         self.requestFactory = APIRequestFactory()
-
+        self.user = create_test_user()
         self.organization = create_test_organization(owner=self.user)
         self.product = create_test_product(organization=self.organization)
 
