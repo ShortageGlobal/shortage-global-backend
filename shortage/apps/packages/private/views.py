@@ -4,6 +4,7 @@ from rest_framework.schemas.openapi import AutoSchema
 from shortage.apps.catalog.models import Organization
 from shortage.apps.packages.models import Package
 from shortage.apps.packages.private.package_serializers import PrivatePackageSerializer
+from shortage.helpers.permissions import IsObjectOwner
 
 
 class PrivateOrganizationPackagesViewSet(
@@ -14,7 +15,7 @@ class PrivateOrganizationPackagesViewSet(
         tags=["Private", "Packages"],
     )
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsObjectOwner]
     serializer_class = PrivatePackageSerializer
 
     def get_queryset(self):

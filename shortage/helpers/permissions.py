@@ -11,7 +11,7 @@ class IsObjectOwner(BasePermission):
     def has_permission(self, request, view):
         if not self.organization:
             self.organization = get_object_or_404(
-                Organization.objects.public(), slug=view.kwargs["org_slug"]
+                Organization.objects.active(), slug=view.kwargs["org_slug"]
             )
 
         return request.user == self.organization.owner
@@ -19,7 +19,7 @@ class IsObjectOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
         if not self.organization:
             self.organization = get_object_or_404(
-                Organization.objects.public(), slug=view.kwargs["org_slug"]
+                Organization.objects.active(), slug=view.kwargs["org_slug"]
             )
 
         # Todo: Figure out a way to check ownership of the object itself
