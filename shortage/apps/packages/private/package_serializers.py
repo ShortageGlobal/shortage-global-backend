@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from shortage.apps.packages.models import Package
-from shortage.apps.packages.package_serializers import PackageItemCreationSerializer
 
 
 class PrivatePackageSerializer(serializers.ModelSerializer):
@@ -18,5 +17,6 @@ class PrivatePackageSerializer(serializers.ModelSerializer):
             "note",
             "status",
             "photo",
+            "type",
         ]
         read_only_fields = fields

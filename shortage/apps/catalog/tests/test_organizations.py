@@ -9,6 +9,8 @@ from shortage.apps.catalog.views import (
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
 )
+from shortage.helpers.test_utilities import create_test_organization
+
 
 # Todo: Move to test helpers after the merge
 def create_image(
@@ -149,19 +151,12 @@ class PrivateOrganizationSlugCheckerTests(APITestCase):
         }
 
     def test_existence_checker(self):
-        # Create test organization
-        request = self.requestFactory.post(
-            "/api/private/organizations/", data=self.testData, format="json"
-        )
-        force_authenticate(request, user=self.user)
-        response = PrivateOrganizationViewSet.as_view({"post": "create"})(request)
-
-        self.assertEqual(response.status_code, 201, "Organization was not created")
+        organization = create_test_organization(owner=self.user)
 
         # Start slug checker tests
         request = self.requestFactory.get("/api/private/exists/organizations/")
         response = PrivateOrganizationSlugExistsViewSet.as_view({"get": "retrieve"})(
-            request, slug=self.testData["slug"]
+            request, slug=organization.slug
         )
 
         self.assertNotEqual(response.status_code, 200, "Method should require auth")
@@ -169,7 +164,7 @@ class PrivateOrganizationSlugCheckerTests(APITestCase):
         request = self.requestFactory.get("/api/private/exists/organizations/")
         force_authenticate(request, user=self.user)
         response = PrivateOrganizationSlugExistsViewSet.as_view({"get": "retrieve"})(
-            request, slug=self.testData["slug"]
+            request, slug=organization.slug
         )
 
         self.assertEqual(response.status_code, 200, "Slug doesn't exist but should")
@@ -188,11 +183,7 @@ class PrivateOrganizationSlugCheckerTests(APITestCase):
         request = self.requestFactory.get("/api/private/exists/organizations/")
         force_authenticate(request, user=wrong_user)
         response = PrivateOrganizationSlugExistsViewSet.as_view({"get": "retrieve"})(
-            request, slug=self.testData["slug"]
+            request, slug=organization.slug
         )
 
-        self.assertEqual(
-            response.status_code,
-            200,
-            "Slug check takes user into account but shouldn't",
-        )
+        self.assertEqual(response.status_code, 200)
