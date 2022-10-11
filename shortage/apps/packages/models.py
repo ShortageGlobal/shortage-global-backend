@@ -25,6 +25,7 @@ class PackageStatus(models.TextChoices):
         "Payment Succeeded",
     )
     CONFIRMED = settings.PACKAGE_STATUS["CONFIRMED"], "Confirmed"
+    ON_ITS_WAY = settings.PACKAGE_STATUS["ON_ITS_WAY"], "On Its Way"
     DELIVERED = settings.PACKAGE_STATUS["DELIVERED"], "Delivered"
 
 
@@ -111,10 +112,13 @@ class Package(models.Model):
     def payment_succeeded(self):
         self.status = PackageStatus.PAYMENT_SUCCEEDED
 
-    def payment_confirmed(self):
+    def package_confirmed(self):
         self.status = PackageStatus.CONFIRMED
 
-    def payment_delivered(self):
+    def package_on_its_way(self):
+        self.status = PackageStatus.ON_ITS_WAY
+
+    def package_delivered(self):
         self.status = PackageStatus.DELIVERED
 
 
