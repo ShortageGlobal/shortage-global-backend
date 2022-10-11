@@ -247,7 +247,8 @@ PACKAGE_STATUS = {
     "PAYMENT_FAILED": "PAYMENT_FAILED",
     "PAYMENT_PROCESSING": "PAYMENT_PROCESSING",
     "PAYMENT_SUCCEEDED": "PAYMENT_SUCCEEDED",
-    "CONFIRMED": "CONFIRMED",
+    "CONFIRMED": "CONFIRMED",  # we received the payment (funded) or verified the tracking info (sent by donor)
+    "ON_ITS_WAY": "ON_ITS_WAY",  # when payment is successful, we bought the goods and sent them
     "DELIVERED": "DELIVERED",
 }
 
