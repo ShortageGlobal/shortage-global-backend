@@ -15,6 +15,7 @@ class PackageSerializer(serializers.ModelSerializer):
             "tracking_code",
             "created_at",
             "status",
+            "type",
         ]
 
 
