@@ -1,13 +1,12 @@
-from django.contrib.auth.models import User
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.utils import json
-
 from shortage.apps.catalog.models import Product
 from shortage.apps.catalog.private.views import (
     PrivateProductsViewSet,
     PrivateProductsSlugExistsViewSet,
 )
 from shortage.helpers.test_utilities import (
+    create_test_user,
     create_test_organization,
     create_test_product,
 )
@@ -15,10 +14,9 @@ from shortage.helpers.test_utilities import (
 
 class PrivateProductsTestCase(APITestCase):
     def setUp(self) -> None:
-        self.user = User.objects.create_user(username="testuser", password="12345")
+        self.user = create_test_user()
         self.requestFactory = APIRequestFactory()
-
-        self.organization = create_test_organization(self.user)
+        self.organization = create_test_organization(owner=self.user)
 
         self.assertNotEqual(self.organization.id, None, "Organization was not created")
 
@@ -54,7 +52,7 @@ class PrivateProductsTestCase(APITestCase):
         # Access from a different user
         request = self.requestFactory.get(self.get_request_route(), format="json")
 
-        other_user = User.objects.create_user(username="other_user", password="12345")
+        other_user = create_test_user(username="other_user")
         force_authenticate(request, user=other_user)
 
         response = PrivateProductsViewSet.as_view({"get": "list"})(
@@ -85,7 +83,7 @@ class PrivateProductsTestCase(APITestCase):
 
     def test_list(self):
         # Create test product
-        product1 = create_test_product(self.organization)
+        product1 = create_test_product(organization=self.organization)
 
         self.assertNotEqual(product1.id, None)
 
@@ -102,7 +100,9 @@ class PrivateProductsTestCase(APITestCase):
         self.assertEqual(content["results"][0]["slug"], product1.slug)
 
         # Create another product
-        product2 = create_test_product(self.organization, "other_slug")
+        product2 = create_test_product(
+            organization=self.organization, slug="other_slug"
+        )
 
         self.assertNotEqual(product2.id, None)
 
@@ -215,10 +215,9 @@ class PrivateProductsTestCase(APITestCase):
 
 class PrivateProductsSlugCheckerTests(APITestCase):
     def setUp(self) -> None:
-        self.user = User.objects.create_user(username="testuser", password="12345")
+        self.user = create_test_user()
         self.requestFactory = APIRequestFactory()
-
-        self.organization = create_test_organization(self.user)
+        self.organization = create_test_organization(owner=self.user)
 
         self.assertNotEqual(self.organization.id, None, "Organization was not created")
 
@@ -274,7 +273,7 @@ class PrivateProductsSlugCheckerTests(APITestCase):
         self.assertEqual(response.status_code, 404, "Slug exists but shouldn't")
 
     def test_permissions(self):
-        wrong_user = User.objects.create_user(username="wrong_user", password="12345")
+        wrong_user = create_test_user(username="wrong_user")
 
         request = self.requestFactory.get(self.get_request_route())
         force_authenticate(request, user=wrong_user)

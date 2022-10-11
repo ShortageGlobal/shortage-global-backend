@@ -1,9 +1,9 @@
-from django.contrib.auth.models import User
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.utils import json
 from shortage.apps.packages.private.views import PrivateOrganizationPackagesViewSet
 from shortage.apps.packages.views import PackageCreationViewSet
 from shortage.helpers.test_utilities import (
+    create_test_user,
     create_test_organization,
     create_test_product,
 )
@@ -11,11 +11,10 @@ from shortage.helpers.test_utilities import (
 
 class PackageTestCase(APITestCase):
     def setUp(self) -> None:
-        self.user = User.objects.create_user(username="testuser", password="12345")
         self.requestFactory = APIRequestFactory()
-
-        self.organization = create_test_organization(self.user)
-        self.product = create_test_product(self.organization)
+        self.user = create_test_user()
+        self.organization = create_test_organization(owner=self.user)
+        self.product = create_test_product(organization=self.organization)
 
     def test_create(self):
         test_data = {
@@ -65,11 +64,11 @@ class PackageTestCase(APITestCase):
 
 class PrivatePackageTestCase(APITestCase):
     def setUp(self) -> None:
-        self.user = User.objects.create_user(username="testuser", password="12345")
+        self.user = create_test_user()
         self.requestFactory = APIRequestFactory()
 
-        self.organization = create_test_organization(self.user)
-        self.product = create_test_product(self.organization)
+        self.organization = create_test_organization(owner=self.user)
+        self.product = create_test_product(organization=self.organization)
 
     def create_test_package(self):
         # Todo: Replace with database creation instead of using the request
