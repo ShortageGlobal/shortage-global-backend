@@ -1,12 +1,14 @@
 from io import BytesIO
-
 from PIL import Image
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.utils import json
-from .views import PrivateOrganizationViewSet, PrivateOrganizationSlugExistsViewSet
+from shortage.apps.catalog.views import (
+    PrivateOrganizationViewSet,
+    PrivateOrganizationSlugExistsViewSet,
+)
 
 # Todo: Move to test helpers after the merge
 def create_image(

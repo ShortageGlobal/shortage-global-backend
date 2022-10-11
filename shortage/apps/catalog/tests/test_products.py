@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.utils import json
-
 from shortage.apps.catalog.models import Product
 from shortage.apps.catalog.private.views import (
     PrivateProductsViewSet,
