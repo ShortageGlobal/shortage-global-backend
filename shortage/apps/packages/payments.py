@@ -20,14 +20,26 @@ def deserialize_stripe_event(payload, signature):
 
 
 def generate_package_checkout_url(
-    organization_slug, package_uuid, items, customer_email
+    organization_slug, package_uuid, items, cart_item_uuids, customer_email
 ):
     package_status_url = "%s/organizations/%s/packages/%s" % (
         settings.FRONTEND_BASE_URL,
         organization_slug,
         package_uuid,
     )
+
     cart_url = "%s/donation/details/cart" % settings.FRONTEND_BASE_URL
+
+    # attach cart item ids to the url, so the frontend
+    # could delete the cart items on page visit
+    success_url = "%s?paymentStatus=succeeded&%s" % (
+        package_status_url,
+        "&".join(
+            ["dci={}".format(cart_item_uuid) for cart_item_uuid in cart_item_uuids]
+        ),
+    )
+
+    cancel_url = "%s?paymentStatus=cancelled" % cart_url
 
     metadata = {
         "organization_slug": organization_slug,
@@ -55,10 +67,11 @@ def generate_package_checkout_url(
         ],
         mode="payment",
         submit_type="donate",
-        success_url=package_status_url + "?paymentStatus=succeeded",
-        cancel_url=cart_url + "?paymentStatus=cancelled",
+        success_url=success_url,
+        cancel_url=cancel_url,
         metadata=metadata,
         payment_intent_data={"metadata": metadata},
+        payment_method_types=["card"],
     )
 
     return session.url
