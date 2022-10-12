@@ -35,10 +35,18 @@ class PackageItemCreationSerializer(serializers.ModelSerializer):
     quantity = serializers.IntegerField(
         min_value=1, max_value=2147483647, required=True
     )
+    cart_item_uuid = serializers.CharField(
+        write_only=True,
+        required=False,
+        allow_blank=False,
+        default="",
+        min_length=36,
+        max_length=36,
+    )
 
     class Meta:
         model = PackageItem
-        fields = ["product", "quantity"]
+        fields = ["product", "quantity", "cart_item_uuid"]
 
 
 class PackageCreationSerializer(serializers.ModelSerializer):
@@ -98,7 +106,11 @@ class PackageCreationSerializer(serializers.ModelSerializer):
 
         # create package items
         items = [
-            PackageItem(package=package, **validated_item_data)
+            PackageItem(
+                package=package,
+                product=validated_item_data["product"],
+                quantity=validated_item_data["quantity"],
+            )
             for validated_item_data in validated_items_data
         ]
         PackageItem.objects.bulk_create(items)
@@ -106,11 +118,13 @@ class PackageCreationSerializer(serializers.ModelSerializer):
         if package.type == PackageType.FUNDED_BY_DONOR:
             organization = self.context["view"].organization
             organization_slug = organization.slug
+            cart_item_uuids = [item["cart_item_uuid"] for item in validated_items_data]
 
             package.checkout_url = generate_package_checkout_url(
                 organization_slug,
                 package.uuid,
                 items,
+                cart_item_uuids,
                 package.email,
             )
             package.save()
