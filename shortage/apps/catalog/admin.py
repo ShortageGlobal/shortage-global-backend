@@ -13,6 +13,7 @@ class OrganizationAdmin(admin.ModelAdmin):
         "name",
         "is_verified",
         "is_draft",
+        "promote",
         "owner",
         "created_at",
     ]
