@@ -14,10 +14,9 @@ from shortage.helpers import get_full_name
 class OrganizationManager(models.Manager):
     def promoted(self):
         """
-        Return all validated published organizations for now.
-        In the future, use a "promoted' flag or something.
+        Return handpicked list of organizations to show on the main page
         """
-        return self.public()
+        return self.public().filter(promote=True)
 
     def public(self):
         """Return all publicly available organizations"""
@@ -56,6 +55,7 @@ class Organization(models.Model):
     is_verified = models.BooleanField(default=False, db_index=True)
     is_draft = models.BooleanField(default=True, db_index=True)
     is_deleted = models.BooleanField(default=False, db_index=True)
+    promote = models.BooleanField(default=False, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     objects = OrganizationManager()
