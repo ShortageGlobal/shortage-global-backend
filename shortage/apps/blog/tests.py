@@ -69,4 +69,3 @@ class BlogPostTestCase(APITestCase):
         )
 
         self.assertEqual(response.status_code, 403)
-
