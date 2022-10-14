@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('is_published', models.BooleanField(db_index=True, default=False)),
                 ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='authors', to=settings.AUTH_USER_MODEL)),
-                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='blog_posts', to='catalog.organization')),
+                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='blog_posts', to='catalog.organization')),
             ],
         ),
     ]

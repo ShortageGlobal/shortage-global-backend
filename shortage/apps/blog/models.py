@@ -12,7 +12,7 @@ class BlogManager(models.Manager):
 
 
 class BlogPost(models.Model):
-    owner = models.ForeignKey(
+    organization = models.ForeignKey(
         Organization,
         related_name="blog_posts",
         on_delete=models.CASCADE,
