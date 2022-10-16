@@ -16,9 +16,6 @@ class PrivateBlogPostViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, IsObjectOwner]
     serializer_class = PrivateBlogPostSerializer
 
-    def __init__(self):
-        self.organization = None
-
     def get_queryset(self):
         organization = get_object_or_404(
             Organization.objects.public(), slug=self.kwargs["org_slug"]
