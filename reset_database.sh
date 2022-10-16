@@ -1,5 +1,8 @@
 #!/bin/bash
+
 # Resets the local Django database, adding an admin login and migrations
+# Author: https://mattsegal.dev/reset-django-local-database.html
+
 set -e
 echo -e "\n>>> Resetting the database"
 docker-compose exec django python manage.py reset_db --close-sessions --noinput
