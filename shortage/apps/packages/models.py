@@ -167,6 +167,10 @@ class Cart(models.Model):
     def __str__(self):
         return self.uuid.__str__()
 
+    @property
+    def full_name(self):
+        return get_full_name(first_name=self.first_name, last_name=self.last_name)
+
 
 class CartItem(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

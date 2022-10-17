@@ -5,18 +5,15 @@ from django.utils.html import format_html
 
 class PackageAdmin(admin.ModelAdmin):
     list_display = [
+        "created_at",
         "status",
-        "owner",
         "type",
         "full_name",
-        "need_tax_deduction",
         "email",
         "phone_number",
+        "need_tax_deduction",
         "delivery_company",
         "tracking_code",
-        "status",
-        "photo_preview",
-        "created_at",
     ]
     fields = [
         "type",
@@ -65,7 +62,11 @@ class PackageAdmin(admin.ModelAdmin):
         "email",
         "first_name",
         "last_name",
+        "phone_number",
+        "delivery_company",
+        "tracking_code",
     ]
+    list_filter = ["type", "status", "created_at", "need_tax_deduction"]
 
     def has_add_permission(self, request, obj=None):
         return False
@@ -86,6 +87,8 @@ class PackageAdmin(admin.ModelAdmin):
 class PackageItemAdmin(admin.ModelAdmin):
     list_display = ["product", "quantity", "created_at", "package"]
     readonly_fields = ["created_at"]
+    search_fields = ["package__pk", "product__name"]
+    list_filter = ["created_at"]
 
     def has_add_permission(self, request, obj=None):
         return False
@@ -97,11 +100,20 @@ class PackageItemAdmin(admin.ModelAdmin):
 class CartAdmin(admin.ModelAdmin):
     list_display = [
         "created_at",
-        "owner",
+        "full_name",
         "email",
+        "phone_number",
+        "need_tax_deduction",
         "uuid",
     ]
     readonly_fields = ["created_at", "updated_at"]
+    search_fields = [
+        "email",
+        "first_name",
+        "last_name",
+        "phone_number",
+    ]
+    list_filter = ["created_at", "need_tax_deduction"]
 
     def has_add_permission(self, request, obj=None):
         return False
@@ -116,6 +128,8 @@ class CartAdmin(admin.ModelAdmin):
 class CartItemAdmin(admin.ModelAdmin):
     list_display = ["product", "quantity", "created_at", "cart"]
     readonly_fields = ["created_at", "updated_at"]
+    search_fields = ["cart__pk", "product__name"]
+    list_filter = ["created_at"]
 
     def has_add_permission(self, request, obj=None):
         return False
