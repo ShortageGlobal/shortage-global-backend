@@ -7,7 +7,13 @@ from shortage.apps.blog.views import PrivateBlogPostViewSet
 router = routers.DefaultRouter()
 
 router.register(
-    r"organizations/(?P<org_slug>[^/.]+)/blog",
+    r"private/organizations/(?P<org_slug>[^/.]+)/blog",
+    PrivateBlogPostViewSet,
+    basename="blog",
+)
+
+router.register(
+    r"organizations/(?P<org_slug>[^/.]+)/packages/(?P<package_uuid>[^/.]+)/blog",
     PrivateBlogPostViewSet,
     basename="blog",
 )

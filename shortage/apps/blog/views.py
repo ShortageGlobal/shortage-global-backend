@@ -1,11 +1,13 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, mixins
 from rest_framework.schemas.openapi import AutoSchema
 from rest_framework.generics import get_object_or_404
-
+from bs4 import BeautifulSoup
 from shortage.apps.blog.models import BlogPost
-from shortage.apps.blog.serializers import PrivateBlogPostSerializer
+from shortage.apps.blog.serializers import PrivateBlogPostSerializer, BlogPostSerializer
 from shortage.apps.catalog.models import Organization
+from shortage.apps.packages.models import Package
 from shortage.helpers.permissions import IsObjectOwner
+import os
 
 
 class PrivateBlogPostViewSet(viewsets.ModelViewSet):
@@ -21,7 +23,13 @@ class PrivateBlogPostViewSet(viewsets.ModelViewSet):
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
 
-        return BlogPost.objects.filter(organization=organization)
+        queryset = BlogPost.objects.filter(organization=organization)
+
+        is_published = self.request.query_params.get("is_published")
+        if is_published:
+            queryset = queryset.filter(is_published=is_published)
+
+        return queryset
 
     def create(self, request, *args, **kwargs):
         self.organization = get_object_or_404(
@@ -29,3 +37,33 @@ class PrivateBlogPostViewSet(viewsets.ModelViewSet):
         )
 
         return super().create(request, *args, **kwargs)
+
+    def perform_destroy(self, instance):
+        # Delete all related images
+        soup = BeautifulSoup(instance.content, features="html.parser")
+        for img in soup.findAll("img"):
+            file_path = img.get("src")
+
+            if os.path.exists(file_path) and os.path.isfile(file_path):
+                os.path.remove(file_path)
+
+        super().perform_destroy(instance)
+
+class RelatedBlogPostsViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    schema = AutoSchema(
+        tags=["Packages", "Blog"],
+    )
+
+    permission_classes = [permissions.AllowAny]
+    serializer_class = BlogPostSerializer
+    slug_url_kwarg = "package_uuid"
+
+    def get_queryset(self):
+        organization = get_object_or_404(
+            Organization.objects.public(), slug=self.kwargs["org_slug"]
+        )
+        package = get_object_or_404(
+            Package.objects.all(), slug=self.kwargs["uuid"]
+        )
+
+        return BlogPost.objects.all().filter(organization=organization, packages__in=[package])

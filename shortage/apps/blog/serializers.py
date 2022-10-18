@@ -12,10 +12,12 @@ class PrivateBlogPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogPost
         fields = [
+            "uuid",
             "organization",
             "author",
             "title",
             "content",
+            "packages",
             "is_published",
         ]
 
@@ -23,4 +25,18 @@ class PrivateBlogPostSerializer(serializers.ModelSerializer):
         organization = self.context["view"].organization
         validated_data["organization"] = organization
 
-        return BlogPost.objects.create(**validated_data)
+        return super().create(validated_data)
+
+class BlogPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlogPost
+        fields = [
+            "uuid",
+            "organization",
+            "author",
+            "title",
+            "content",
+            "packages",
+            "is_published",
+        ]
+        read_only_fields = fields

@@ -16,7 +16,7 @@ docker-compose exec django python manage.py createsuperuser \
    --email admin@example.com \
    --noinput
 
-echo -e "\n>>> Setting superuser 'admin' password to 12345"
+echo -e "\n>>> Setting superuser 'admin' password to 123456"
 docker-compose exec django python manage.py shell_plus --quiet-load -c "
 u=User.objects.get(username='admin')
 u.set_password('123456')
