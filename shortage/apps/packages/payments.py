@@ -20,7 +20,12 @@ def deserialize_stripe_event(payload, signature):
 
 
 def generate_package_checkout_url(
-    organization_slug, package_uuid, items, cart_item_uuids, customer_email
+    organization_slug,
+    organization_name,
+    package_uuid,
+    items,
+    cart_item_uuids,
+    customer_email,
 ):
     package_status_url = "%s/organizations/%s/packages/%s" % (
         settings.FRONTEND_BASE_URL,
@@ -43,6 +48,7 @@ def generate_package_checkout_url(
 
     metadata = {
         "organization_slug": organization_slug,
+        "organization_name": organization_name,
         "package_uuid": package_uuid,
     }
 
@@ -59,7 +65,7 @@ def generate_package_checkout_url(
                             **metadata,
                         },
                     },
-                    "unit_amount": item.product.price * 100,
+                    "unit_amount": int(item.product.price * 100),
                 },
                 "quantity": item.quantity,
             }
