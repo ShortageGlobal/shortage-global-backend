@@ -95,9 +95,7 @@ class BlogPostTestCase(APITestCase):
 
         self.assertEqual(response.status_code, 201)
 
-        request = self.requestFactory.get(
-            self.get_request_route(), format="json"
-        )
+        request = self.requestFactory.get(self.get_request_route(), format="json")
         force_authenticate(request, self.user)
 
         response = PrivateBlogPostViewSet.as_view({"get": "list"})(
@@ -146,7 +144,6 @@ class BlogPostTestCase(APITestCase):
 
         self.assertEqual(content["title"], test_data["title"])
 
-
     def test_delete(self):
         test_data = {
             "title": "Test title",
@@ -166,9 +163,7 @@ class BlogPostTestCase(APITestCase):
 
         content = json.loads(response.render().content)
 
-        request = self.requestFactory.delete(
-            self.get_request_route(), format="json"
-        )
+        request = self.requestFactory.delete(self.get_request_route(), format="json")
         force_authenticate(request, self.user)
         response = PrivateBlogPostViewSet.as_view({"delete": "destroy"})(
             request, org_slug=self.organization.slug, pk=content["uuid"]
@@ -177,9 +172,7 @@ class BlogPostTestCase(APITestCase):
         self.assertEqual(response.status_code, 204)
 
         # Double check with get
-        request = self.requestFactory.get(
-            self.get_request_route(), format="json"
-        )
+        request = self.requestFactory.get(self.get_request_route(), format="json")
         force_authenticate(request, self.user)
         response = PrivateBlogPostViewSet.as_view({"get": "retrieve"})(
             request, org_slug=self.organization.slug, pk=content["uuid"]
@@ -187,30 +180,54 @@ class BlogPostTestCase(APITestCase):
 
         self.assertEqual(response.status_code, 404)
 
-# class RelatedBlogPostsTestCase(APITestCase):
-#     def setUp(self) -> None:
-#         self.user = create_test_user()
-#         self.requestFactory = APIRequestFactory()
-#         self.organization = create_test_organization(owner=self.user)
-#
-#         self.assertNotEqual(self.organization.id, None, "Organization was not created")
-#
-#         self.package = create_test_package(organization=self.organization)
-#
-#         self.assertNotEqual(self.package.uuid, None, "Package was not created")
-#
-#     def get_request_route(self):
-#         return "/api/private/organizations/{}/packages/{}/blog".format(self.organization.slug, self.package.uuid)
-#
-#     def test_related(self):
-#         request = self.requestFactory.get(
-#             self.get_request_route(), format="json"
-#         )
-#         force_authenticate(request, self.user)
-#         response = RelatedBlogPostsViewSet.as_view({"get": "retrieve"})(
-#             request, org_slug=self.organization.slug, uuid=str(self.package.uuid)
-#         )
-#
-#         self.assertEqual(response.status_code, 200)
 
+class RelatedBlogPostsTestCase(APITestCase):
+    def setUp(self) -> None:
+        self.user = create_test_user()
+        self.requestFactory = APIRequestFactory()
+        self.organization = create_test_organization(owner=self.user)
 
+        self.assertNotEqual(self.organization.id, None, "Organization was not created")
+
+        self.package = create_test_package(organization=self.organization)
+
+        self.assertNotEqual(self.package.uuid, None, "Package was not created")
+
+    def get_request_route(self):
+        return "/api/private/organizations/{}/packages/{}/blog".format(
+            self.organization.slug, self.package.uuid
+        )
+
+    def create_blog_post(self):
+        test_data = {
+            "title": "Test title",
+            "content": "<p>test content</p>",
+            "is_published": False,
+            "packages": [self.package.uuid],
+        }
+        request = self.requestFactory.post(
+            self.get_request_route(), data=test_data, format="json"
+        )
+        force_authenticate(request, self.user)
+
+        response = PrivateBlogPostViewSet.as_view({"post": "create"})(
+            request, org_slug=self.organization.slug
+        )
+
+        self.assertEqual(response.status_code, 201)
+
+    def test_related(self):
+        self.create_blog_post()
+
+        request = self.requestFactory.get(self.get_request_route(), format="json")
+        force_authenticate(request, self.user)
+        response = RelatedBlogPostsViewSet.as_view({"get": "list"})(
+            request, org_slug=self.organization.slug, pk=str(self.package.uuid)
+        )
+
+        content = json.loads(response.render().content)
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(content["count"], 1)
+        self.assertEqual(content["results"][0]["packages"][0], str(self.package.uuid))

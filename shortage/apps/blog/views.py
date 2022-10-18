@@ -49,21 +49,23 @@ class PrivateBlogPostViewSet(viewsets.ModelViewSet):
 
         super().perform_destroy(instance)
 
-class RelatedBlogPostsViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+
+class RelatedBlogPostsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     schema = AutoSchema(
         tags=["Packages", "Blog"],
     )
 
     permission_classes = [permissions.AllowAny]
     serializer_class = BlogPostSerializer
-    slug_url_kwarg = "package_uuid"
 
     def get_queryset(self):
         organization = get_object_or_404(
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
-        package = get_object_or_404(
-            Package.objects.all(), slug=self.kwargs["uuid"]
+        package = get_object_or_404(Package.objects.all(), uuid=self.kwargs["pk"])
+
+        queryset = BlogPost.objects.all().filter(
+            organization=organization, packages__in=[str(package.uuid)]
         )
 
-        return BlogPost.objects.all().filter(organization=organization, packages__in=[package])
+        return queryset

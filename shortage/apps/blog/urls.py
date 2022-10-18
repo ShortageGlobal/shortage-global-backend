@@ -2,7 +2,7 @@ from django.urls import include, path
 from rest_framework import routers
 
 from shortage.apps.blog.image_upload import upload_image
-from shortage.apps.blog.views import PrivateBlogPostViewSet
+from shortage.apps.blog.views import PrivateBlogPostViewSet, RelatedBlogPostsViewSet
 
 router = routers.DefaultRouter()
 
@@ -13,8 +13,8 @@ router.register(
 )
 
 router.register(
-    r"organizations/(?P<org_slug>[^/.]+)/packages/(?P<package_uuid>[^/.]+)/blog",
-    PrivateBlogPostViewSet,
+    r"organizations/(?P<org_slug>[^/.]+)/blog/packages/",
+    RelatedBlogPostsViewSet,
     basename="blog",
 )
 

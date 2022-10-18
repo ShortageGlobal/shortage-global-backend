@@ -27,6 +27,7 @@ class PrivateBlogPostSerializer(serializers.ModelSerializer):
 
         return super().create(validated_data)
 
+
 class BlogPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogPost
