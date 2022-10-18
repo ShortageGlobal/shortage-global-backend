@@ -59,7 +59,7 @@ def generate_package_checkout_url(
                             **metadata,
                         },
                     },
-                    "unit_amount": item.product.price * 100,
+                    "unit_amount": int(item.product.price * 100),
                 },
                 "quantity": item.quantity,
             }

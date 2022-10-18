@@ -126,7 +126,9 @@ class Product(models.Model):
         storage=storage.MediaStorage(),
         pregenerated_sizes=["product_large", "product_medium"],
     )
-    price = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
+    price = models.DecimalField(
+        max_digits=8, decimal_places=2, validators=[MinValueValidator(1)]
+    )
     requested_amount = models.PositiveIntegerField(
         default=1, validators=[MinValueValidator(1)]
     )

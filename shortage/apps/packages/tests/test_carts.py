@@ -102,7 +102,7 @@ class CartItemsTestCase(APITestCase):
                 "slug": "test_product",
                 "category": "VITAL_GOODS",
                 "photo": None,
-                "price": 999,
+                "price": "999.00",
                 "requested_amount": 20,
                 "top_priority": False,
                 "organization": {
@@ -122,7 +122,7 @@ class CartItemsTestCase(APITestCase):
                 "slug": "test_product",
                 "category": "VITAL_GOODS",
                 "photo": None,
-                "price": 999,
+                "price": "999.00",
                 "requested_amount": 20,
                 "top_priority": False,
                 "organization": {
