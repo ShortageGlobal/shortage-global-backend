@@ -118,10 +118,12 @@ class PackageCreationSerializer(serializers.ModelSerializer):
         if package.type == PackageType.FUNDED_BY_DONOR:
             organization = self.context["view"].organization
             organization_slug = organization.slug
+            organization_name = organization.name
             cart_item_uuids = [item["cart_item_uuid"] for item in validated_items_data]
 
             package.checkout_url = generate_package_checkout_url(
                 organization_slug,
+                organization_name,
                 package.uuid,
                 items,
                 cart_item_uuids,
