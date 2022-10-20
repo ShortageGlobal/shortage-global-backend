@@ -6,6 +6,8 @@ DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
 
+FRONTEND_BASE_URL = os.getenv("DJANGO_FRONTEND_BASE_URL", "https://shortage.global")
+
 # Do not connect to database during static collection
 if len(sys.argv) > 0 and sys.argv[1] != "collectstatic":
     database_url = os.getenv("DJANGO_DATABASE_URL", None)

@@ -23,5 +23,5 @@ class PrivateOrganizationPackagesViewSet(
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
         return Package.objects.filter(
-            items__product__organization=organization, owner=self.request.user
+            items__product__organization=organization
         ).distinct()
