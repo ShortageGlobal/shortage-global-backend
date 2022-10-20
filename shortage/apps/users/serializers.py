@@ -1,22 +1,19 @@
-from rest_framework import serializers
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.db import transaction
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
+from rest_framework import serializers
 from rest_framework.exceptions import APIException, NotFound
-from rest_framework.validators import UniqueValidator
-from shortage.apps.mailing.mail_service import UserConfirmationEmail
 from phonenumber_field.serializerfields import PhoneNumberField
+from shortage.apps.mailing.mail_service import UserConfirmationEmail
 from shortage.helpers import get_full_name
 from .models import Profile
 from .tokens import user_activation_token
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(
-        required=True, validators=[UniqueValidator(queryset=User.objects.all())]
-    )
+    email = serializers.EmailField(required=True)
     password = serializers.CharField(
         write_only=True, required=True, validators=[validate_password]
     )
@@ -31,7 +28,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = User
+        model = get_user_model()
         fields = ["email", "password", "first_name", "last_name", "phone_number"]
 
     @transaction.atomic
@@ -39,6 +36,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         first_name = validated_data.get("first_name", None)
         last_name = validated_data.get("last_name", None)
 
+        User = get_user_model()
         user = User.objects.create(
             username=validated_data["email"],
             email=validated_data["email"],
@@ -81,6 +79,7 @@ class ActivationSerializer(serializers.Serializer):
     )
 
     def create(self, validated_data):
+        User = get_user_model()
         try:
             uid = self.__decode_uid(validated_data["uid"])
             user = User.objects.get(pk=uid)

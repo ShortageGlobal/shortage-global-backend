@@ -1,6 +1,6 @@
 from io import BytesIO
 from PIL import Image
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
@@ -33,6 +33,7 @@ def create_image(
 
 class PrivateOrganizationTestCase(APITestCase):
     def setUp(self) -> None:
+        User = get_user_model()
         self.user = User.objects.create_user(username="testuser", password="12345")
         self.requestFactory = APIRequestFactory()
 
@@ -139,6 +140,7 @@ class PrivateOrganizationTestCase(APITestCase):
 
 class PrivateOrganizationSlugCheckerTests(APITestCase):
     def setUp(self) -> None:
+        User = get_user_model()
         self.user = User.objects.create_user(username="testuser", password="12345")
         self.requestFactory = APIRequestFactory()
 
@@ -178,6 +180,7 @@ class PrivateOrganizationSlugCheckerTests(APITestCase):
         self.assertEqual(response.status_code, 404, "Slug exists but shouldn't")
 
         # Test for wrong user
+        User = get_user_model()
         wrong_user = User.objects.create_user(username="wrong_user", password="12345")
 
         request = self.requestFactory.get("/api/private/exists/organizations/")
