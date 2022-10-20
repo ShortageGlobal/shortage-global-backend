@@ -1,6 +1,5 @@
 from io import BytesIO
 from PIL import Image
-from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
@@ -9,7 +8,7 @@ from shortage.apps.catalog.views import (
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
 )
-from shortage.helpers.test_utilities import create_test_organization
+from shortage.helpers.test_utilities import create_test_user, create_test_organization
 
 
 # Todo: Move to test helpers after the merge
@@ -33,8 +32,7 @@ def create_image(
 
 class PrivateOrganizationTestCase(APITestCase):
     def setUp(self) -> None:
-        User = get_user_model()
-        self.user = User.objects.create_user(username="testuser", password="12345")
+        self.user = create_test_user()
         self.requestFactory = APIRequestFactory()
 
         self.testData = {
@@ -140,8 +138,7 @@ class PrivateOrganizationTestCase(APITestCase):
 
 class PrivateOrganizationSlugCheckerTests(APITestCase):
     def setUp(self) -> None:
-        User = get_user_model()
-        self.user = User.objects.create_user(username="testuser", password="12345")
+        self.user = create_test_user()
         self.requestFactory = APIRequestFactory()
 
         self.testData = {
@@ -180,9 +177,7 @@ class PrivateOrganizationSlugCheckerTests(APITestCase):
         self.assertEqual(response.status_code, 404, "Slug exists but shouldn't")
 
         # Test for wrong user
-        User = get_user_model()
-        wrong_user = User.objects.create_user(username="wrong_user", password="12345")
-
+        wrong_user = create_test_user(email="wrong_user@shortage.global")
         request = self.requestFactory.get("/api/private/exists/organizations/")
         force_authenticate(request, user=wrong_user)
         response = PrivateOrganizationSlugExistsViewSet.as_view({"get": "retrieve"})(

@@ -17,7 +17,7 @@ class CartItemsTestCase(APITestCase):
         self.product1 = create_test_product(organization=self.organization1)
 
         # create a product in another organization
-        self.user2 = create_test_user(username="testuser2")
+        self.user2 = create_test_user(email="testuser2@shortage.global")
         self.organization2 = create_test_organization(
             owner=self.user2, slug="test_organization2"
         )

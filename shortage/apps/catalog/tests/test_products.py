@@ -52,7 +52,7 @@ class PrivateProductsTestCase(APITestCase):
         # Access from a different user
         request = self.requestFactory.get(self.get_request_route(), format="json")
 
-        other_user = create_test_user(username="other_user")
+        other_user = create_test_user(email="other_user@shortage.global")
         force_authenticate(request, user=other_user)
 
         response = PrivateProductsViewSet.as_view({"get": "list"})(
@@ -273,7 +273,7 @@ class PrivateProductsSlugCheckerTests(APITestCase):
         self.assertEqual(response.status_code, 404, "Slug exists but shouldn't")
 
     def test_permissions(self):
-        wrong_user = create_test_user(username="wrong_user")
+        wrong_user = create_test_user(email="wrong_user@shortage.global")
 
         request = self.requestFactory.get(self.get_request_route())
         force_authenticate(request, user=wrong_user)

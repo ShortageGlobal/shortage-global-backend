@@ -4,7 +4,7 @@ from shortage.apps.catalog.models import Organization, Product
 
 def create_test_user(**kwargs):
     test_data = {
-        "username": "testuser",
+        "email": "testuser@shortage.global",
         "password": "12345",
         **kwargs,
     }
