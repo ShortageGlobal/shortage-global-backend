@@ -11,3 +11,6 @@ sandbox.py
 
 # in case we need local settings
 shortage/settings/local.py
+
+# misc
+.DS_Store
