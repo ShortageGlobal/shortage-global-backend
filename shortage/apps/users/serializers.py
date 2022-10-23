@@ -1,6 +1,6 @@
+from django.db import transaction
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-from django.db import transaction
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from rest_framework import serializers
@@ -13,6 +13,8 @@ from .tokens import user_activation_token
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
+    """Register new inactive user and create a profile"""
+
     email = serializers.EmailField(required=True)
     password = serializers.CharField(
         write_only=True, required=True, validators=[validate_password]
@@ -70,6 +72,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 
 class ActivationSerializer(serializers.Serializer):
+    """Activate user account"""
+
     uid = serializers.RegexField(
         regex=r"^[0-9A-Za-z_\-]+$", write_only=True, required=True
     )
@@ -101,3 +105,37 @@ class ActivationSerializer(serializers.Serializer):
             return force_str(urlsafe_base64_decode(data))
         except (TypeError, ValueError, OverflowError):
             raise serializers.ValidationError({"uid": "The given uid is not valid."})
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """ShortageUser serializer"""
+
+    class Meta:
+        model = get_user_model()
+        fields = [
+            "first_name",
+            "last_name",
+            "email",
+        ]
+        read_only_fields = ["email"]
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    """Get/update user profile"""
+
+    user = UserSerializer(required=True)
+
+    class Meta:
+        model = Profile
+        fields = ["user", "phone_number"]
+        read_only_fields = []
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        # update user data
+        user_data = validated_data.pop("user")
+        user_serializer = self.fields["user"]
+        user = instance.user
+        user_serializer.update(user, user_data)
+        # update profile data
+        return super().update(instance, validated_data)
