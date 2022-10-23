@@ -1,14 +1,14 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from shortage.apps.catalog.models import Organization, Product
-from shortage.apps.packages.models import Cart, CartItem
 
 
 def create_test_user(**kwargs):
     test_data = {
-        "username": "testuser",
+        "email": "testuser@shortage.global",
         "password": "12345",
         **kwargs,
     }
+    User = get_user_model()
     user = User.objects.create_user(**test_data)
     return user
 

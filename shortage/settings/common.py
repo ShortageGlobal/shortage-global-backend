@@ -257,7 +257,9 @@ PACKAGE_TYPE = {
     "FUNDED_BY_DONOR": "FUNDED_BY_DONOR",
 }
 
-FRONTEND_BASE_URL = os.getenv("DJANGO_FRONTEND_BASE_URL", "https://shortage.global")
+FRONTEND_BASE_URL = os.getenv("DJANGO_FRONTEND_BASE_URL", "")
+
+AUTH_USER_MODEL = "users.ShortageUser"
 
 EMAIL_HOST = os.getenv("DJANGO_EMAIL_HOST", "")
 EMAIL_PORT = os.getenv("DJANGO_EMAIL_PORT", "")
