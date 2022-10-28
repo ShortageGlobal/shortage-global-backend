@@ -38,11 +38,6 @@ class ProductAdmin(admin.ModelAdmin):
     autocomplete_fields = ["organization"]
 
 
-class OnlineStoreAdmin(admin.ModelAdmin):
-    list_display = ["url", "product", "name", "created_at"]
-    autocomplete_fields = ["product"]
-
-
 class OrganizationRegistrationRequestAdmin(admin.ModelAdmin):
     list_display = [
         "full_name",

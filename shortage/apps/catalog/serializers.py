@@ -3,7 +3,6 @@ from .models import (
     Organization,
     Instruction,
     Product,
-    OnlineStore,
     OrganizationRegistrationRequest,
 )
 from shortage.helpers.serializers import AuthorizedUserOrNone
@@ -128,12 +127,6 @@ class ProductSerializer(serializers.ModelSerializer):
             "top_priority",
             "organization",
         ]
-
-
-class OnlineStoreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OnlineStore
-        fields = ["url", "name"]
 
 
 class OrganizationRegistrationRequestSerializer(serializers.ModelSerializer):
