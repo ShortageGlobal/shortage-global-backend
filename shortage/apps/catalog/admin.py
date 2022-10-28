@@ -3,7 +3,6 @@ from .models import (
     Organization,
     Product,
     Instruction,
-    OnlineStore,
     OrganizationRegistrationRequest,
 )
 
@@ -78,7 +77,6 @@ class OrganizationRegistrationRequestAdmin(admin.ModelAdmin):
 admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(Instruction, InstructionAdmin)
 admin.site.register(Product, ProductAdmin)
-admin.site.register(OnlineStore, OnlineStoreAdmin)
 admin.site.register(
     OrganizationRegistrationRequest, OrganizationRegistrationRequestAdmin
 )

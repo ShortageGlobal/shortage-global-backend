@@ -163,21 +163,9 @@ class Product(models.Model):
         return self.photo.thumbnails.product_medium
 
 
-class OnlineStore(models.Model):
-    product = models.ForeignKey(
-        Product, related_name="online_stores", on_delete=models.CASCADE, null=True
-    )
-    url = models.URLField(max_length=255, null=True, blank=True)
-    name = models.CharField(max_length=255, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.url
-
-
 class OrganizationRegistrationRequest(models.Model):
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
     phone_number = PhoneNumberField(null=True, blank=True)
     email = models.EmailField(max_length=100)
     organization_name = models.CharField(max_length=255, null=True, blank=True)
@@ -196,5 +184,4 @@ class OrganizationRegistrationRequest(models.Model):
 auditlog.register(Organization)
 auditlog.register(Instruction)
 auditlog.register(Product)
-auditlog.register(OnlineStore)
 auditlog.register(OrganizationRegistrationRequest)
