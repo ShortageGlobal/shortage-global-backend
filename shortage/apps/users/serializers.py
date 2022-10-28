@@ -15,15 +15,8 @@ from .tokens import user_activation_token
 class RegistrationSerializer(serializers.ModelSerializer):
     """Register new inactive user and create a profile"""
 
-    email = serializers.EmailField(required=True)
     password = serializers.CharField(
         write_only=True, required=True, validators=[validate_password]
-    )
-    first_name = serializers.CharField(
-        write_only=True, required=False, allow_blank=True, default="", min_length=1
-    )
-    last_name = serializers.CharField(
-        write_only=True, required=False, allow_blank=True, default="", min_length=1
     )
     phone_number = PhoneNumberField(
         write_only=True, required=False, allow_blank=True, default=""
@@ -35,12 +28,13 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        first_name = validated_data.get("first_name", None)
-        last_name = validated_data.get("last_name", None)
+        email = validated_data["email"]
+        first_name = validated_data.get("first_name", "")
+        last_name = validated_data.get("last_name", "")
 
         User = get_user_model()
         user = User.objects.create(
-            email=validated_data["email"],
+            email=email,
             first_name=first_name,
             last_name=last_name,
             is_active=False,

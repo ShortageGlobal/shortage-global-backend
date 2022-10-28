@@ -9,7 +9,6 @@ from .views import (
     CategoriesViewSet,
     ProductsViewSet,
     ProductViewSet,
-    OnlineStoresViewSet,
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
     OrganizationRegistrationRequestViewSet,
@@ -79,13 +78,6 @@ router.register(
     r"private/exists/organizations/(?P<org_slug>[^/.]+)/products",
     PrivateProductsSlugExistsViewSet,
     basename="private_exists_products",
-)
-
-# Online stores
-router.register(
-    r"organizations/(?P<org_slug>[^/.]+)/products/(?P<product_slug>[^/.]+)/online-stores",
-    OnlineStoresViewSet,
-    basename="online_stores",
 )
 
 # Request for nonprofits

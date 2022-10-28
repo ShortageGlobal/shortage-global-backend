@@ -3,7 +3,6 @@ from .models import (
     Organization,
     Product,
     Instruction,
-    OnlineStore,
     OrganizationRegistrationRequest,
 )
 
@@ -37,11 +36,6 @@ class ProductAdmin(admin.ModelAdmin):
     ]
     search_fields = ["name"]
     autocomplete_fields = ["organization"]
-
-
-class OnlineStoreAdmin(admin.ModelAdmin):
-    list_display = ["url", "product", "name", "created_at"]
-    autocomplete_fields = ["product"]
 
 
 class OrganizationRegistrationRequestAdmin(admin.ModelAdmin):
@@ -78,7 +72,6 @@ class OrganizationRegistrationRequestAdmin(admin.ModelAdmin):
 admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(Instruction, InstructionAdmin)
 admin.site.register(Product, ProductAdmin)
-admin.site.register(OnlineStore, OnlineStoreAdmin)
 admin.site.register(
     OrganizationRegistrationRequest, OrganizationRegistrationRequestAdmin
 )

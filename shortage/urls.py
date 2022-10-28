@@ -24,6 +24,10 @@ urlpatterns = [
     path("api/", include("shortage.apps.api_urls")),
 ]
 
+admin.site.site_header = "Shortage administration"
+admin.site.site_title = "Shortage"
+admin.site.index_title = "Admin"
+
 if settings.DEBUG:
     from django.conf.urls.static import static
 

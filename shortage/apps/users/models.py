@@ -32,7 +32,7 @@ class ShortageUserManager(BaseUserManager):
 
 class ShortageUser(AbstractUser):
     username = None
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, blank=False, null=False)
 
     objects = ShortageUserManager()
 
