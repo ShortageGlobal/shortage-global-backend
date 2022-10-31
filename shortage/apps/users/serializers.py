@@ -18,13 +18,32 @@ class RegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True, required=True, validators=[validate_password]
     )
+    confirm_password = serializers.CharField(write_only=True, required=True)
     phone_number = PhoneNumberField(
         write_only=True, required=False, allow_blank=True, default=""
     )
 
     class Meta:
         model = get_user_model()
-        fields = ["email", "password", "first_name", "last_name", "phone_number"]
+        fields = [
+            "email",
+            "password",
+            "confirm_password",
+            "first_name",
+            "last_name",
+            "phone_number",
+        ]
+
+    def validate(self, attrs):
+        password = attrs.get("password")
+        confirm_password = attrs.get("confirm_password")
+
+        if password != confirm_password:
+            raise serializers.ValidationError(
+                {"confirm_password": ["Passwords do not match."]}
+            )
+
+        return super().validate(attrs)
 
     @transaction.atomic
     def create(self, validated_data):
