@@ -1,184 +1,67 @@
-<!DOCTYPE html>
-<html
-  lang="en"
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:o="urn:schemas-microsoft-com:office:office"
+{% extends "emails/base.html" %}
+
+{% block body_content %}
+<p
+  style="
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+  "
 >
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="x-apple-disable-message-reformatting" />
-    <title></title>
-    <!--[if mso]>
-      <noscript>
-        <xml>
-          <o:OfficeDocumentSettings>
-            <o:PixelsPerInch>96</o:PixelsPerInch>
-          </o:OfficeDocumentSettings>
-        </xml>
-      </noscript>
-    <![endif]-->
-    <style>
-      table,
-      td,
-      div,
-      h1,
-      p {
-        font-family: Arial, sans-serif;
-      }
-    </style>
-  </head>
-  <body style="margin: 0; padding: 10px">
-    <table
-      role="presentation"
-      style="
-        width: 100%;
-        border-collapse: collapse;
-        border: 0;
-        border-spacing: 0;
-        background: #ffffff;
-      "
+{% if full_name %}
+{{ full_name }}, we're excited to see you join the <a href="{{ frontend_base_url }}" style="color: #00b657; text-decoration: underline;">Shortage</a> community.
+{% else %}
+We're excited to see you join the <a href="{{ frontend_base_url }}" style="color: #00b657; text-decoration: underline;">Shortage</a> community.
+{% endif %}
+</p>
+
+<p
+  style="
+    margin: 0 0 0 0;
+    font-size: 16px;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+  "
+>
+  We just need you to confirm your email address by clicking the button below:
+</p>
+
+<p
+  style="
+    margin: 0 0 0 0;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+  "
+>
+  <a 
+    href="{% autoescape off %}{{ url }}{% endautoescape %}"
+    style="
+      margin: 42px 0 42px 0;
+      padding: 16px 16px 16px 16px;
+      background-color:#00b657;
+      color:#ffffff;
+      display:inline-block;
+      font-family: Arial, sans-serif;
+      font-size:18px;
+      font-weight:bold;
+      text-align:center;
+      text-decoration:none;
+      -webkit-text-size-adjust:none;"
     >
-      <tr>
-        <td align="center" style="padding: 0">
-          <table
-            role="presentation"
-            style="
-              width: 602px;
-              border-collapse: collapse;
-              border: 1px solid #e5e5e5;
-              border-spacing: 0;
-              text-align: left;
-            "
-          >
-            <tr>
-              <td
-                align="left"
-                style="
-                  padding: 40px 0 30px 30px;
-                  background: #ffffff;
-                  border-bottom: 1px solid #e5e5e5;
-                "
-              >
-                <img
-                  src="https://shortage-global.sfo3.digitaloceanspaces.com/shortage-global/static/emails/Shortage.png"
-                  alt="Shortage logo"
-                  width="131"
-                  height="32"
-                  style="height: auto; display: block"
-                />
-              </td>
-            </tr>
-            <tr>
-              <td style="padding: 36px 30px 42px 30px">
-                <table
-                  role="presentation"
-                  style="
-                    width: 100%;
-                    border-collapse: collapse;
-                    border: 0;
-                    border-spacing: 0;
-                  "
-                >
-                  <tr>
-                    <td style="padding: 0 0 0 0; color: #000000">
-                      <h1
-                        style="
-                          font-size: 24px;
-                          margin: 0 0 20px 0;
-                          font-family: Arial, sans-serif;
-                          word-break: break-word;
-                        "
-                      >
-                        {% if full_name %}
-                        {{ full_name }}, thank you for your registration
-                        {% else %}
-                        Thank you for your registration
-                        {% endif %}
-                      </h1>                    
-                      <p
-                        style="
-                          margin: 0 0 12px 0;
-                          font-size: 16px;
-                          line-height: 24px;
-                          font-family: Arial, sans-serif;
-                        "
-                      >                        
-                        Please, follow <a
-                          href="{{ url }}"
-                          style="color: #0085ff; text-decoration: underline"
-                          >the link</a
-                        > to confirm your account. 
-                      </p>
-                      <p
-                        style="
-                          margin: 0 0 0 0;
-                          font-size: 16px;
-                          line-height: 24px;
-                          font-family: Arial, sans-serif;
-                        "
-                      >
-                        -
-                      </p>
-                      <p
-                        style="
-                          margin: 0 0 0 0;
-                          font-size: 16px;
-                          line-height: 24px;
-                          font-family: Arial, sans-serif;
-                        "
-                      >
-                        Best Regards,
-                      </p>
-                      <p
-                        style="
-                          margin: 0 0 0 0;
-                          font-size: 16px;
-                          line-height: 24px;
-                          font-family: Arial, sans-serif;
-                        "
-                      >
-                        The Shortage Team
-                      </p>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding: 30px; background: #f2f2f2">
-                <table
-                  role="presentation"
-                  style="
-                    width: 100%;
-                    border-collapse: collapse;
-                    border: 0;
-                    border-spacing: 0;
-                    font-size: 9px;
-                    font-family: Arial, sans-serif;
-                  "
-                >
-                  <tr>
-                    <td style="padding: 0; width: 50%" align="center">
-                      <p
-                        style="
-                          margin: 0;
-                          font-size: 14px;
-                          line-height: 16px;
-                          font-family: Arial, sans-serif;
-                          color: #767576;
-                        "
-                      >
-                        &copy; {% now 'Y' %} All rights reserved. Shortage
-                      </p>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
-</html>
+      Confirm my account
+    </a>
+</p>
+
+<p
+  style="
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+  "
+>
+  If you didn't try to create a new account on Shortage, don't worry. You can safely ignore this email.
+</p>
+{% endblock %}

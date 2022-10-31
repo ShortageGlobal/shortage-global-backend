@@ -1,13 +1,14 @@
-{% if full_name %}
-{{ full_name }}, thank you for your registration
-{% else %}
-Thank you for your registration
-{% endif %}
+{% extends "emails/base.txt" %}
 
-Please, follow {% autoescape off %}{{ url }}{% endautoescape %} to confirm your account. 
+{% block body_content %}
+{% if full_name %}{{ full_name }}, we're excited to see you join the Shortage community.{% else %}We're excited to see you join the Shortage community.{% endif %}
 
--
+We just need you to confirm your email address by following the link below:
 
-Best Regards,
 
-The Shortage Team
+{% autoescape off %}{{ url }}{% endautoescape %}
+
+
+If you didn't try to create a new account on Shortage, don't worry. You can safely ignore this email.
+
+{% endblock %}

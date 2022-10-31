@@ -185,7 +185,7 @@ class UserConfirmationEmail(MailingBackend):
     Email sent on user registration to confirm their email
     """
 
-    subject = "Confirm your registration at Shortage"
+    subject = "Confirm your Shortage account"
     html_template = "emails/user_confirmation/index.html"
     text_template = "emails/user_confirmation/index.txt"
 
@@ -196,13 +196,14 @@ class UserConfirmationEmail(MailingBackend):
         self.token = token
 
     def get_context(self):
-        url = "%s/users/activate?uid=%s&token=%s" % (
+        url = "%s/account/activate?uid=%s&token=%s" % (
             self.frontend_base_url,
             self.uid,
             self.token,
         )
 
         return {
+            "frontend_base_url": self.frontend_base_url,
             "url": url,
             "full_name": get_full_name(
                 first_name=self.first_name,
