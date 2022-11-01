@@ -143,12 +143,12 @@ class PackageRegistrationEmail(MailingBackend):
         self.organization_name = organization_name
 
     def get_context(self):
-        package_status_url = "%s/organizations/%s/packages/%s" % (
+        package_status_url = "%s/organizations/%s/packages/%s/" % (
             self.frontend_base_url,
             self.organization_slug,
             self.package.uuid,
         )
-        organization_url = "%s/organizations/%s" % (
+        organization_url = "%s/organizations/%s/" % (
             self.frontend_base_url,
             self.organization_slug,
         )
@@ -196,7 +196,7 @@ class UserConfirmationEmail(MailingBackend):
         self.token = token
 
     def get_context(self):
-        url = "%s/account/activate?uid=%s&token=%s" % (
+        url = "%s/account/activate/?uid=%s&token=%s" % (
             self.frontend_base_url,
             self.uid,
             self.token,

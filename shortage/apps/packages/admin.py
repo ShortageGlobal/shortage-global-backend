@@ -8,9 +8,9 @@ class PackageAdmin(admin.ModelAdmin):
         "created_at",
         "status",
         "type",
+        "owner",
         "full_name",
         "email",
-        "phone_number",
         "need_tax_deduction",
         "delivery_company",
         "tracking_code",
@@ -100,6 +100,7 @@ class PackageItemAdmin(admin.ModelAdmin):
 class CartAdmin(admin.ModelAdmin):
     list_display = [
         "created_at",
+        "owner",
         "full_name",
         "email",
         "phone_number",
