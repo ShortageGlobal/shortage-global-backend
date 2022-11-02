@@ -36,7 +36,7 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
         package = generics.get_object_or_404(
-            Package.objects.all(),
+            Package.objects.distinct(),
             pk=self.kwargs["pk"],
             items__product__organization=organization,
         )
