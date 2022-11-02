@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('title', models.CharField(max_length=1000)),
-                ('content', models.TextField(blank=True, null=True)),
+                ('content', models.TextField()),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('is_published', models.BooleanField(db_index=True, default=False)),
                 ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='authors', to=settings.AUTH_USER_MODEL)),

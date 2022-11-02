@@ -1,8 +1,11 @@
 import os
+import uuid
 
 from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+
+from shortage.apps.storage import MediaStorage
 
 
 @csrf_exempt
@@ -18,26 +21,24 @@ def upload_image(request):
         ]:
             return JsonResponse({"message": "Wrong file format"})
 
-        path = os.path.join(
-            settings.MEDIA_ROOT,
-            "tinymce",
+        storage = MediaStorage()
+        file_name = storage.get_available_name(
+            f"{str(uuid.uuid4())}.{file_name_suffix}"
         )
-        # If there is no such path, create
-        if not os.path.exists(path):
-            os.makedirs(path)
 
-        file_path = os.path.join(path, file_obj.name)
+        if storage.exists(file_name):
+            return JsonResponse(
+                {"message": "file already exist", "location": file_obj.name}
+            )
 
-        file_url = f"{settings.MEDIA_URL}tinymce/{file_obj.name}"
-
-        if os.path.exists(file_path):
-            return JsonResponse({"message": "file already exist", "location": file_url})
-
-        with open(file_path, "wb+") as f:
+        with storage.open(file_name, "wb+") as file:
             for chunk in file_obj.chunks():
-                f.write(chunk)
+                file.write(chunk)
+
+        file_url = storage.url(file_name)
 
         return JsonResponse(
             {"message": "Image uploaded successfully", "location": file_url}
         )
+
     return JsonResponse({"detail": "Wrong request"})
