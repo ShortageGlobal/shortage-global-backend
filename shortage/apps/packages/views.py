@@ -1,4 +1,3 @@
-import logging
 from django.db import transaction
 from django.conf import settings
 from rest_framework import generics, viewsets, mixins, permissions, exceptions
@@ -30,15 +29,35 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     )
 
     serializer_class = PackageSerializer
+    queryset = Package.objects.all()
 
-    def get_queryset(self):
+    def get_object(self):
         organization = generics.get_object_or_404(
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
+        package = generics.get_object_or_404(
+            Package.objects.all(),
+            pk=self.kwargs["pk"],
+            items__product__organization=organization,
+        )
+
+        # if the package has no owner, just return it
+        if package.owner is None:
+            return package
+
         user = self.request.user if self.request.user.is_authenticated else None
-        return Package.objects.filter(
-            items__product__organization=organization, owner=user
-        ).distinct()
+
+        # if unathenticated user attempts to access package with owner, raise 401
+        if user is None:
+            raise exceptions.NotAuthenticated()
+
+        # if athenticated user attempts to access package that doesn't belong to them, raise 403
+        if user != package.owner:
+            raise exceptions.PermissionDenied(
+                detail="You do not have permission to see this package."
+            )
+
+        return package
 
 
 class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -95,9 +114,7 @@ class CartViewSet(
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
-        user = self.request.user if self.request.user.is_authenticated else None
-        queryset = Cart.objects.filter(owner=user)
-
+        queryset = Cart.objects.all()
         if self.action == "retrieve":
             return queryset.prefetch_related(
                 "items", "items__product", "items__product__organization"
@@ -140,11 +157,9 @@ class CartItemViewSet(
         }
 
     def get_object(self):
-        user = self.request.user if self.request.user.is_authenticated else None
         obj = generics.get_object_or_404(
             CartItem.objects.filter(),
             cart_id=self.kwargs["cart_pk"],
-            cart__owner=user,
             pk=self.kwargs.get("pk"),
         )
 
@@ -154,9 +169,8 @@ class CartItemViewSet(
         return obj
 
     def create(self, request, *args, **kwargs):
-        user = self.request.user if self.request.user.is_authenticated else None
         # do not add items to a cart of another user
-        if not Cart.objects.filter(pk=self.kwargs["cart_pk"], owner=user).exists():
+        if not Cart.objects.filter(pk=self.kwargs["cart_pk"]).exists():
             raise exceptions.NotFound()
         return super().create(request, *args, **kwargs)
 

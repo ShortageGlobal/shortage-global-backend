@@ -10,6 +10,8 @@ services:
       - 8080:8080
     depends_on:
       - db
+    environment:
+      - PYTHONUNBUFFERED=1 # for print
   db:
     container_name: shortage-global-postgres
     image: postgres
