@@ -161,6 +161,9 @@ class Cart(models.Model):
     zip = models.CharField(max_length=100, null=True, blank=True)
     country = CountryField(default="US")
 
+    # terms of use
+    agreed_to_terms_of_use = models.BooleanField(default=False)
+
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -73,6 +73,7 @@ class CartItemsTestCase(APITestCase):
         self.assertDictContainsSubset(
             {
                 "uuid": self.cart["uuid"],
+                "agreed_to_terms_of_use": False,
                 "need_tax_deduction": False,
                 "first_name": None,
                 "last_name": None,

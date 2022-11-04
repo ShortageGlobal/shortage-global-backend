@@ -118,6 +118,7 @@ class CartSerializer(serializers.ModelSerializer):
             "uuid",
             "created_at",
             "items",
+            "agreed_to_terms_of_use",
             "need_tax_deduction",
             "first_name",
             "last_name",
@@ -187,9 +188,12 @@ class CartCreationSerializer(serializers.ModelSerializer):
 
 
 class CartUpdateSerializer(serializers.ModelSerializer):
+    agreed_to_terms_of_use = serializers.BooleanField(required=True)
+
     class Meta:
         model = Cart
         fields = [
+            "agreed_to_terms_of_use",
             "need_tax_deduction",
             "first_name",
             "last_name",
@@ -234,3 +238,10 @@ class CartUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(errors)
 
         return super().validate(attrs)
+
+    def validate_agreed_to_terms_of_use(self, value):
+        if not value:
+            raise serializers.ValidationError(
+                "You must agree to the Terms of Use Policy."
+            )
+        return value

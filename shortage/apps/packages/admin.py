@@ -105,16 +105,17 @@ class CartAdmin(admin.ModelAdmin):
         "email",
         "phone_number",
         "need_tax_deduction",
+        "agreed_to_terms_of_use",
         "uuid",
     ]
-    readonly_fields = ["created_at", "updated_at"]
+    readonly_fields = ["created_at", "updated_at", "agreed_to_terms_of_use"]
     search_fields = [
         "email",
         "first_name",
         "last_name",
         "phone_number",
     ]
-    list_filter = ["created_at", "need_tax_deduction"]
+    list_filter = ["created_at", "need_tax_deduction", "agreed_to_terms_of_use"]
 
     def has_add_permission(self, request, obj=None):
         return False
