@@ -22,6 +22,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     phone_number = PhoneNumberField(
         write_only=True, required=False, allow_blank=True, default=""
     )
+    agreed_to_terms_of_use = serializers.BooleanField(required=True, write_only=True)
 
     class Meta:
         model = get_user_model()
@@ -32,6 +33,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "phone_number",
+            "agreed_to_terms_of_use",
         ]
 
     def validate(self, attrs):
@@ -44,6 +46,13 @@ class RegistrationSerializer(serializers.ModelSerializer):
             )
 
         return super().validate(attrs)
+
+    def validate_agreed_to_terms_of_use(self, value):
+        if not value:
+            raise serializers.ValidationError(
+                "You must agree to the Terms of Use Policy."
+            )
+        return value
 
     @transaction.atomic
     def create(self, validated_data):
