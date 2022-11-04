@@ -130,6 +130,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class OrganizationRegistrationRequestSerializer(serializers.ModelSerializer):
+    agreed_to_terms_of_use = serializers.BooleanField(required=True, write_only=True)
+
     class Meta:
         model = OrganizationRegistrationRequest
         fields = [
@@ -140,4 +142,12 @@ class OrganizationRegistrationRequestSerializer(serializers.ModelSerializer):
             "organization_name",
             "ein_number",
             "url",
+            "agreed_to_terms_of_use",
         ]
+
+    def validate_agreed_to_terms_of_use(self, value):
+        if not value:
+            raise serializers.ValidationError(
+                "You must agree to the Terms of Use Policy."
+            )
+        return value

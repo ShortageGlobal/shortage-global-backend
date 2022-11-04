@@ -135,6 +135,8 @@ class PackageCreationSerializer(serializers.ModelSerializer):
 
 
 class CorporateDonationSerializer(serializers.ModelSerializer):
+    agreed_to_terms_of_use = serializers.BooleanField(required=True, write_only=True)
+
     class Meta:
         model = CorporateDonation
         fields = [
@@ -156,4 +158,12 @@ class CorporateDonationSerializer(serializers.ModelSerializer):
             "estimated_value",
             "url",
             "photo",
+            "agreed_to_terms_of_use",
         ]
+
+    def validate_agreed_to_terms_of_use(self, value):
+        if not value:
+            raise serializers.ValidationError(
+                "You must agree to the Terms of Use Policy."
+            )
+        return value
