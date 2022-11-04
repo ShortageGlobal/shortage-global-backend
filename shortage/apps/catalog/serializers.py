@@ -151,3 +151,8 @@ class OrganizationRegistrationRequestSerializer(serializers.ModelSerializer):
                 "You must agree to the Terms of Use Policy."
             )
         return value
+
+    def create(self, validated_data):
+        # ignore this field after validation
+        validated_data.pop("agreed_to_terms_of_use")
+        return super().create(validated_data)
