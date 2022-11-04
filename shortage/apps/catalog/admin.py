@@ -40,9 +40,9 @@ class ProductAdmin(admin.ModelAdmin):
 
 class OrganizationRegistrationRequestAdmin(admin.ModelAdmin):
     list_display = [
+        "email",
         "full_name",
         "phone_number",
-        "email",
         "organization_name",
         "ein_number",
         "created_at",
