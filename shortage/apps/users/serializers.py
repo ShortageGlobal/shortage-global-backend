@@ -49,7 +49,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     def validate_agreed_to_terms_of_use(self, value):
         if not value:
-            raise serializers.ValidationError("You must agree to the Terms of Use Policy.")
+            raise serializers.ValidationError(
+                "You must agree to the Terms of Use Policy."
+            )
         return value
 
     @transaction.atomic
