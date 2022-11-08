@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from .private.views import PrivateOrganizationPackagesViewSet
+from .private.views import PrivateOrganizationPackagesViewSet, PrivatePackagesViewSet
 from .views import (
     PackagePaymentsWebhookViewSet,
     PackageViewSet,
@@ -28,6 +28,11 @@ router.register(
     r"private/organizations/(?P<org_slug>[^/.]+)/packages",
     PrivateOrganizationPackagesViewSet,
     basename="private_organization_packages",
+)
+router.register(
+    r"private/packages",
+    PrivatePackagesViewSet,
+    basename="private_packages",
 )
 router.register(
     r"packages/payments/webhook",
