@@ -66,7 +66,7 @@ class BlogPostTestCase(APITestCase):
 
         # Access from a different user
         request = self.requestFactory.get(self.get_request_route())
-        other_user = create_test_user(username="other_user")
+        other_user = create_test_user(email="other_user@shortage.global")
         force_authenticate(request, user=other_user)
 
         response = PrivateBlogPostViewSet.as_view({"get": "list"})(

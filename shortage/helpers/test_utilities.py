@@ -9,8 +9,9 @@ def create_test_user(**kwargs):
         "password": "12345",
         **kwargs,
     }
-    User = get_user_model()
-    user = User.objects.create_user(**test_data)
+
+    user = get_user_model().objects.create_user(**test_data)
+
     return user
 
 
