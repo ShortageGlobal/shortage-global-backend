@@ -29,7 +29,13 @@ class PrivateBlogPostViewSet(viewsets.ModelViewSet):
         queryset = BlogPost.objects.filter(organization=self.organization)
 
         is_published = self.request.query_params.get("is_published")
+
         if is_published:
+            is_published = is_published.lower()
+
+            if is_published != "true" and is_published != "false":
+                raise ValueError("is_published should be either true or false")
+
             queryset = queryset.filter(is_published=is_published)
 
         return queryset
