@@ -2,6 +2,8 @@ import uuid
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.response import Response
+from rest_framework import status
 
 from shortage.apps.file_paths import get_blog_image_path
 from shortage.apps.storage import MediaStorage
@@ -19,7 +21,7 @@ def upload_image(request):
             "gif",
             "jpeg",
         ]:
-            return JsonResponse({"message": "Wrong file format"})
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         storage = MediaStorage()
 
@@ -32,4 +34,4 @@ def upload_image(request):
             }
         )
 
-    return JsonResponse({"detail": "Wrong request"})
+    return Response(status=status.HTTP_400_BAD_REQUEST)
