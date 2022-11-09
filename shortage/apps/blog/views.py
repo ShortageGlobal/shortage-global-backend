@@ -2,11 +2,8 @@ import logging
 
 from rest_framework import viewsets, permissions
 from rest_framework.schemas.openapi import AutoSchema
-from bs4 import BeautifulSoup
 from shortage.apps.blog.models import BlogPost
 from shortage.apps.blog.serializers import PrivateBlogPostSerializer
-from shortage.apps.storage import MediaStorage
-
 
 class BlogPostViewSet(viewsets.ModelViewSet):
     schema = AutoSchema(
@@ -32,15 +29,6 @@ class BlogPostViewSet(viewsets.ModelViewSet):
         return queryset
 
     def perform_destroy(self, instance):
-        # Delete all related images
-        storage = MediaStorage()
-        soup = BeautifulSoup(instance.content, features="html.parser")
-        for img in soup.findAll("img"):
-            file_path = img.get("src")
-
-            logging.error(file_path)
-            if storage.exists(file_path):
-                logging.error("Exists")
-                storage.delete(file_path)
+        # Todo: Delete all related images
 
         super().perform_destroy(instance)
