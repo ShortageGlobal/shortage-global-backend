@@ -5,6 +5,7 @@ from rest_framework.schemas.openapi import AutoSchema
 from shortage.apps.blog.models import BlogPost
 from shortage.apps.blog.serializers import PrivateBlogPostSerializer
 
+
 class BlogPostViewSet(viewsets.ModelViewSet):
     schema = AutoSchema(
         tags=["Private", "Blog"],
