@@ -14,13 +14,12 @@ class BlogPostAdmin(admin.ModelAdmin):
     ]
     search_fields = ["title"]
     fields = [
-        "organization",
         "author",
         "title",
         "content",
         "is_published",
     ]
-    autocomplete_fields = ["organization"]
+    autocomplete_fields = ["author"]
 
 
 admin.site.register(BlogPost, BlogPostAdmin)

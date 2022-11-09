@@ -12,13 +12,12 @@ docker-compose exec django python manage.py migrate
 
 echo -e "\n>>> Creating new superuser 'admin'"
 docker-compose exec django python manage.py createsuperuser \
-   --username admin \
-   --email admin@example.com \
+   --email admin@shortage.global \
    --noinput
 
 echo -e "\n>>> Setting superuser 'admin' password to 123456"
 docker-compose exec django python manage.py shell_plus --quiet-load -c "
-u=User.objects.get(username='admin')
+u=get_user_model().objects.get(email='admin@shortage.global')
 u.set_password('123456')
 u.save()
 "

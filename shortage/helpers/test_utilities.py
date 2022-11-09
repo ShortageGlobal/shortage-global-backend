@@ -55,26 +55,3 @@ def create_test_product(**kwargs):
     product = Product(**test_data)
     product.save()
     return product
-
-
-def create_test_package(**kwargs):
-    assert (
-        "organization" in kwargs
-    ), "'create_test_package' was called without 'organization'"
-
-    product = create_test_product(organization=kwargs.pop("organization"))
-
-    test_data = {
-        "first_name": "Test",
-        "last_name": "User",
-        "email": "user@email.com",
-        "phone_number": "1234567890",
-        "delivery_company": "Amazon",
-        "tracking_code": "AZ12345678CD",
-        "note": "",
-        "photo": None,
-    }
-
-    package = Package(**test_data)
-    package.save()
-    return package
