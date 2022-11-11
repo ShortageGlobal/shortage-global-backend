@@ -56,6 +56,7 @@ class Organization(models.Model):
     is_draft = models.BooleanField(default=True, db_index=True)
     is_deleted = models.BooleanField(default=False, db_index=True)
     promote = models.BooleanField(default=False, db_index=True)
+    deadline = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     objects = OrganizationManager()
