@@ -1,8 +1,7 @@
 from rest_framework import generics, viewsets, mixins, permissions, filters
 from rest_framework.schemas.openapi import AutoSchema
-
 from shortage.apps.catalog.models import Organization
-from shortage.apps.packages.models import Package
+from shortage.apps.packages.models import Package, PackageStatus, PackageType
 from shortage.apps.packages.private.package_serializers import PrivatePackageSerializer
 from shortage.helpers.permissions import IsObjectOwner
 
@@ -28,7 +27,7 @@ class PrivateOrganizationPackagesViewSet(
         ).distinct()
 
 
-class PrivatePackagesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class PrivateAccountPackagesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """List of packages donated by the current user"""
 
     schema = AutoSchema(
@@ -42,4 +41,6 @@ class PrivatePackagesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     ordering = ["-created_at"]
 
     def get_queryset(self):
-        return Package.objects.filter(owner=self.request.user)
+        return Package.objects.filter(owner=self.request.user).exclude(
+            type=PackageType.FUNDED_BY_DONOR, status=PackageStatus.REGISTERED
+        )
