@@ -107,6 +107,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             "logo",
             "banner",
             "url",
+            "deadline",
         ]
 
 
