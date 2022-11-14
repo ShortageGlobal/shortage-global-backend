@@ -38,8 +38,6 @@ class Organization(models.Model):
     description = HTMLField(null=True, blank=True)
     logo = ImageField(
         upload_to=get_organization_path,
-        null=True,
-        blank=True,
         storage=storage.MediaStorage(),
         pregenerated_sizes=["organization_logo_medium"],
     )
