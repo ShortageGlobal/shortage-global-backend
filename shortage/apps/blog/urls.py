@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from shortage.apps.blog.image_upload import upload_image
+from shortage.apps.blog.upload_image import upload_image
 
 router = routers.DefaultRouter()
 

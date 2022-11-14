@@ -7,7 +7,10 @@ script.onload = function(){
 	tinymce.init({
 		selector: 'textarea',  // change this value according to your HTML
 
-		// For more info regarding local upload in tinymce https://www.tiny.cloud/docs/demo/local-upload/
-		images_upload_url: '/api/upload_image/', // Image upload address in Django route
+        images_upload_credentials: true,
+		images_upload_url: '/api/upload_image/',
+		relative_urls: false,
+		remove_script_host: false,
+		convert_urls: true,
 	})
 }
