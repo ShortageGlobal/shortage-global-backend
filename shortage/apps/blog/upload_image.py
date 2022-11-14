@@ -27,7 +27,9 @@ def upload_image(request):
 
     storage = MediaStorage()
 
-    file_path = storage.save(get_blog_image_path(request.user.id, file_obj.name), file_obj)
+    file_path = storage.save(
+        get_blog_image_path(request.user.id, file_obj.name), file_obj
+    )
 
     return JsonResponse(
         {
