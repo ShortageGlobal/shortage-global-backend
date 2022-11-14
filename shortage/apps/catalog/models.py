@@ -109,6 +109,9 @@ class ProductCategory(models.TextChoices):
     EDUCATION = settings.PRODUCT_CATEGORY["EDUCATION"], "Education"
     BABY_CARE = settings.PRODUCT_CATEGORY["BABY_CARE"], "Baby Care"
     SAVE_ANIMALS = settings.PRODUCT_CATEGORY["SAVE_ANIMALS"], "Save Animals"
+    HOUSEHOLD_ITEMS = settings.PRODUCT_CATEGORY["HOUSEHOLD_ITEMS"], "Household Items"
+    FOOD = settings.PRODUCT_CATEGORY["FOOD"], "Food"
+    TOYS = settings.PRODUCT_CATEGORY["TOYS"], "Toys"
 
 
 class Product(models.Model):
