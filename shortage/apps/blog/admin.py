@@ -3,9 +3,6 @@ from shortage.apps.blog.models import BlogPost
 
 
 class BlogPostAdmin(admin.ModelAdmin):
-    class Media:
-        js = ("js/tinyInject.js",)
-
     list_display = [
         "author",
         "title",

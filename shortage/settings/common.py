@@ -237,6 +237,11 @@ TINYMCE_DEFAULT_CONFIG = {
     "bold italic backcolor | alignleft aligncenter "
     "alignright alignjustify | bullist numlist outdent indent | "
     "removeformat | help",
+    "relative_urls": False,
+    "remove_script_host": False,
+    "convert_urls": True,
+    "images_upload_url": '/api/upload_image/',
+    "images_upload_credentials": True,
 }
 
 # IMPORTANT: the list of category keys must be synchronized with frontend
