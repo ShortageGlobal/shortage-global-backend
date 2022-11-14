@@ -79,8 +79,20 @@ class ProductOrganizationPreviewSerializer(serializers.ModelSerializer):
         ]
 
 
+class PromotedProductOrganizationPreviewSerializer(serializers.ModelSerializer):
+    logo = serializers.ImageField(source="medium_logo_photo", read_only=True)
+
+    class Meta:
+        model = Organization
+        fields = [
+            "name",
+            "slug",
+            "logo",
+        ]
+
+
 class PromotedProductPreviewSerializer(ProductPreviewSerializer):
-    organization = ProductOrganizationPreviewSerializer(read_only=True)
+    organization = PromotedProductOrganizationPreviewSerializer(read_only=True)
 
     class Meta:
         model = Product
