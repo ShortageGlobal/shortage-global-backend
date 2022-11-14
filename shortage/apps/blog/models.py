@@ -4,6 +4,7 @@ from django.conf import settings
 import uuid
 from tinymce.models import HTMLField
 
+
 class BlogPost(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 

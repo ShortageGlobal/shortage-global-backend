@@ -240,7 +240,7 @@ TINYMCE_DEFAULT_CONFIG = {
     "relative_urls": False,
     "remove_script_host": False,
     "convert_urls": True,
-    "images_upload_url": '/api/upload_image/',
+    "images_upload_url": "/api/upload_image/",
     "images_upload_credentials": True,
 }
 
