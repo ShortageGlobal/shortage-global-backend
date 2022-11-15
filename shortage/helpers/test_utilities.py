@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from shortage.apps.catalog.models import Organization, Product
+from shortage.apps.packages.models import Package
 
 
 def create_test_user(**kwargs):
@@ -8,8 +9,9 @@ def create_test_user(**kwargs):
         "password": "12345",
         **kwargs,
     }
-    User = get_user_model()
-    user = User.objects.create_user(**test_data)
+
+    user = get_user_model().objects.create_user(**test_data)
+
     return user
 
 

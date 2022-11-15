@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "shortage.apps.catalog",
     "shortage.apps.packages",
     "shortage.apps.users",
+    "shortage.apps.blog",
     "phonenumber_field",
     "django_cleanup.apps.CleanupConfig",  # should be last
 ]
@@ -235,6 +236,18 @@ TINYMCE_DEFAULT_CONFIG = {
     "bold italic backcolor | alignleft aligncenter "
     "alignright alignjustify | bullist numlist outdent indent | "
     "removeformat | help",
+    "relative_urls": False,
+    "remove_script_host": False,
+    "convert_urls": True,
+    "images_upload_credentials": True,
+    "images_upload_url": "/api/private/upload_image/",
+    "images_upload_handler": "tinymceImageUploadHandler",  # included with extra media
+}
+
+# Include extra media to attach X-CSRFTOKEN header to image upload requests
+# when uploading using django admin
+TINYMCE_EXTRA_MEDIA = {
+    "js": ["/static/blog/tinymce_extra.js"],
 }
 
 # IMPORTANT: the list of category keys must be synchronized with frontend

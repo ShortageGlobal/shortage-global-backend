@@ -9,6 +9,7 @@ urlpatterns = [
     path("", include("shortage.apps.users.urls")),
     path("", include("shortage.apps.catalog.urls")),
     path("", include("shortage.apps.packages.urls")),
+    path("", include("shortage.apps.blog.urls")),
 ]
 
 if settings.DEBUG:
