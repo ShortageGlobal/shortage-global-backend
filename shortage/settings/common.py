@@ -240,8 +240,15 @@ TINYMCE_DEFAULT_CONFIG = {
     "relative_urls": False,
     "remove_script_host": False,
     "convert_urls": True,
-    "images_upload_url": "/api/upload_image/",
     "images_upload_credentials": True,
+    "images_upload_url": "/api/upload_image/",
+    "images_upload_handler": "tinymceImageUploadHandler",  # included with extra media
+}
+
+# Include extra media to attach X-CSRFTOKEN header to image upload requests
+# when uploading using django admin
+TINYMCE_EXTRA_MEDIA = {
+    "js": ["/static/blog/tinymce_extra.js"],
 }
 
 # IMPORTANT: the list of category keys must be synchronized with frontend

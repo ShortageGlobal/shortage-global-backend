@@ -1,5 +1,3 @@
-import logging
-
 from rest_framework import viewsets, permissions
 from rest_framework.schemas.openapi import AutoSchema
 from shortage.apps.blog.models import BlogPost
@@ -30,6 +28,5 @@ class BlogPostViewSet(viewsets.ModelViewSet):
         return queryset
 
     def perform_destroy(self, instance):
-        # Todo: Delete all related images
-
+        # TODO: Delete all related images
         super().perform_destroy(instance)

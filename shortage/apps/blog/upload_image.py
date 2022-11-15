@@ -1,29 +1,33 @@
-import uuid
-
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.response import Response
-from rest_framework import status
-
+from rest_framework import exceptions
 from shortage.apps.file_paths import get_blog_image_path
 from shortage.apps.storage import MediaStorage
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework import permissions
+from rest_framework.response import Response
 
 
-@csrf_exempt
+@api_view(["POST"])
+@permission_classes((permissions.IsAuthenticated,))
 def upload_image(request):
-    if request.method != "POST":
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+    file_obj = request.FILES.get("file")
 
-    file_obj = request.FILES["file"]
-    file_name_suffix = file_obj.name.split(".")[-1]
+    if not file_obj:
+        raise exceptions.ParseError(detail="No file was sent")
 
-    if file_name_suffix not in [
+    file_extension = file_obj.name.split(".")[-1]
+
+    if file_extension.lower() not in [
         "jpg",
         "png",
         "gif",
         "jpeg",
     ]:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        raise exceptions.ParseError(
+            detail='File extension "{extension}" is not supported'.format(
+                extension=file_extension
+            )
+        )
 
     storage = MediaStorage()
 
@@ -31,7 +35,7 @@ def upload_image(request):
         get_blog_image_path(request.user.id, file_obj.name), file_obj
     )
 
-    return JsonResponse(
+    return Response(
         {
             "message": "Image uploaded successfully",
             "location": storage.url(file_path),
