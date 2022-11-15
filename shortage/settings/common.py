@@ -245,9 +245,9 @@ TINYMCE_DEFAULT_CONFIG = {
 }
 
 # Include extra media to attach X-CSRFTOKEN header to image upload requests
-# when uploading using django admin
+# when uploading using django admin. Use correct /static/ url in production.
 TINYMCE_EXTRA_MEDIA = {
-    "js": ["/static/blog/tinymce_extra.js"],
+    "js": ["{static_url}blog/tinymce_extra.js".format(static_url=STATIC_URL)],
 }
 
 # IMPORTANT: the list of category keys must be synchronized with frontend

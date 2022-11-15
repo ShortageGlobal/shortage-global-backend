@@ -65,3 +65,7 @@ LOGGING = {
         },
     },
 }
+
+TINYMCE_EXTRA_MEDIA = {
+    "js": ["{static_url}blog/tinymce_extra.js".format(static_url=STATIC_URL)],
+}
