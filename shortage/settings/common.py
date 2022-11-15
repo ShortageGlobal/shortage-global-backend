@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     "shortage.apps.users",
     "shortage.apps.blog",
     "phonenumber_field",
-    "django_extensions",
     "django_cleanup.apps.CleanupConfig",  # should be last
 ]
 
