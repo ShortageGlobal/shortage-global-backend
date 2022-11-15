@@ -241,7 +241,7 @@ TINYMCE_DEFAULT_CONFIG = {
     "remove_script_host": False,
     "convert_urls": True,
     "images_upload_credentials": True,
-    "images_upload_url": "/api/upload_image/",
+    "images_upload_url": "/api/private/upload_image/",
     "images_upload_handler": "tinymceImageUploadHandler",  # included with extra media
 }
 
