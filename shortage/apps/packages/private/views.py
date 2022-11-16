@@ -27,7 +27,7 @@ class PrivateOrganizationPackagesViewSet(
         ).distinct()
 
 
-class PrivateAccountPackagesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class PrivateAccountPackagesViewSet(viewsets.ReadOnlyModelViewSet):
     """List of packages donated by the current user"""
 
     schema = AutoSchema(
@@ -41,6 +41,8 @@ class PrivateAccountPackagesViewSet(mixins.ListModelMixin, viewsets.GenericViewS
     ordering = ["-created_at"]
 
     def get_queryset(self):
-        return Package.objects.filter(owner=self.request.user).exclude(
-            type=PackageType.FUNDED_BY_DONOR, status=PackageStatus.REGISTERED
+        return (
+            Package.objects.filter(owner=self.request.user)
+            .exclude(type=PackageType.FUNDED_BY_DONOR, status=PackageStatus.REGISTERED)
+            .prefetch_related("items", "items__product", "items__product__organization")
         )
