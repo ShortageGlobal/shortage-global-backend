@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from shortage.apps.catalog.models import Product
-from shortage.apps.catalog.serializers import ProductOrganizationPreviewSerializer
 
 
 class PrivateProductSerializer(serializers.ModelSerializer):
