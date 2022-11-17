@@ -1,0 +1,7 @@
+{% extends "emails/base.txt" %}
+
+{% block body_content %}
+The package you have donated via Shortage has been delivered.
+
+Thank you for donating through Shortage!
+{% endblock %}

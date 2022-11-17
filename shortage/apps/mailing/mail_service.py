@@ -180,6 +180,24 @@ class PackagePaymentStatusUpdatedServiceEmail(MailingBackend):
         return {"package_uuid": self.package_uuid, "new_status": self.new_status}
 
 
+class PackageDeliveryEmail(MailingBackend):
+    """
+    Email sent on package delivery
+    """
+
+    subject = "Package successfully delivered!"
+    html_template = "emails/package_delivered/index.html"
+    text_template = "emails/package_delivered/index.txt"
+
+    service_email = True
+
+    def __init__(self, package):
+        self.package = package
+
+    def get_context(self):
+        return {"package": self.package}
+
+
 class UserConfirmationEmail(MailingBackend):
     """
     Email sent on user registration to confirm their email
