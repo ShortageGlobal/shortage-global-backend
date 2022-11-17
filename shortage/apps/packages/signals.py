@@ -8,10 +8,15 @@ from shortage.apps.mailing.mail_service import (
 from shortage.apps.packages.models import Package, PackageStatus, PackageType
 
 
-@receiver(pre_save, sender=Package)
+@receiver(pre_save, sender=Package, dispatch_uid="package_pre_save")
 def package_pre_save(sender, **kwargs):
     new_package = kwargs["instance"]
-    old_package = Package.objects.get(uuid=new_package.uuid)
+
+    old_package = None
+    try:
+        old_package = Package.objects.get(uuid=new_package.uuid)
+    except Package.DoesNotExist:
+        old_package = new_package
 
     if old_package.status != new_package.status:
         package_status_change_handler(

@@ -130,7 +130,9 @@ class PrivateAccountPackages(APITestCase):
 
     def create_package(self, type, owner=None):
         owner = owner or self.user
-        package = Package.objects.create(owner=owner, type=type)
+        package = Package.objects.create(
+            owner=owner, type=type, email="test@shortage.global"
+        )
         PackageItem.objects.create(package=package, product=self.product, quantity=1)
         return package
 
