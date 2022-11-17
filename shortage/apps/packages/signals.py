@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
 from shortage.apps.mailing.mail_service import (
@@ -8,9 +8,20 @@ from shortage.apps.mailing.mail_service import (
 from shortage.apps.packages.models import Package, PackageStatus, PackageType
 
 
-@receiver(post_save, sender=Package)
-def package_updated(sender, **kwargs):
-    package = kwargs["instance"]
+@receiver(pre_save, sender=Package)
+def package_pre_save(sender, **kwargs):
+    new_package = kwargs["instance"]
+    old_package = Package.objects.get(uuid=new_package.uuid)
+
+    if old_package.status != new_package.status:
+        package_status_change_handler(
+            new_package, old_package.status, new_package.status
+        )
+
+
+def package_status_change_handler(package, old_status, new_status):
+    if old_status == new_status:
+        return
 
     first_item = package.items.all()[0]
     organization = first_item.product.organization

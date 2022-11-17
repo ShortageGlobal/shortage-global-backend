@@ -84,14 +84,6 @@ class PackageAdmin(admin.ModelAdmin):
 
     photo_preview.short_description = "Photo preview"
 
-    def response_add(self, request, obj, post_url_continue=None):
-        super().response_add(request, obj, post_url_continue)
-
-        # Admin doesn't send signals, so we have to trigger it manually
-        # Since we can't create packages via admin - we always send created=False
-        # However it may become messy if we ever want to create packages via admin panel
-        post_save.send(Package, instance=request, created=False)
-
 
 class PackageItemAdmin(admin.ModelAdmin):
     list_display = ["product", "quantity", "created_at", "package"]
