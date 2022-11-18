@@ -189,8 +189,6 @@ class PackageDeliveryEmail(MailingBackend):
     html_template = "emails/package_delivered/index.html"
     text_template = "emails/package_delivered/index.txt"
 
-    service_email = True
-
     def __init__(self, package):
         self.package = package
 

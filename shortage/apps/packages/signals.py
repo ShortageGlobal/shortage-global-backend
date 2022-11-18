@@ -42,7 +42,7 @@ def package_status_change_handler(package, old_status, new_status):
                 organization_slug=organization.slug,
                 organization_name=organization.name,
             )
-    elif package.status == PackageStatus.PAYMENT_PROCESSING:
+    elif package.status == PackageStatus.PAYMENT_SUCCEEDED:
         if package.type == PackageType.FUNDED_BY_DONOR:
             # notify the donor about his payment and registered package
             status_change_email = PackageRegistrationEmail(

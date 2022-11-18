@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import Package, PackageItem, Cart, CartItem, CorporateDonation
 from django.utils.html import format_html
-from django.db.models.signals import post_save
 
 
 class PackageAdmin(admin.ModelAdmin):
