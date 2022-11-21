@@ -14,7 +14,6 @@ class PackageSerializer(serializers.ModelSerializer):
             "delivery_company",
             "tracking_code",
             "created_at",
-            "status",
             "type",
         ]
 

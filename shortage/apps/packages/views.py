@@ -47,11 +47,11 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         user = self.request.user if self.request.user.is_authenticated else None
 
-        # if unathenticated user attempts to access package with owner, raise 401
+        # if unauthenticated user attempts to access package with owner, raise 401
         if user is None:
             raise exceptions.NotAuthenticated()
 
-        # if athenticated user attempts to access package that doesn't belong to them, raise 403
+        # if authenticated user attempts to access package that doesn't belong to them, raise 403
         if user != package.owner:
             raise exceptions.PermissionDenied(
                 detail="You do not have permission to see this package."

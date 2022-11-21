@@ -51,7 +51,6 @@ class PrivatePackageSerializer(serializers.ModelSerializer):
             "delivery_company",
             "tracking_code",
             "note",
-            "status",
             "photo",
             "type",
             "items",

@@ -75,11 +75,6 @@ class Package(models.Model):
         choices=PackageType.choices,
         default=PackageType.SENT_BY_DONOR,
     )
-    status = models.CharField(
-        max_length=32,
-        choices=PackageStatus.choices,
-        default=PackageStatus.REGISTERED,
-    )
     photo = ImageField(
         upload_to=get_package_path,
         null=True,
@@ -88,6 +83,12 @@ class Package(models.Model):
         pregenerated_sizes=["package_medium"],
     )
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        history_entry = PackageStatusHistoryEntry(package=self, status=PackageStatus.REGISTERED)
+        history_entry.save()
 
     def __str__(self):
         return self.uuid.__str__()
@@ -100,26 +101,42 @@ class Package(models.Model):
     def full_name(self):
         return get_full_name(first_name=self.first_name, last_name=self.last_name)
 
+    @property
+    def status(self):
+        status = PackageStatus.REGISTERED
+
+        try:
+            status_object = PackageStatusHistoryEntry.objects.latest("created_at")
+            status = status_object.status
+        except PackageStatusHistoryEntry.DoesNotExist:
+            pass
+
+        return status
+
+    def set_status(self, new_status: PackageStatus):
+        history_entry = PackageStatusHistoryEntry(package=self, status=new_status)
+        history_entry.save()
+
     def payment_canceled(self):
-        self.status = PackageStatus.PAYMENT_CANCELED
+        self.set_status(PackageStatus.PAYMENT_CANCELED)
 
     def payment_failed(self):
-        self.status = PackageStatus.PAYMENT_FAILED
+        self.set_status(PackageStatus.PAYMENT_FAILED)
 
     def payment_processing(self):
-        self.status = PackageStatus.PAYMENT_PROCESSING
+        self.set_status(PackageStatus.PAYMENT_PROCESSING)
 
     def payment_succeeded(self):
-        self.status = PackageStatus.PAYMENT_SUCCEEDED
+        self.set_status(PackageStatus.PAYMENT_SUCCEEDED)
 
     def package_confirmed(self):
-        self.status = PackageStatus.CONFIRMED
+        self.set_status(PackageStatus.CONFIRMED)
 
     def package_on_its_way(self):
-        self.status = PackageStatus.ON_ITS_WAY
+        self.set_status(PackageStatus.ON_ITS_WAY)
 
     def package_delivered(self):
-        self.status = PackageStatus.DELIVERED
+        self.set_status(PackageStatus.DELIVERED)
 
 
 class PackageItem(models.Model):
@@ -135,6 +152,13 @@ class PackageItem(models.Model):
     def __str__(self):
         return self.product.name
 
+class PackageStatusHistoryEntry(models.Model):
+    package = models.ForeignKey(Package, related_name="status_history", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=32,
+        choices=PackageStatus.choices
+    )
 
 class Cart(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

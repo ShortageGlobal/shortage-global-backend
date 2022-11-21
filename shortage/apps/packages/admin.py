@@ -35,7 +35,6 @@ class PackageAdmin(admin.ModelAdmin):
         "photo_preview",
         "created_at",
         "note",
-        "status",
         "checkout_url",
     ]
     readonly_fields = [
@@ -67,7 +66,7 @@ class PackageAdmin(admin.ModelAdmin):
         "delivery_company",
         "tracking_code",
     ]
-    list_filter = ["type", "status", "created_at", "need_tax_deduction"]
+    list_filter = ["type", "created_at", "need_tax_deduction"]
 
     def has_add_permission(self, request, obj=None):
         return False

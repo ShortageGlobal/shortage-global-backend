@@ -43,6 +43,6 @@ class PrivateAccountPackagesViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return (
             Package.objects.filter(owner=self.request.user)
-            .exclude(type=PackageType.FUNDED_BY_DONOR, status=PackageStatus.REGISTERED)
+            .exclude(type=PackageType.FUNDED_BY_DONOR)
             .prefetch_related("items", "items__product", "items__product__organization")
         )
