@@ -87,13 +87,14 @@ class Instruction(models.Model):
 class ProductsManager(models.Manager):
     def promoted(self):
         """
-        Return all public products for all promoted organizations.
+        Return high demand public products for all promoted organizations.
         In the future, use a "promoted' flag or something.
         """
         return self.public().filter(
             organization_id__in=models.Subquery(
                 Organization.objects.promoted().values("id")
-            )
+            ),
+            top_priority=True,
         )
 
     def public(self):

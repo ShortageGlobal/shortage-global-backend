@@ -36,6 +36,7 @@ class ProductAdmin(admin.ModelAdmin):
     ]
     search_fields = ["name"]
     autocomplete_fields = ["organization"]
+    list_filter = ["top_priority", "category", "created_at"]
 
 
 class OrganizationRegistrationRequestAdmin(admin.ModelAdmin):
