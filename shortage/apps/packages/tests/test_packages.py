@@ -1,8 +1,6 @@
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.utils import json
 from shortage.apps.packages.models import (
-    Package,
-    PackageItem,
     PackageType,
     PackageStatus,
 )
@@ -10,7 +8,7 @@ from shortage.apps.packages.private.views import (
     PrivateOrganizationPackagesViewSet,
     PrivateAccountPackagesViewSet,
 )
-from shortage.apps.packages.views import PackageCreationViewSet, PackageStatusLogViewSet
+from shortage.apps.packages.views import PackageViewSet, PackageCreationViewSet
 from shortage.helpers.test_utilities import (
     create_test_user,
     create_test_organization,
@@ -258,28 +256,24 @@ class PackageStatusLogTestCase(APITestCase):
 
         request = self.requestFactory.get("/packages/status_log")
         force_authenticate(request, user=self.user)
-        response = PackageStatusLogViewSet.as_view({"get": "list"})(
+        response = PackageViewSet.as_view({"get": "log"})(
             request, org_slug=self.organization.slug, pk=package.uuid
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["count"], 1)
-        self.assertEqual(
-            response.data["results"][0]["status"], PackageStatus.REGISTERED
-        )
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["status"], PackageStatus.REGISTERED)
 
         package.package_delivered()
         package.save()
 
         request = self.requestFactory.get("/packages/status_log")
         force_authenticate(request, user=self.user)
-        response = PackageStatusLogViewSet.as_view({"get": "list"})(
+        response = PackageViewSet.as_view({"get": "log"})(
             request, org_slug=self.organization.slug, pk=package.uuid
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["count"], 2)
-        self.assertEqual(
-            response.data["results"][0]["status"], PackageStatus.REGISTERED
-        )
-        self.assertEqual(response.data["results"][1]["status"], PackageStatus.DELIVERED)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]["status"], PackageStatus.REGISTERED)
+        self.assertEqual(response.data[1]["status"], PackageStatus.DELIVERED)

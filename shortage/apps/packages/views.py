@@ -2,6 +2,7 @@ from django.db import transaction
 from django.conf import settings
 from rest_framework import generics, viewsets, mixins, permissions, exceptions
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework.schemas.openapi import AutoSchema
 from shortage.apps.catalog.models import Organization
 from shortage.apps.packages.payments import deserialize_stripe_event
@@ -60,6 +61,14 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         return package
 
+    @action(detail=True)
+    def log(self, request, *args, **kwargs):
+        """Get logs for the package"""
+        package = self.get_object()
+        queryset = package.status_log.order_by("created_at")
+        serializer = PackageStatusLogEntrySerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """Create package"""
@@ -97,45 +106,6 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
             package_registration_email.send()
 
         return package_response
-
-
-class PackageStatusLogViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    """Get status change log for the package"""
-
-    schema = AutoSchema(
-        tags=["Packages"],
-    )
-
-    permission_classes = [permissions.AllowAny]
-    serializer_class = PackageStatusLogEntrySerializer
-
-    def get_queryset(self):
-        organization = generics.get_object_or_404(
-            Organization.objects.public(), slug=self.kwargs["org_slug"]
-        )
-        package = generics.get_object_or_404(
-            Package.objects.distinct(),
-            pk=self.kwargs["pk"],
-            items__product__organization=organization,
-        )
-
-        # if the package has no owner, just return it
-        if package.owner is None:
-            return package.status_log.all()
-
-        user = self.request.user if self.request.user.is_authenticated else None
-
-        # if unauthenticated user attempts to access package with owner, raise 401
-        if user is None:
-            raise exceptions.NotAuthenticated()
-
-        # if authenticated user attempts to access package that doesn't belong to them, raise 403
-        if user != package.owner:
-            raise exceptions.PermissionDenied(
-                detail="You do not have permission to see this package."
-            )
-
-        return package.status_log.all()
 
 
 class CartViewSet(
