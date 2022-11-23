@@ -11,14 +11,16 @@ from shortage.apps.packages.models import Package, PackageStatus, PackageType
 @receiver(pre_save, sender=Package, dispatch_uid="package_pre_save")
 def package_pre_save(sender, **kwargs):
     new_package = kwargs["instance"]
-
     old_package = None
+    is_created = False
+
     try:
         old_package = Package.objects.get(uuid=new_package.uuid)
     except Package.DoesNotExist:
+        is_created = True
         old_package = new_package
 
-    if old_package.status != new_package.status:
+    if is_created or old_package.status != new_package.status:
         package_status_change_handler(
             new_package, old_package.status, new_package.status
         )
