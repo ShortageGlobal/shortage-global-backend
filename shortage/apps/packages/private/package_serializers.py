@@ -62,6 +62,7 @@ class PrivatePackageSerializer(serializers.ModelSerializer):
             "photo",
             "type",
             "items",
+            "tax_deduction_receipt",
             "created_at",
         ]
         read_only_fields = fields
