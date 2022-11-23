@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from shortage.apps.catalog.models import Organization, Product
-from shortage.apps.packages.models import Package
+from shortage.apps.packages.models import Package, PackageItem
 
 
 def create_test_user(**kwargs):
@@ -55,3 +55,9 @@ def create_test_product(**kwargs):
     product = Product(**test_data)
     product.save()
     return product
+
+
+def create_test_package(package_type, owner, product):
+    package = Package.objects.create(owner=owner, type=package_type)
+    PackageItem.objects.create(package=package, product=product, quantity=1)
+    return package

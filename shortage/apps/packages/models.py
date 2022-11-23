@@ -121,6 +121,10 @@ class Package(models.Model):
     def package_delivered(self):
         self.status = PackageStatus.DELIVERED
 
+    @property
+    def status_log(self):
+        return PackageStatusLogEntry.objects.filter(package=self)
+
 
 class PackageItem(models.Model):
     package = models.ForeignKey(Package, related_name="items", on_delete=models.CASCADE)
@@ -134,6 +138,21 @@ class PackageItem(models.Model):
 
     def __str__(self):
         return self.product.name
+
+
+class PackageStatusLogEntry(models.Model):
+    package = models.ForeignKey(
+        Package, related_name="status_log", on_delete=models.CASCADE
+    )
+    status = models.CharField(
+        max_length=32,
+        choices=PackageStatus.choices,
+        default=PackageStatus.REGISTERED,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.status
 
 
 class Cart(models.Model):
