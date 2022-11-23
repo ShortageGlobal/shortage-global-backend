@@ -21,6 +21,12 @@ def get_package_path(instance, filename):
     return get_uuid_path(f"photo/package/%Y/%m/%d/", filename)
 
 
+def get_tax_deduction_receipt_path(instance, filename):
+    return get_uuid_path(
+        f"photo/package/tax_deduction_receipt/{instance.uuid}/", filename
+    )
+
+
 def get_corporate_donation_path(instance, filename):
     return get_uuid_path(f"photo/corporate_donations/%Y/%m/%d/", filename)
 

@@ -34,8 +34,9 @@ class PackageAdmin(admin.ModelAdmin):
         "photo_preview",
         "created_at",
         "note",
-        "status",
         "checkout_url",
+        "status",
+        "tax_deduction_receipt",
     ]
     readonly_fields = [
         "type",
