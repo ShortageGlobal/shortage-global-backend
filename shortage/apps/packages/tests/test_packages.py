@@ -256,7 +256,7 @@ class PackageStatusLogTestCase(APITestCase):
 
         request = self.requestFactory.get("/packages/status_log")
         force_authenticate(request, user=self.user)
-        response = PackageViewSet.as_view({"get": "log"})(
+        response = PackageViewSet.as_view({"get": "logs"})(
             request, org_slug=self.organization.slug, pk=package.uuid
         )
 
@@ -269,7 +269,7 @@ class PackageStatusLogTestCase(APITestCase):
 
         request = self.requestFactory.get("/packages/status_log")
         force_authenticate(request, user=self.user)
-        response = PackageViewSet.as_view({"get": "log"})(
+        response = PackageViewSet.as_view({"get": "logs"})(
             request, org_slug=self.organization.slug, pk=package.uuid
         )
 
