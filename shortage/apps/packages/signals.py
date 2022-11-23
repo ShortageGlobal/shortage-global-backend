@@ -14,7 +14,6 @@ def package_update_handler(sender, **kwargs):
         old_package = sender.objects.get(uuid=new_package.uuid)
     except Package.DoesNotExist:
         is_created = True
-        old_package = new_package
 
     if is_created or new_package.status != old_package.status:
 

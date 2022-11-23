@@ -141,11 +141,9 @@ class PackageCreationSerializer(serializers.ModelSerializer):
 
 
 class PackageStatusLogEntrySerializer(serializers.ModelSerializer):
-    package = PackageSerializer(read_only=True)
-
     class Meta:
         model = PackageStatusLogEntry
-        fields = ["status", "created_at", "package"]
+        fields = ["status", "created_at"]
         read_only_fields = fields
 
 
