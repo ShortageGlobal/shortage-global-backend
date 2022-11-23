@@ -1,14 +1,22 @@
 import uuid
 from django.db import models
 from django.conf import settings
-from django.core.validators import MinValueValidator, URLValidator
+from django.core.validators import (
+    MinValueValidator,
+    URLValidator,
+    FileExtensionValidator,
+)
 from auditlog.registry import auditlog
 from phonenumber_field.modelfields import PhoneNumberField
 from thumbnails.fields import ImageField
 from django_countries.fields import CountryField
 from shortage.apps import storage
 from shortage.apps.catalog.models import Product
-from shortage.apps.file_paths import get_package_path, get_corporate_donation_path
+from shortage.apps.file_paths import (
+    get_package_path,
+    get_corporate_donation_path,
+    get_tax_deduction_receipt_path,
+)
 from shortage.helpers import get_full_name
 
 
@@ -59,6 +67,13 @@ class Package(models.Model):
     state_province_region = models.CharField(max_length=255, null=True, blank=True)
     zip = models.CharField(max_length=100, null=True, blank=True)
     country = CountryField(default="US")
+    tax_deduction_receipt = models.FileField(
+        upload_to=get_tax_deduction_receipt_path,
+        null=True,
+        blank=True,
+        storage=storage.MediaStorage(),
+        validators=[FileExtensionValidator(allowed_extensions=["pdf"])],
+    )
 
     # tracking details
     delivery_company = models.CharField(max_length=100, null=True, blank=True)
