@@ -11,6 +11,7 @@ from .package_serializers import (
     PackageSerializer,
     PackageCreationSerializer,
     CorporateDonationSerializer,
+    PackageStatusLogEntrySerializer,
 )
 from .cart_serializers import (
     CartSerializer,
@@ -47,11 +48,11 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         user = self.request.user if self.request.user.is_authenticated else None
 
-        # if unathenticated user attempts to access package with owner, raise 401
+        # if unauthenticated user attempts to access package with owner, raise 401
         if user is None:
             raise exceptions.NotAuthenticated()
 
-        # if athenticated user attempts to access package that doesn't belong to them, raise 403
+        # if authenticated user attempts to access package that doesn't belong to them, raise 403
         if user != package.owner:
             raise exceptions.PermissionDenied(
                 detail="You do not have permission to see this package."
@@ -96,6 +97,45 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
             package_registration_email.send()
 
         return package_response
+
+
+class PackageStatusLogViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """Get status change log for the package"""
+
+    schema = AutoSchema(
+        tags=["Packages"],
+    )
+
+    permission_classes = [permissions.AllowAny]
+    serializer_class = PackageStatusLogEntrySerializer
+
+    def get_queryset(self):
+        organization = generics.get_object_or_404(
+            Organization.objects.public(), slug=self.kwargs["org_slug"]
+        )
+        package = generics.get_object_or_404(
+            Package.objects.distinct(),
+            pk=self.kwargs["pk"],
+            items__product__organization=organization,
+        )
+
+        # if the package has no owner, just return it
+        if package.owner is None:
+            return package.status_log.all()
+
+        user = self.request.user if self.request.user.is_authenticated else None
+
+        # if unauthenticated user attempts to access package with owner, raise 401
+        if user is None:
+            raise exceptions.NotAuthenticated()
+
+        # if authenticated user attempts to access package that doesn't belong to them, raise 403
+        if user != package.owner:
+            raise exceptions.PermissionDenied(
+                detail="You do not have permission to see this package."
+            )
+
+        return package.status_log.all()
 
 
 class CartViewSet(
