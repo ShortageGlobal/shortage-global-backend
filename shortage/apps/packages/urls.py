@@ -11,7 +11,6 @@ from .views import (
     CartViewSet,
     CartItemViewSet,
     CorporateDonationsViewSet,
-    PackageStatusLogViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -26,11 +25,6 @@ router.register(
     r"organizations/(?P<org_slug>[^/.]+)/packages",
     PackageCreationViewSet,
     basename="organization_packages",
-)
-router.register(
-    r"organizations/(?P<org_slug>[^/.]+)/packages/status",
-    PackageStatusLogViewSet,
-    basename="organization_packages_status_log",
 )
 router.register(
     r"private/organizations/(?P<org_slug>[^/.]+)/packages",
