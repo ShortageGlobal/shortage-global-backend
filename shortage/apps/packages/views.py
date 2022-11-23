@@ -62,7 +62,7 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         return package
 
     @action(detail=True)
-    def log(self, request, *args, **kwargs):
+    def logs(self, request, *args, **kwargs):
         """Get logs for the package"""
         package = self.get_object()
         queryset = package.status_log.order_by("created_at")
