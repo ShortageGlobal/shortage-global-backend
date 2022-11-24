@@ -22,6 +22,8 @@ class PackageSerializer(serializers.ModelSerializer):
             "created_at",
             "status",
             "type",
+            "need_tax_deduction",
+            "tax_deduction_receipt",
         ]
 
 
