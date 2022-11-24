@@ -6,6 +6,8 @@ from django.core.validators import (
     URLValidator,
     FileExtensionValidator,
 )
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 from auditlog.registry import auditlog
 from phonenumber_field.modelfields import PhoneNumberField
 from thumbnails.fields import ImageField
@@ -115,6 +117,24 @@ class Package(models.Model):
     def full_name(self):
         return get_full_name(first_name=self.first_name, last_name=self.last_name)
 
+    def clean(self):
+        """Validate Package. Note, this method is called in django admin only"""
+
+        # make sure packages aren't transitioned to DELIVERED if they require tax deduction
+        # and the tax deduction receipt was not provided
+        if (
+            self.status == PackageStatus.DELIVERED
+            and self.need_tax_deduction
+            and not self.tax_deduction_receipt
+        ):
+            raise ValidationError(
+                {
+                    "tax_deduction_receipt": _(
+                        "This package must have a tax deduction receipt if status is 'Delivered'"
+                    )
+                }
+            )
+
     def payment_canceled(self):
         self.status = PackageStatus.PAYMENT_CANCELED
 
@@ -135,10 +155,6 @@ class Package(models.Model):
 
     def package_delivered(self):
         self.status = PackageStatus.DELIVERED
-
-    @property
-    def status_log(self):
-        return PackageStatusLogEntry.objects.filter(package=self)
 
 
 class PackageItem(models.Model):

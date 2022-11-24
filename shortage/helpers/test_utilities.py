@@ -57,7 +57,14 @@ def create_test_product(**kwargs):
     return product
 
 
-def create_test_package(package_type, owner, product):
-    package = Package.objects.create(owner=owner, type=package_type)
+def create_test_package(product, **kwargs):
+    test_data = {
+        "owner": None,
+        "type": "SENT_BY_DONOR",
+        "email": "testuser@shortage.global",
+        "need_tax_deduction": False,
+        **kwargs,
+    }
+    package = Package.objects.create(**test_data)
     PackageItem.objects.create(package=package, product=product, quantity=1)
     return package
