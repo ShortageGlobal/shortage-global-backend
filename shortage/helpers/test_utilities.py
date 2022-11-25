@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from shortage.apps.catalog.models import Organization, Product
-from shortage.apps.packages.models import Package, PackageItem
+from shortage.apps.packages.models import Package, PackageItem, PackageType
 
 
 def create_test_user(**kwargs):
@@ -57,7 +57,21 @@ def create_test_product(**kwargs):
     return product
 
 
-def create_test_package(package_type, owner, product):
-    package = Package.objects.create(owner=owner, type=package_type)
+def create_test_package(package_type, owner, product, organization):
+    package = Package.objects.create(
+        owner=owner, type=package_type, organization=organization
+    )
     PackageItem.objects.create(package=package, product=product, quantity=1)
     return package
+
+"""Sets up a bunch of test entities in database for easier testing"""
+"""Uses already existing user which should be created via createsuperuser"""
+def setup_test_data():
+    user = get_user_model().objects.all()[0]
+
+    organization = create_test_organization(owner=user)
+
+    product = create_test_product(organization=organization)
+
+    create_test_package(PackageType.SENT_BY_DONOR, user, product, None)
+    create_test_package(PackageType.FUNDED_BY_DONOR, user, product, None)

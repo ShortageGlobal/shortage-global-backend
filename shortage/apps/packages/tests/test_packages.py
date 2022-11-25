@@ -1,8 +1,6 @@
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.utils import json
 from shortage.apps.packages.models import (
-    Package,
-    PackageItem,
     PackageType,
     PackageStatus,
 )
@@ -71,16 +69,22 @@ class PackageTestCase(APITestCase):
 
         self.assertEqual(response.status_code, 201)
 
+    def test_organization_mismatch(self):
+        try:
+            create_test_package(
+                PackageType.FUNDED_BY_DONOR, self.user, self.product, self.organization
+            )
+        except Exception as exception:
+            self.assertFalse(f"Exception when creating a valid a package: {exception}")
 
-class PrivatePackageTestCase(APITestCase):
-    def setUp(self) -> None:
-        self.requestFactory = APIRequestFactory()
-        self.user = create_test_user()
-        self.organization = create_test_organization(owner=self.user)
-        self.product = create_test_product(organization=self.organization)
+        other_org = create_test_organization(
+            owner=self.user, name="Other org", slug="other_org"
+        )
+        with self.assertRaises(ValueError):
+            create_test_package(
+                PackageType.FUNDED_BY_DONOR, self.user, self.product, other_org
+            )
 
-    def create_test_package(self):
-        # Todo: Replace with database creation instead of using the request
         test_data = {
             "first_name": "Test",
             "last_name": "User",
@@ -103,10 +107,32 @@ class PrivatePackageTestCase(APITestCase):
 
         self.assertEqual(response.status_code, 201)
 
+        request = self.requestFactory.post(
+            "api/organization/{}/packages".format(self.organization.slug),
+            data=test_data,
+            format="json",
+        )
+        force_authenticate(request, user=self.user)
+        response = PackageCreationViewSet.as_view({"post": "create"})(
+            request, org_slug=other_org.slug
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+
+class PrivatePackageTestCase(APITestCase):
+    def setUp(self) -> None:
+        self.requestFactory = APIRequestFactory()
+        self.user = create_test_user()
+        self.organization = create_test_organization(owner=self.user)
+        self.product = create_test_product(organization=self.organization)
+
     def test_retrieve(self):
         # Create a bunch of test packages
         for i in range(10):
-            self.create_test_package()
+            create_test_package(
+                PackageType.SENT_BY_DONOR, self.user, self.product, self.organization
+            )
 
         request = self.requestFactory.get(
             "/api/private/organization/{}/packages".format(self.organization.slug),
@@ -132,10 +158,10 @@ class PrivateAccountPackagesTestCase(APITestCase):
     def test_retrieve_packages(self):
         # create packages
         sent_package = create_test_package(
-            PackageType.SENT_BY_DONOR, self.user, self.product
+            PackageType.SENT_BY_DONOR, self.user, self.product, self.organization
         )
         funded_package = create_test_package(
-            PackageType.FUNDED_BY_DONOR, self.user, self.product
+            PackageType.FUNDED_BY_DONOR, self.user, self.product, self.organization
         )
 
         # check that user can see one package in the list;
@@ -186,7 +212,7 @@ class PackageStatusLogTestCase(APITestCase):
 
     def test_status_log(self):
         package = create_test_package(
-            PackageType.SENT_BY_DONOR, self.user, self.product
+            PackageType.SENT_BY_DONOR, self.user, self.product, self.organization
         )
 
         self.assertEqual(package.status, PackageStatus.REGISTERED)
@@ -215,10 +241,10 @@ class PackageStatusLogTestCase(APITestCase):
 
     def test_multiple_packages(self):
         package_one = create_test_package(
-            PackageType.SENT_BY_DONOR, self.user, self.product
+            PackageType.SENT_BY_DONOR, self.user, self.product, self.organization
         )
         package_two = create_test_package(
-            PackageType.SENT_BY_DONOR, self.user, self.product
+            PackageType.SENT_BY_DONOR, self.user, self.product, self.organization
         )
 
         self.assertEqual(package_one.status, PackageStatus.REGISTERED)
@@ -253,7 +279,7 @@ class PackageStatusLogTestCase(APITestCase):
 
     def test_api_method(self):
         package = create_test_package(
-            PackageType.SENT_BY_DONOR, self.user, self.product
+            PackageType.SENT_BY_DONOR, self.user, self.product, self.organization
         )
 
         request = self.requestFactory.get("/packages/status_log")

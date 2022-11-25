@@ -39,7 +39,7 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         package = generics.get_object_or_404(
             Package.objects.distinct(),
             pk=self.kwargs["pk"],
-            items__product__organization=organization,
+            organization=organization,
         )
 
         # if the package has no owner, just return it
@@ -116,7 +116,7 @@ class PackageStatusLogViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         package = generics.get_object_or_404(
             Package.objects.distinct(),
             pk=self.kwargs["pk"],
-            items__product__organization=organization,
+            organization=organization,
         )
 
         # if the package has no owner, just return it
