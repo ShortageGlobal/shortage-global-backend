@@ -69,31 +69,41 @@ class PackageTestCase(APITestCase):
 
     def test_tax_deduction_receipt_requirement(self):
         # check that package can be "Delivered" without tax deduction receipt
-        package = create_test_package(self.product, need_tax_deduction=False)
+        package = create_test_package(
+            self.product, need_tax_deduction=False, organization=self.organization
+        )
         package.status = PackageStatus.DELIVERED
         package.clean()  # doesn't raise a validation error
 
         # check that package required tax deduction receipt to become "Delivered"
-        package = create_test_package(self.product, need_tax_deduction=True)
+        package = create_test_package(
+            self.product, need_tax_deduction=True, organization=self.organization
+        )
         package.status = PackageStatus.DELIVERED
         self.assertRaises(ValidationError, package.clean)
 
         # provide receipt and error will not be raised
-        package = create_test_package(self.product, need_tax_deduction=True)
+        package = create_test_package(
+            self.product, need_tax_deduction=True, organization=self.organization
+        )
         package.status = PackageStatus.DELIVERED
         package.tax_deduction_receipt = "/fake/path/to/receipt.pdf"
         package.clean()  # doesn't raise a validation error
 
+    def test_organization_mismatch(self):
+        try:
+            create_test_package(
+                self.product, owner=self.user, organization=self.organization
+            )
+        except Exception as exception:
+            self.assertFalse(f"Exception when creating a valid package: {exception}")
 
-class PrivatePackageTestCase(APITestCase):
-    def setUp(self) -> None:
-        self.requestFactory = APIRequestFactory()
-        self.user = create_test_user()
-        self.organization = create_test_organization(owner=self.user)
-        self.product = create_test_product(organization=self.organization)
+        other_org = create_test_organization(
+            owner=self.user, name="Other org", slug="other_org"
+        )
+        with self.assertRaises(ValueError):
+            create_test_package(self.product, owner=self.user, organization=other_org)
 
-    def create_test_package(self):
-        # Todo: Replace with database creation instead of using the request
         test_data = {
             "first_name": "Test",
             "last_name": "User",
@@ -116,10 +126,32 @@ class PrivatePackageTestCase(APITestCase):
 
         self.assertEqual(response.status_code, 201)
 
+        request = self.requestFactory.post(
+            "api/organization/{}/packages".format(self.organization.slug),
+            data=test_data,
+            format="json",
+        )
+        force_authenticate(request, user=self.user)
+        response = PackageCreationViewSet.as_view({"post": "create"})(
+            request, org_slug=other_org.slug
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+
+class PrivatePackageTestCase(APITestCase):
+    def setUp(self) -> None:
+        self.requestFactory = APIRequestFactory()
+        self.user = create_test_user()
+        self.organization = create_test_organization(owner=self.user)
+        self.product = create_test_product(organization=self.organization)
+
     def test_retrieve(self):
         # Create a bunch of test packages
         for i in range(10):
-            self.create_test_package()
+            create_test_package(
+                self.product, owner=self.user, organization=self.organization
+            )
 
         request = self.requestFactory.get(
             "/api/private/organization/{}/packages".format(self.organization.slug),
@@ -145,10 +177,16 @@ class PrivateAccountPackagesTestCase(APITestCase):
     def test_retrieve_packages(self):
         # create packages
         sent_package = create_test_package(
-            self.product, type=PackageType.SENT_BY_DONOR, owner=self.user
+            self.product,
+            type=PackageType.SENT_BY_DONOR,
+            owner=self.user,
+            organization=self.organization,
         )
         funded_package = create_test_package(
-            self.product, type=PackageType.FUNDED_BY_DONOR, owner=self.user
+            self.product,
+            type=PackageType.FUNDED_BY_DONOR,
+            owner=self.user,
+            organization=self.organization,
         )
         # check that user can see one package in the list;
         # a funded package does not appear in the list if status is REGISTERED
@@ -197,7 +235,9 @@ class PackageStatusLogTestCase(APITestCase):
         self.product = create_test_product(organization=self.organization)
 
     def test_status_log(self):
-        package = create_test_package(self.product, owner=self.user)
+        package = create_test_package(
+            self.product, owner=self.user, organization=self.organization
+        )
 
         self.assertEqual(package.status, PackageStatus.REGISTERED)
         self.assertEqual(package.status_log.count(), 1)
@@ -224,8 +264,12 @@ class PackageStatusLogTestCase(APITestCase):
         )
 
     def test_multiple_packages(self):
-        package_one = create_test_package(self.product, owner=self.user)
-        package_two = create_test_package(self.product, owner=self.user)
+        package_one = create_test_package(
+            self.product, owner=self.user, organization=self.organization
+        )
+        package_two = create_test_package(
+            self.product, owner=self.user, organization=self.organization
+        )
 
         self.assertEqual(package_one.status, PackageStatus.REGISTERED)
         self.assertEqual(package_one.status_log.count(), 1)
@@ -258,7 +302,9 @@ class PackageStatusLogTestCase(APITestCase):
         )
 
     def test_api_method(self):
-        package = create_test_package(self.product, owner=self.user)
+        package = create_test_package(
+            self.product, owner=self.user, organization=self.organization
+        )
 
         request = self.requestFactory.get("/packages/status_log")
         force_authenticate(request, user=self.user)

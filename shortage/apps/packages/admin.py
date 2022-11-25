@@ -13,6 +13,7 @@ from django.utils.html import format_html
 class PackageAdmin(admin.ModelAdmin):
     list_display = [
         "created_at",
+        "organization",
         "status",
         "type",
         "owner",
@@ -23,6 +24,7 @@ class PackageAdmin(admin.ModelAdmin):
         "tracking_code",
     ]
     fields = [
+        "organization",
         "type",
         "owner",
         "need_tax_deduction",
@@ -46,6 +48,7 @@ class PackageAdmin(admin.ModelAdmin):
         "tax_deduction_receipt",
     ]
     readonly_fields = [
+        "organization",
         "type",
         "owner",
         "need_tax_deduction",

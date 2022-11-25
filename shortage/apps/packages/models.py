@@ -13,7 +13,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from thumbnails.fields import ImageField
 from django_countries.fields import CountryField
 from shortage.apps import storage
-from shortage.apps.catalog.models import Product
+from shortage.apps.catalog.models import Product, Organization
 from shortage.apps.file_paths import (
     get_package_path,
     get_corporate_donation_path,
@@ -53,6 +53,9 @@ class Package(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
+    )
+    organization = models.ForeignKey(
+        Organization, related_name="packages", on_delete=models.CASCADE
     )
 
     # donor details
@@ -166,6 +169,16 @@ class PackageItem(models.Model):
     )
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __init__(self, *args, **kwargs):
+        if "package" in kwargs and "product" in kwargs:
+            product = kwargs["product"]
+            organization = kwargs["package"].organization
+
+            if product.organization != organization:
+                raise ValueError("Organization doesn't match product organization")
+
+        super().__init__(*args, **kwargs)
 
     def __str__(self):
         return self.product.name

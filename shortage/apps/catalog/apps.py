@@ -7,5 +7,5 @@ class CatalogConfig(AppConfig):
     verbose_name = "Catalog"
 
     def ready(self):
-        # Implicitly connect signal handlers decorated with @receiver.
+        # Connect signals
         from . import signals
