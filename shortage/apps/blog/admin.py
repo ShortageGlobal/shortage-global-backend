@@ -9,7 +9,6 @@ class BlogPostAdmin(admin.ModelAdmin):
         "created_at",
         "is_published",
     ]
-    search_fields = ["title"]
     fields = [
         "author",
         "title",
@@ -19,6 +18,7 @@ class BlogPostAdmin(admin.ModelAdmin):
     readonly_fields = ["author"]
     list_filter = ["created_at", "is_published"]
     search_fields = ["author__email", "title"]
+    ordering = ["-created_at"]
 
     # use current user as author
     def save_model(self, request, obj, form, change):

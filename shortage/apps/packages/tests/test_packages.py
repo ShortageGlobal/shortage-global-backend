@@ -1,14 +1,12 @@
+from django.core.exceptions import ValidationError
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.utils import json
-from shortage.apps.packages.models import (
-    PackageType,
-    PackageStatus,
-)
+from shortage.apps.packages.models import PackageType, PackageStatus, Package
 from shortage.apps.packages.private.views import (
     PrivateOrganizationPackagesViewSet,
     PrivateAccountPackagesViewSet,
 )
-from shortage.apps.packages.views import PackageCreationViewSet, PackageStatusLogViewSet
+from shortage.apps.packages.views import PackageViewSet, PackageCreationViewSet
 from shortage.helpers.test_utilities import (
     create_test_user,
     create_test_organization,
@@ -68,6 +66,23 @@ class PackageTestCase(APITestCase):
         )
 
         self.assertEqual(response.status_code, 201)
+
+    def test_tax_deduction_receipt_requirement(self):
+        # check that package can be "Delivered" without tax deduction receipt
+        package = create_test_package(self.product, need_tax_deduction=False)
+        package.status = PackageStatus.DELIVERED
+        package.clean()  # doesn't raise a validation error
+
+        # check that package required tax deduction receipt to become "Delivered"
+        package = create_test_package(self.product, need_tax_deduction=True)
+        package.status = PackageStatus.DELIVERED
+        self.assertRaises(ValidationError, package.clean)
+
+        # provide receipt and error will not be raised
+        package = create_test_package(self.product, need_tax_deduction=True)
+        package.status = PackageStatus.DELIVERED
+        package.tax_deduction_receipt = "/fake/path/to/receipt.pdf"
+        package.clean()  # doesn't raise a validation error
 
     def test_organization_mismatch(self):
         try:
@@ -158,12 +173,11 @@ class PrivateAccountPackagesTestCase(APITestCase):
     def test_retrieve_packages(self):
         # create packages
         sent_package = create_test_package(
-            PackageType.SENT_BY_DONOR, self.user, self.product, self.organization
+            self.product, type=PackageType.SENT_BY_DONOR, owner=self.user
         )
         funded_package = create_test_package(
-            PackageType.FUNDED_BY_DONOR, self.user, self.product, self.organization
+            self.product, type=PackageType.FUNDED_BY_DONOR, owner=self.user
         )
-
         # check that user can see one package in the list;
         # a funded package does not appear in the list if status is REGISTERED
         # because we create a dummy package each time users click "Order Items"
@@ -211,9 +225,7 @@ class PackageStatusLogTestCase(APITestCase):
         self.product = create_test_product(organization=self.organization)
 
     def test_status_log(self):
-        package = create_test_package(
-            PackageType.SENT_BY_DONOR, self.user, self.product, self.organization
-        )
+        package = create_test_package(self.product, owner=self.user)
 
         self.assertEqual(package.status, PackageStatus.REGISTERED)
         self.assertEqual(package.status_log.count(), 1)
@@ -240,12 +252,8 @@ class PackageStatusLogTestCase(APITestCase):
         )
 
     def test_multiple_packages(self):
-        package_one = create_test_package(
-            PackageType.SENT_BY_DONOR, self.user, self.product, self.organization
-        )
-        package_two = create_test_package(
-            PackageType.SENT_BY_DONOR, self.user, self.product, self.organization
-        )
+        package_one = create_test_package(self.product, owner=self.user)
+        package_two = create_test_package(self.product, owner=self.user)
 
         self.assertEqual(package_one.status, PackageStatus.REGISTERED)
         self.assertEqual(package_one.status_log.count(), 1)
@@ -278,34 +286,28 @@ class PackageStatusLogTestCase(APITestCase):
         )
 
     def test_api_method(self):
-        package = create_test_package(
-            PackageType.SENT_BY_DONOR, self.user, self.product, self.organization
-        )
+        package = create_test_package(self.product, owner=self.user)
 
         request = self.requestFactory.get("/packages/status_log")
         force_authenticate(request, user=self.user)
-        response = PackageStatusLogViewSet.as_view({"get": "list"})(
+        response = PackageViewSet.as_view({"get": "logs"})(
             request, org_slug=self.organization.slug, pk=package.uuid
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["count"], 1)
-        self.assertEqual(
-            response.data["results"][0]["status"], PackageStatus.REGISTERED
-        )
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["status"], PackageStatus.REGISTERED)
 
         package.package_delivered()
         package.save()
 
         request = self.requestFactory.get("/packages/status_log")
         force_authenticate(request, user=self.user)
-        response = PackageStatusLogViewSet.as_view({"get": "list"})(
+        response = PackageViewSet.as_view({"get": "logs"})(
             request, org_slug=self.organization.slug, pk=package.uuid
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["count"], 2)
-        self.assertEqual(
-            response.data["results"][0]["status"], PackageStatus.REGISTERED
-        )
-        self.assertEqual(response.data["results"][1]["status"], PackageStatus.DELIVERED)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]["status"], PackageStatus.REGISTERED)
+        self.assertEqual(response.data[1]["status"], PackageStatus.DELIVERED)
