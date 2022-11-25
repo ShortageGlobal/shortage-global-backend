@@ -96,7 +96,7 @@ class PackageTestCase(APITestCase):
                 self.product, owner=self.user, organization=self.organization
             )
         except Exception as exception:
-            self.assertFalse(f"Exception when creating a valid a package: {exception}")
+            self.assertFalse(f"Exception when creating a valid package: {exception}")
 
         other_org = create_test_organization(
             owner=self.user, name="Other org", slug="other_org"
