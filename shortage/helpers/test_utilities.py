@@ -63,14 +63,18 @@ def create_test_package(product, **kwargs):
         "type": "SENT_BY_DONOR",
         "email": "testuser@shortage.global",
         "need_tax_deduction": False,
+        "organization": None,
         **kwargs,
     }
     package = Package.objects.create(**test_data)
     PackageItem.objects.create(package=package, product=product, quantity=1)
     return package
 
+
 """Sets up a bunch of test entities in database for easier testing"""
 """Uses already existing user which should be created via createsuperuser"""
+
+
 def setup_test_data():
     user = get_user_model().objects.all()[0]
 

@@ -69,17 +69,23 @@ class PackageTestCase(APITestCase):
 
     def test_tax_deduction_receipt_requirement(self):
         # check that package can be "Delivered" without tax deduction receipt
-        package = create_test_package(self.product, need_tax_deduction=False)
+        package = create_test_package(
+            self.product, need_tax_deduction=False, organization=self.organization
+        )
         package.status = PackageStatus.DELIVERED
         package.clean()  # doesn't raise a validation error
 
         # check that package required tax deduction receipt to become "Delivered"
-        package = create_test_package(self.product, need_tax_deduction=True)
+        package = create_test_package(
+            self.product, need_tax_deduction=True, organization=self.organization
+        )
         package.status = PackageStatus.DELIVERED
         self.assertRaises(ValidationError, package.clean)
 
         # provide receipt and error will not be raised
-        package = create_test_package(self.product, need_tax_deduction=True)
+        package = create_test_package(
+            self.product, need_tax_deduction=True, organization=self.organization
+        )
         package.status = PackageStatus.DELIVERED
         package.tax_deduction_receipt = "/fake/path/to/receipt.pdf"
         package.clean()  # doesn't raise a validation error
@@ -87,7 +93,7 @@ class PackageTestCase(APITestCase):
     def test_organization_mismatch(self):
         try:
             create_test_package(
-                PackageType.FUNDED_BY_DONOR, self.user, self.product, self.organization
+                self.product, owner=self.user, organization=self.organization
             )
         except Exception as exception:
             self.assertFalse(f"Exception when creating a valid a package: {exception}")
@@ -96,9 +102,7 @@ class PackageTestCase(APITestCase):
             owner=self.user, name="Other org", slug="other_org"
         )
         with self.assertRaises(ValueError):
-            create_test_package(
-                PackageType.FUNDED_BY_DONOR, self.user, self.product, other_org
-            )
+            create_test_package(self.product, owner=self.user, organization=other_org)
 
         test_data = {
             "first_name": "Test",
@@ -146,7 +150,7 @@ class PrivatePackageTestCase(APITestCase):
         # Create a bunch of test packages
         for i in range(10):
             create_test_package(
-                PackageType.SENT_BY_DONOR, self.user, self.product, self.organization
+                self.product, owner=self.user, organization=self.organization
             )
 
         request = self.requestFactory.get(
@@ -173,10 +177,16 @@ class PrivateAccountPackagesTestCase(APITestCase):
     def test_retrieve_packages(self):
         # create packages
         sent_package = create_test_package(
-            self.product, type=PackageType.SENT_BY_DONOR, owner=self.user
+            self.product,
+            type=PackageType.SENT_BY_DONOR,
+            owner=self.user,
+            organization=self.organization,
         )
         funded_package = create_test_package(
-            self.product, type=PackageType.FUNDED_BY_DONOR, owner=self.user
+            self.product,
+            type=PackageType.FUNDED_BY_DONOR,
+            owner=self.user,
+            organization=self.organization,
         )
         # check that user can see one package in the list;
         # a funded package does not appear in the list if status is REGISTERED
@@ -225,7 +235,9 @@ class PackageStatusLogTestCase(APITestCase):
         self.product = create_test_product(organization=self.organization)
 
     def test_status_log(self):
-        package = create_test_package(self.product, owner=self.user)
+        package = create_test_package(
+            self.product, owner=self.user, organization=self.organization
+        )
 
         self.assertEqual(package.status, PackageStatus.REGISTERED)
         self.assertEqual(package.status_log.count(), 1)
@@ -252,8 +264,12 @@ class PackageStatusLogTestCase(APITestCase):
         )
 
     def test_multiple_packages(self):
-        package_one = create_test_package(self.product, owner=self.user)
-        package_two = create_test_package(self.product, owner=self.user)
+        package_one = create_test_package(
+            self.product, owner=self.user, organization=self.organization
+        )
+        package_two = create_test_package(
+            self.product, owner=self.user, organization=self.organization
+        )
 
         self.assertEqual(package_one.status, PackageStatus.REGISTERED)
         self.assertEqual(package_one.status_log.count(), 1)
@@ -286,7 +302,9 @@ class PackageStatusLogTestCase(APITestCase):
         )
 
     def test_api_method(self):
-        package = create_test_package(self.product, owner=self.user)
+        package = create_test_package(
+            self.product, owner=self.user, organization=self.organization
+        )
 
         request = self.requestFactory.get("/packages/status_log")
         force_authenticate(request, user=self.user)
