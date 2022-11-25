@@ -18,6 +18,7 @@ class MailingBackend:
     text_template = None
     to = None
     bcc = None
+    attachments = None
 
     service_email = False
 
@@ -63,6 +64,9 @@ class MailingBackend:
     def get_bcc(self):
         return self.format_emails(self.bcc)
 
+    def get_attachments(self):
+        return self.attachments
+
     def add_recipient(self, email, name=""):
         self.to = self.to if self.to else []
         self.to.append({"name": name, "email": email})
@@ -70,6 +74,10 @@ class MailingBackend:
     def add_bcc_recipient(self, email, name=""):
         self.bcc = self.bcc if self.bcc else []
         self.bcc.append({"name": name, "email": email})
+
+    def add_attachment(self, filename=None, content=None, mimetype=None):
+        self.attachments = self.attachments if self.attachments else []
+        self.attachments.append((filename, content, mimetype))
 
     def send(self):
         """
@@ -96,8 +104,13 @@ class MailingBackend:
                 from_email=self.get_from(),
                 to=recipients,
                 bcc=self.get_bcc(),
+                attachments=self.get_attachments(),
             )
+
+            # html version
             message.attach_alternative(self.get_html(), "text/html")
+
+            # send email
             result = message.send(fail_silently=True)
 
         if result == 0:
@@ -128,7 +141,34 @@ class MailingBackend:
         return str(address)
 
 
-class PackageRegistrationEmail(MailingBackend):
+class PackageBaseEmail(MailingBackend):
+    """
+    Abstract class for package-related emails
+    """
+
+    def __init__(self, package):
+        self.package = package
+
+    def get_context(self):
+        package_status_url = "%s/organizations/%s/packages/%s/" % (
+            self.frontend_base_url,
+            self.package.organization.slug,
+            self.package.uuid,
+        )
+        organization_url = "%s/organizations/%s/" % (
+            self.frontend_base_url,
+            self.package.organization.slug,
+        )
+
+        return {
+            "package_status_url": package_status_url,
+            "organization_url": organization_url,
+            "organization": self.package.organization,
+            "package": self.package,
+        }
+
+
+class PackageRegistrationEmail(PackageBaseEmail):
     """
     Email sent on package registration
     """
@@ -137,28 +177,26 @@ class PackageRegistrationEmail(MailingBackend):
     html_template = "emails/package_registration/index.html"
     text_template = "emails/package_registration/index.txt"
 
-    def __init__(self, package, organization_slug, organization_name):
-        self.package = package
-        self.organization_slug = organization_slug
-        self.organization_name = organization_name
 
-    def get_context(self):
-        package_status_url = "%s/organizations/%s/packages/%s/" % (
-            self.frontend_base_url,
-            self.organization_slug,
-            self.package.uuid,
-        )
-        organization_url = "%s/organizations/%s/" % (
-            self.frontend_base_url,
-            self.organization_slug,
-        )
+class PackageDeliveryEmail(PackageBaseEmail):
+    """
+    Email sent on package delivery
+    """
 
-        return {
-            "package_status_url": package_status_url,
-            "organization_url": organization_url,
-            "organization_name": self.organization_name,
-            "package": self.package,
-        }
+    subject = "Your donation was delivered"
+    html_template = "emails/package_delivered/index.html"
+    text_template = "emails/package_delivered/index.txt"
+
+    def __init__(self, package):
+        super().__init__(package)
+
+        # attach tax deduction receipt to the email if needed
+        if package.need_tax_deduction and package.tax_deduction_receipt:
+            # NOTE: we read a file from media storage. This operation might be heavy, better to refactor some day
+            self.add_attachment(
+                filename="tax_deduction_receipt.pdf",
+                content=package.tax_deduction_receipt.read(),
+            )
 
 
 class PackagePaymentStatusUpdatedServiceEmail(MailingBackend):
@@ -178,22 +216,6 @@ class PackagePaymentStatusUpdatedServiceEmail(MailingBackend):
 
     def get_context(self):
         return {"package_uuid": self.package_uuid, "new_status": self.new_status}
-
-
-class PackageDeliveryEmail(MailingBackend):
-    """
-    Email sent on package delivery
-    """
-
-    subject = "Package successfully delivered!"
-    html_template = "emails/package_delivered/index.html"
-    text_template = "emails/package_delivered/index.txt"
-
-    def __init__(self, package):
-        self.package = package
-
-    def get_context(self):
-        return {"package": self.package}
 
 
 class UserConfirmationEmail(MailingBackend):
