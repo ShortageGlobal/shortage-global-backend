@@ -39,7 +39,6 @@ class Migration(migrations.Migration):
             model_name="package",
             name="organization",
             field=models.ForeignKey(
-                default=None,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="packages",
                 to="catalog.organization",
