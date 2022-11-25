@@ -2,20 +2,32 @@ from django.db import transaction
 from rest_framework import serializers
 from shortage.helpers.serializers import AuthorizedUserOrNone
 from shortage.apps.catalog.models import Product
-from .models import Package, PackageItem, CorporateDonation, PackageType
+from shortage.apps.catalog.serializers import ProductOrganizationPreviewSerializer
+from .models import (
+    Package,
+    PackageItem,
+    CorporateDonation,
+    PackageType,
+    PackageStatusLogEntry,
+)
 from .payments import generate_package_checkout_url
 
 
 class PackageSerializer(serializers.ModelSerializer):
+    organization = ProductOrganizationPreviewSerializer(read_only=True)
+
     class Meta:
         model = Package
         fields = [
             "uuid",
+            "organization",
             "delivery_company",
             "tracking_code",
             "created_at",
             "status",
             "type",
+            "need_tax_deduction",
+            "tax_deduction_receipt",
         ]
 
 
@@ -85,10 +97,19 @@ class PackageCreationSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         items = attrs.get("items")
 
+        organization = self.context["view"].organization
+
         # check all products are unique
         products_slug_set = set()
         for item in items:
-            product_slug = item["product"].slug
+            product = item["product"]
+
+            if product.organization != organization:
+                raise serializers.ValidationError(
+                    "Product organization does not match package organization"
+                )
+
+            product_slug = product.slug
             if product_slug in products_slug_set:
                 raise serializers.ValidationError(
                     "All items must be unique. Duplicated product: %s" % product_slug
@@ -101,9 +122,11 @@ class PackageCreationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_items_data = validated_data.pop("items")
 
+        organization = self.context["view"].organization
+        validated_data["organization"] = organization
+
         # create package
         package = Package.objects.create(**validated_data)
-
         # create package items
         items = [
             PackageItem(
@@ -132,6 +155,13 @@ class PackageCreationSerializer(serializers.ModelSerializer):
             package.save()
 
         return package
+
+
+class PackageStatusLogEntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PackageStatusLogEntry
+        fields = ["status", "created_at"]
+        read_only_fields = fields
 
 
 class CorporateDonationSerializer(serializers.ModelSerializer):

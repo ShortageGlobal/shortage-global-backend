@@ -1,14 +1,24 @@
 import uuid
 from django.db import models
 from django.conf import settings
-from django.core.validators import MinValueValidator, URLValidator
+from django.core.validators import (
+    MinValueValidator,
+    URLValidator,
+    FileExtensionValidator,
+)
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 from auditlog.registry import auditlog
 from phonenumber_field.modelfields import PhoneNumberField
 from thumbnails.fields import ImageField
 from django_countries.fields import CountryField
 from shortage.apps import storage
-from shortage.apps.catalog.models import Product
-from shortage.apps.file_paths import get_package_path, get_corporate_donation_path
+from shortage.apps.catalog.models import Product, Organization
+from shortage.apps.file_paths import (
+    get_package_path,
+    get_corporate_donation_path,
+    get_tax_deduction_receipt_path,
+)
 from shortage.helpers import get_full_name
 
 
@@ -44,6 +54,9 @@ class Package(models.Model):
         null=True,
         blank=True,
     )
+    organization = models.ForeignKey(
+        Organization, related_name="packages", on_delete=models.CASCADE
+    )
 
     # donor details
     email = models.EmailField(max_length=100)
@@ -59,6 +72,13 @@ class Package(models.Model):
     state_province_region = models.CharField(max_length=255, null=True, blank=True)
     zip = models.CharField(max_length=100, null=True, blank=True)
     country = CountryField(default="US")
+    tax_deduction_receipt = models.FileField(
+        upload_to=get_tax_deduction_receipt_path,
+        null=True,
+        blank=True,
+        storage=storage.MediaStorage(),
+        validators=[FileExtensionValidator(allowed_extensions=["pdf"])],
+    )
 
     # tracking details
     delivery_company = models.CharField(max_length=100, null=True, blank=True)
@@ -100,6 +120,24 @@ class Package(models.Model):
     def full_name(self):
         return get_full_name(first_name=self.first_name, last_name=self.last_name)
 
+    def clean(self):
+        """Validate Package. Note, this method is called in django admin only"""
+
+        # make sure packages aren't transitioned to DELIVERED if they require tax deduction
+        # and the tax deduction receipt was not provided
+        if (
+            self.status == PackageStatus.DELIVERED
+            and self.need_tax_deduction
+            and not self.tax_deduction_receipt
+        ):
+            raise ValidationError(
+                {
+                    "tax_deduction_receipt": _(
+                        "This package must have a tax deduction receipt if status is 'Delivered'"
+                    )
+                }
+            )
+
     def payment_canceled(self):
         self.status = PackageStatus.PAYMENT_CANCELED
 
@@ -132,8 +170,33 @@ class PackageItem(models.Model):
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __init__(self, *args, **kwargs):
+        if "package" in kwargs and "product" in kwargs:
+            product = kwargs["product"]
+            organization = kwargs["package"].organization
+
+            if product.organization != organization:
+                raise ValueError("Organization doesn't match product organization")
+
+        super().__init__(*args, **kwargs)
+
     def __str__(self):
         return self.product.name
+
+
+class PackageStatusLogEntry(models.Model):
+    package = models.ForeignKey(
+        Package, related_name="status_log", on_delete=models.CASCADE
+    )
+    status = models.CharField(
+        max_length=32,
+        choices=PackageStatus.choices,
+        default=PackageStatus.REGISTERED,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.status
 
 
 class Cart(models.Model):

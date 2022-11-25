@@ -44,10 +44,17 @@ class PrivatePackageSerializer(serializers.ModelSerializer):
         model = Package
         fields = [
             "uuid",
+            "need_tax_deduction",
             "first_name",
             "last_name",
-            "email",
             "phone_number",
+            "email",
+            "address_line1",
+            "address_line2",
+            "city",
+            "state_province_region",
+            "zip",
+            "country",
             "delivery_company",
             "tracking_code",
             "note",
@@ -55,6 +62,7 @@ class PrivatePackageSerializer(serializers.ModelSerializer):
             "photo",
             "type",
             "items",
+            "tax_deduction_receipt",
             "created_at",
         ]
         read_only_fields = fields

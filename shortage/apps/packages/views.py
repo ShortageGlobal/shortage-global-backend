@@ -2,6 +2,7 @@ from django.db import transaction
 from django.conf import settings
 from rest_framework import generics, viewsets, mixins, permissions, exceptions
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework.schemas.openapi import AutoSchema
 from shortage.apps.catalog.models import Organization
 from shortage.apps.packages.payments import deserialize_stripe_event
@@ -11,6 +12,7 @@ from .package_serializers import (
     PackageSerializer,
     PackageCreationSerializer,
     CorporateDonationSerializer,
+    PackageStatusLogEntrySerializer,
 )
 from .cart_serializers import (
     CartSerializer,
@@ -38,7 +40,7 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         package = generics.get_object_or_404(
             Package.objects.distinct(),
             pk=self.kwargs["pk"],
-            items__product__organization=organization,
+            organization=organization,
         )
 
         # if the package has no owner, just return it
@@ -47,17 +49,25 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         user = self.request.user if self.request.user.is_authenticated else None
 
-        # if unathenticated user attempts to access package with owner, raise 401
+        # if unauthenticated user attempts to access package with owner, raise 401
         if user is None:
             raise exceptions.NotAuthenticated()
 
-        # if athenticated user attempts to access package that doesn't belong to them, raise 403
+        # if authenticated user attempts to access package that doesn't belong to them, raise 403
         if user != package.owner:
             raise exceptions.PermissionDenied(
                 detail="You do not have permission to see this package."
             )
 
         return package
+
+    @action(detail=True)
+    def logs(self, request, *args, **kwargs):
+        """Get logs for the package"""
+        package = self.get_object()
+        queryset = package.status_log.order_by("created_at")
+        serializer = PackageStatusLogEntrySerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):

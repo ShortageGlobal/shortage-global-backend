@@ -1,11 +1,19 @@
 from django.contrib import admin
-from .models import Package, PackageItem, Cart, CartItem, CorporateDonation
+from .models import (
+    Package,
+    PackageItem,
+    PackageStatusLogEntry,
+    Cart,
+    CartItem,
+    CorporateDonation,
+)
 from django.utils.html import format_html
 
 
 class PackageAdmin(admin.ModelAdmin):
     list_display = [
         "created_at",
+        "organization",
         "status",
         "type",
         "owner",
@@ -16,6 +24,7 @@ class PackageAdmin(admin.ModelAdmin):
         "tracking_code",
     ]
     fields = [
+        "organization",
         "type",
         "owner",
         "need_tax_deduction",
@@ -34,10 +43,12 @@ class PackageAdmin(admin.ModelAdmin):
         "photo_preview",
         "created_at",
         "note",
-        "status",
         "checkout_url",
+        "status",
+        "tax_deduction_receipt",
     ]
     readonly_fields = [
+        "organization",
         "type",
         "owner",
         "need_tax_deduction",
@@ -67,6 +78,7 @@ class PackageAdmin(admin.ModelAdmin):
         "tracking_code",
     ]
     list_filter = ["type", "status", "created_at", "need_tax_deduction"]
+    ordering = ["-created_at"]
 
     def has_add_permission(self, request, obj=None):
         return False
@@ -89,6 +101,20 @@ class PackageItemAdmin(admin.ModelAdmin):
     readonly_fields = ["created_at"]
     search_fields = ["package__pk", "product__name"]
     list_filter = ["created_at"]
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+class PackageStatusLogEntryAdmin(admin.ModelAdmin):
+    list_display = ["package", "status", "created_at"]
+    # readonly_fields = ["package", "status", "created_at"]
+    search_fields = ["package__pk"]
+    list_filter = ["status", "created_at"]
+    ordering = ["-created_at"]
 
     def has_add_permission(self, request, obj=None):
         return False
@@ -197,6 +223,7 @@ class CorporateDonationAdmin(admin.ModelAdmin):
 
 admin.site.register(Package, PackageAdmin)
 admin.site.register(PackageItem, PackageItemAdmin)
+admin.site.register(PackageStatusLogEntry, PackageStatusLogEntryAdmin)
 admin.site.register(Cart, CartAdmin)
 admin.site.register(CartItem, CartItemAdmin)
 admin.site.register(CorporateDonation, CorporateDonationAdmin)
