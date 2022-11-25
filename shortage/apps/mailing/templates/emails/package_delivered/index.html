@@ -1,0 +1,77 @@
+{% extends "emails/base.html" %}
+
+{% block body_content %}
+<h1 style="
+  font-size: 20px; 
+  margin: 0 0 20px 0; 
+  font-family: Arial, sans-serif; 
+  text-align: center;"
+>
+  Thank you for the donation you made via Shortage. 
+  <br />
+  We adore your generosity! 
+</h1>
+
+<p
+  style="
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+  "
+>
+  Your gift was delivered to <a href="{{ organization_url }}" style="color: #00b657; text-decoration: underline; word-break: break-word;">{{organization.name}}</a>.
+</p>
+
+<p
+  style="
+    margin: 0 0 0 0;
+    font-size: 16px;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+  "
+>
+  We gathered everything related to your donation by the link below: 
+</p>
+
+<p
+  style="
+    margin: 0 0 0 0;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+  "
+>
+  <a 
+    href="{{ package_status_url }}"
+    style="
+      margin: 42px 0 42px 0;
+      padding: 16px 16px 16px 16px;
+      background-color:#00b657;
+      color:#ffffff;
+      display:inline-block;
+      font-family: Arial, sans-serif;
+      font-size:18px;
+      font-weight:bold;
+      text-align:center;
+      text-decoration:none;
+      -webkit-text-size-adjust:none;"
+    >
+      View the donation status
+    </a>
+</p>
+
+{% if package.need_tax_deduction and package.tax_deduction_receipt %}
+  <p
+    style="
+      margin: 0 0 12px 0;
+      font-size: 16px;
+      line-height: 24px;
+      font-family: Arial, sans-serif;
+    "
+  >
+    Also, please find your tax deduction receipt in the attachment. Or you can find it on the donation status page.
+  </p>
+{% endif %}
+
+{% endblock %}

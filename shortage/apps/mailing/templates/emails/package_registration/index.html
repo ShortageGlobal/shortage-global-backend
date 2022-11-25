@@ -53,7 +53,7 @@
       Confirmation email to acknowledge your donation has been received and your card has been charged.
     </li>
     <li style="margin: 0 0 8px 0; font-size: 16px;">
-      Shipment notification email to let you know when the donation has been shipped.
+      Shipment notification email to let you know when the donation has been delivered.
     </li>
   </ol>
   {% else %} 
@@ -65,7 +65,7 @@
       font-family: Arial, sans-serif;
     "
   >
-    We have received your donation details and will send you another email when your package is delivered to <a href="{{ organization_url }}" style="color: #00b657; text-decoration: underline">{{organization_name}}</a>.
+    We have received your donation details and will send you another email when your package is delivered to <a href="{{ organization_url }}" style="color: #00b657; text-decoration: underline; word-break: break-word;">{{organization.name}}</a>.
   </p>
 {% endif %}
 

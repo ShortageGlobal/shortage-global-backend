@@ -9,8 +9,8 @@ View the donation status:
 Important Note: Once your order has been processed, you will receive 2 communications:
 
 1. Confirmation email to acknowledge your donation has been received and your card has been charged.
-2. Shipment notification email to let you know when the donation has been shipped.
+2. Shipment notification email to let you know when the donation has been delivered.
 {% else %}
-We have received your donation details and will send you another email when your package is delivered to {{organization_name}}.
+We have received your donation details and will send you another email when your package is delivered to {{organization.name}}.
 {% endif %}
 {% endblock %}

@@ -7,4 +7,5 @@ class PackagesConfig(AppConfig):
     verbose_name = "Packages"
 
     def ready(self):
+        # Connect signals
         from . import signals

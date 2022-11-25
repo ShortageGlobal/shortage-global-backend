@@ -87,25 +87,7 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
 
-        package_response = super().create(request, *args, **kwargs)
-
-        uuid = package_response.data["uuid"]
-        package = Package.objects.get(uuid=uuid)
-
-        # if package sent by donor - email him right away
-        # if package funded by donor - email him on payment success
-        if package.type == settings.PACKAGE_TYPE["SENT_BY_DONOR"]:
-            package_registration_email = PackageRegistrationEmail(
-                package=package,
-                organization_slug=self.organization.slug,
-                organization_name=self.organization.name,
-            )
-            package_registration_email.add_recipient(
-                email=package.email, name=package.full_name
-            )
-            package_registration_email.send()
-
-        return package_response
+        return super().create(request, *args, **kwargs)
 
 
 class CartViewSet(
@@ -209,13 +191,9 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
 
         # retrieve metadata
         package_uuid = event["data"]["object"]["metadata"]["package_uuid"]
-        organization_slug = event["data"]["object"]["metadata"]["organization_slug"]
-        organization_name = event["data"]["object"]["metadata"]["organization_name"]
 
         # get package object
         package = generics.get_object_or_404(Package.objects.all(), uuid=package_uuid)
-        initial_status = package.status
-        should_notify_donor = False
 
         # Handle the event
         if event["type"] == "payment_intent.canceled":
@@ -227,28 +205,10 @@ class PackagePaymentsWebhookViewSet(viewsets.ViewSet):
         elif event["type"] == "payment_intent.processing":
             package.payment_processing()
             package.save()
-            should_notify_donor = True
         elif event["type"] == "payment_intent.succeeded":
             package.payment_succeeded()
             package.save()
-            # in case we somehow skipped "payment_processing" status
-            # and jumped straight to "succeeded"
-            should_notify_donor = (
-                initial_status != settings.PACKAGE_STATUS["PAYMENT_PROCESSING"]
-            )
         else:
             print("Unhandled event type {}".format(event["type"]))
-
-        if should_notify_donor:
-            # notify the donor about his payment and registered package
-            package_registration_email = PackageRegistrationEmail(
-                package=package,
-                organization_slug=organization_slug,
-                organization_name=organization_name,
-            )
-            package_registration_email.add_recipient(
-                email=package.email, name=package.full_name
-            )
-            package_registration_email.send()
 
         return Response(status=200)

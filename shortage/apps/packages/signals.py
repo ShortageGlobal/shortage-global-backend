@@ -1,23 +1,52 @@
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
-from shortage.apps.packages.models import Package, PackageStatusLogEntry
+from shortage.apps.mailing.mail_service import (
+    PackageRegistrationEmail,
+    PackageDeliveryEmail,
+)
+from shortage.apps.packages.models import (
+    Package,
+    PackageStatus,
+    PackageType,
+    PackageStatusLogEntry,
+)
 
 
 @receiver(pre_save, sender=Package, dispatch_uid="package_update_handler")
-def package_update_handler(sender, **kwargs):
-    new_package = kwargs["instance"]
+def package_update_handler(sender, instance, **kwargs):
     old_package = None
     is_created = False
 
     try:
-        old_package = sender.objects.get(uuid=new_package.uuid)
+        old_package = sender.objects.get(uuid=instance.uuid)
     except Package.DoesNotExist:
         is_created = True
+        old_package = instance
 
-    if is_created or new_package.status != old_package.status:
+    # fire handler only if status changed
+    if is_created or instance.status != old_package.status:
+        package_status_change_handler(instance)
 
-        status_log = PackageStatusLogEntry(
-            package=new_package, status=new_package.status
-        )
-        status_log.save()
+
+def package_status_change_handler(package):
+    # create package log entry
+    PackageStatusLogEntry.objects.create(package=package, status=package.status)
+
+    status_change_email = None
+
+    if package.status == PackageStatus.REGISTERED:
+        # if package sent by donor - email him right away
+        # if package funded by donor - email him on payment success
+        if package.type == PackageType.SENT_BY_DONOR:
+            status_change_email = PackageRegistrationEmail(package=package)
+    elif package.status == PackageStatus.PAYMENT_SUCCEEDED:
+        if package.type == PackageType.FUNDED_BY_DONOR:
+            # notify the donor about his payment and registered package
+            status_change_email = PackageRegistrationEmail(package=package)
+    elif package.status == PackageStatus.DELIVERED:
+        status_change_email = PackageDeliveryEmail(package=package)
+
+    if status_change_email:
+        status_change_email.add_recipient(email=package.email, name=package.full_name)
+        status_change_email.send()

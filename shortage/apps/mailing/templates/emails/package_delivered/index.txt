@@ -1,0 +1,14 @@
+{% extends "emails/base.txt" %}
+
+{% block body_content %}
+Thank you for the donation you made via Shortage. 
+We adore your generosity! 
+
+Your gift was delivered to {{organization.name}}.
+
+We gathered everything related to your donation by the link below:
+{{package_status_url}}
+{% if package.need_tax_deduction and package.tax_deduction_receipt %}
+Also, please find your tax deduction receipt in the attachment. Or you can find it on the donation status page.
+{% endif %}
+{% endblock %}
