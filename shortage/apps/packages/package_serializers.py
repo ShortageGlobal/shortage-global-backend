@@ -2,6 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from shortage.helpers.serializers import AuthorizedUserOrNone
 from shortage.apps.catalog.models import Product
+from shortage.apps.catalog.serializers import ProductOrganizationPreviewSerializer
 from .models import (
     Package,
     PackageItem,
@@ -10,7 +11,6 @@ from .models import (
     PackageStatusLogEntry,
 )
 from .payments import generate_package_checkout_url
-from ..catalog.serializers import ProductOrganizationPreviewSerializer
 
 
 class PackageSerializer(serializers.ModelSerializer):

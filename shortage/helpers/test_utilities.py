@@ -71,11 +71,11 @@ def create_test_package(product, **kwargs):
     return package
 
 
-"""Sets up a bunch of test entities in database for easier testing"""
-"""Uses already existing user which should be created via createsuperuser"""
-
-
 def setup_test_data():
+    """
+    Sets up a bunch of test entities in database for easier testing.
+    Uses already existing user which should be created via createsuperuser
+    """
     user = get_user_model().objects.all()[0]
 
     organization = create_test_organization(owner=user)
