@@ -329,3 +329,67 @@ class PackageStatusLogTestCase(APITestCase):
         self.assertEqual(len(response.data), 2)
         self.assertEqual(response.data[0]["status"], PackageStatus.REGISTERED)
         self.assertEqual(response.data[1]["status"], PackageStatus.DELIVERED)
+
+
+class PackageLeaveNoteTestCase(APITestCase):
+    def setUp(self) -> None:
+        self.requestFactory = APIRequestFactory()
+        self.user = create_test_user()
+        self.organization = create_test_organization(owner=self.user)
+        self.product = create_test_product(organization=self.organization)
+
+    def test_leave_note(self):
+        package = create_test_package(
+            self.product, owner=self.user, organization=self.organization
+        )
+
+        # check note is empty initially
+        self.assertEqual(package.note, None)
+
+        # send note
+        request = self.requestFactory.post(
+            "/packages/leave_note", data={"note": "lorem ipsum"}
+        )
+        force_authenticate(request, user=self.user)
+        response = PackageViewSet.as_view({"post": "leave_note"})(
+            request, org_slug=self.organization.slug, pk=package.uuid
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # fetch package and check note content
+        request = self.requestFactory.get("/packages")
+        force_authenticate(request, user=self.user)
+        response = PackageViewSet.as_view({"get": "retrieve"})(
+            request, org_slug=self.organization.slug, pk=package.uuid
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["note"], "lorem ipsum")
+
+        # try to leave a note for someone else's package
+        another_user = create_test_user(email="another.testuser@shortage.global")
+        request = self.requestFactory.post(
+            "/packages/leave_note", data={"note": "foo bar"}
+        )
+        force_authenticate(request, user=another_user)
+        response = PackageViewSet.as_view({"post": "leave_note"})(
+            request, org_slug=self.organization.slug, pk=package.uuid
+        )
+        self.assertEqual(response.status_code, 403)
+
+        # try to leave an anonymous note for someone else's package
+        request = self.requestFactory.post(
+            "/packages/leave_note", data={"note": "foo bar"}
+        )
+        response = PackageViewSet.as_view({"post": "leave_note"})(
+            request, org_slug=self.organization.slug, pk=package.uuid
+        )
+        self.assertEqual(response.status_code, 401)
+
+        # check the package note hasn't changed after failed attempts
+        request = self.requestFactory.get("/packages")
+        force_authenticate(request, user=self.user)
+        response = PackageViewSet.as_view({"get": "retrieve"})(
+            request, org_slug=self.organization.slug, pk=package.uuid
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["note"], "lorem ipsum")
