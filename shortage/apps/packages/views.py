@@ -10,6 +10,7 @@ from shortage.apps.mailing.mail_service import PackageRegistrationEmail
 from .models import Package, Cart, CartItem
 from .package_serializers import (
     PackageSerializer,
+    PackageNoteSerializer,
     PackageCreationSerializer,
     CorporateDonationSerializer,
     PackageStatusLogEntrySerializer,
@@ -30,15 +31,22 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         tags=["Packages"],
     )
 
-    serializer_class = PackageSerializer
+    permission_classes = [permissions.AllowAny]
     queryset = Package.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == "logs":
+            return PackageStatusLogEntrySerializer
+        if self.action == "leave_note":
+            return PackageNoteSerializer
+        return PackageSerializer
 
     def get_object(self):
         organization = generics.get_object_or_404(
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
         package = generics.get_object_or_404(
-            Package.objects.distinct(),
+            Package.objects.all(),
             pk=self.kwargs["pk"],
             organization=organization,
         )
@@ -66,8 +74,17 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         """Get logs for the package"""
         package = self.get_object()
         queryset = package.status_log.order_by("created_at")
-        serializer = PackageStatusLogEntrySerializer(queryset, many=True)
+        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    @action(detail=True, methods=["POST"])
+    def leave_note(self, request, *args, **kwargs):
+        """Leave a note for the organization"""
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response()
 
 
 class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):

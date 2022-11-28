@@ -26,8 +26,17 @@ class PackageSerializer(serializers.ModelSerializer):
             "created_at",
             "status",
             "type",
+            "note",
             "need_tax_deduction",
             "tax_deduction_receipt",
+        ]
+
+
+class PackageNoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Package
+        fields = [
+            "note",
         ]
 
 
