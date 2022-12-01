@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django import forms
 from .models import (
     Organization,
     Product,
@@ -26,18 +25,21 @@ class InstructionAdmin(admin.ModelAdmin):
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = [
-        "id",
         "name",
+        "organization",
         "category",
         "price",
-        "requested_amount",
         "top_priority",
-        "is_deleted",
-        "created_at",
     ]
-    search_fields = ["name"]
+    search_fields = ["name", "organization__name"]
     autocomplete_fields = ["organization"]
-    list_filter = ["top_priority", "category", "created_at"]
+    list_filter = [
+        "organization",
+        "top_priority",
+        "category",
+        "created_at",
+        "is_deleted",
+    ]
 
 
 class OrganizationRegistrationRequestAdmin(admin.ModelAdmin):
