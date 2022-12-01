@@ -33,9 +33,10 @@ class Organization(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="organizations", on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=255, null=True, blank=True)
-    slug = models.SlugField(max_length=255, unique=True)
+    name = models.CharField(max_length=80, null=True, blank=True)
+    slug = models.SlugField(max_length=80, unique=True)
     description = HTMLField(null=True, blank=True)
+    meta_description = models.CharField(max_length=200, null=True, blank=True)
     logo = ImageField(
         upload_to=get_organization_path,
         storage=storage.MediaStorage(),
@@ -117,8 +118,8 @@ class Product(models.Model):
     organization = models.ForeignKey(
         Organization, related_name="products", on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, db_index=True)
+    name = models.CharField(max_length=150)
+    slug = models.SlugField(max_length=150, db_index=True)
     category = models.CharField(
         max_length=255, choices=ProductCategory.choices, db_index=True
     )
