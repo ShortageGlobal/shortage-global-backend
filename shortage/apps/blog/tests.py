@@ -21,7 +21,7 @@ class BlogPostTestCase(APITestCase):
         test_data = {
             "title": "Test title",
             "content": "<p>test content</p>",
-            "is_published": False,
+            "is_draft": True,
         }
         request = self.requestFactory.post(
             self.get_request_route(), data=test_data, format="json"
@@ -63,7 +63,7 @@ class BlogPostTestCase(APITestCase):
         test_data = {
             "title": "Test title",
             "content": "<p>test content</p>",
-            "is_published": False,
+            "is_draft": True,
         }
         request = self.requestFactory.post(
             self.get_request_route(), data=test_data, format="json"
@@ -95,7 +95,7 @@ class BlogPostTestCase(APITestCase):
         test_data = {
             "title": "Test title",
             "content": "<p>test content</p>",
-            "is_published": False,
+            "is_draft": True,
         }
         request = self.requestFactory.post(
             self.get_request_route(), data=test_data, format="json"

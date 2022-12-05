@@ -11,6 +11,7 @@ from .models import Package, Cart, CartItem
 from .package_serializers import (
     PackageSerializer,
     PackageNoteSerializer,
+    PackageBlogPostSerializer,
     PackageCreationSerializer,
     CorporateDonationSerializer,
     PackageStatusLogEntrySerializer,
@@ -39,6 +40,8 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             return PackageStatusLogEntrySerializer
         if self.action == "leave_note":
             return PackageNoteSerializer
+        if self.action == "blog_posts":
+            return PackageBlogPostSerializer
         return PackageSerializer
 
     def get_object(self):
@@ -85,6 +88,14 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response()
+
+    @action(detail=True)
+    def blog_posts(self, request, *args, **kwargs):
+        """Get logs for the package"""
+        package = self.get_object()
+        queryset = package.blog_posts.public().order_by("-created_at")
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):

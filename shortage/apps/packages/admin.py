@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import (
     Package,
+    PackageBlogPost,
     PackageItem,
     PackageStatusLogEntry,
     Cart,
@@ -8,6 +9,10 @@ from .models import (
     CorporateDonation,
 )
 from django.utils.html import format_html
+
+
+class PackageBlogPostAdmin(admin.TabularInline):
+    model = PackageBlogPost
 
 
 class PackageAdmin(admin.ModelAdmin):
@@ -23,30 +28,77 @@ class PackageAdmin(admin.ModelAdmin):
         "delivery_company",
         "tracking_code",
     ]
-    fields = [
-        "organization",
-        "type",
-        "owner",
-        "need_tax_deduction",
-        "first_name",
-        "last_name",
-        "phone_number",
-        "email",
-        "address_line1",
-        "address_line2",
-        "city",
-        "state_province_region",
-        "zip",
-        "country",
-        "delivery_company",
-        "tracking_code",
-        "photo_preview",
-        "created_at",
-        "note",
-        "checkout_url",
-        "status",
-        "tax_deduction_receipt",
-    ]
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "organization",
+                    "type",
+                    "status",
+                    "need_tax_deduction",
+                    "tax_deduction_receipt",
+                    "created_at",
+                )
+            },
+        ),
+        (
+            "Donor",
+            {
+                "fields": (
+                    "owner",
+                    "email",
+                    "first_name",
+                    "last_name",
+                    "phone_number",
+                ),
+            },
+        ),
+        (
+            "Address",
+            {
+                "classes": ("collapse",),
+                "fields": (
+                    "address_line1",
+                    "address_line2",
+                    "city",
+                    "state_province_region",
+                    "zip",
+                    "country",
+                ),
+            },
+        ),
+        (
+            "Tracking Details",
+            {
+                "classes": ("collapse",),
+                "fields": (
+                    "delivery_company",
+                    "tracking_code",
+                ),
+            },
+        ),
+        (
+            "Feedback",
+            {
+                "classes": ("collapse",),
+                "fields": (
+                    "note",
+                    "photo_preview",
+                    # "blog_posts",
+                ),
+            },
+        ),
+        (
+            "Advanced",
+            {
+                "classes": ("collapse",),
+                "fields": ("checkout_url",),
+            },
+        ),
+    )
+    inlines = (PackageBlogPostAdmin,)
+
     readonly_fields = [
         "organization",
         "type",

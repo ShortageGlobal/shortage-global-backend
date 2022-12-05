@@ -1,6 +1,7 @@
 from django.db import transaction
 from rest_framework import serializers
 from shortage.helpers.serializers import AuthorizedUserOrNone
+from shortage.apps.blog.models import BlogPost
 from shortage.apps.catalog.models import Product
 from shortage.apps.catalog.serializers import ProductOrganizationPreviewSerializer
 from .models import (
@@ -37,6 +38,16 @@ class PackageNoteSerializer(serializers.ModelSerializer):
         model = Package
         fields = [
             "note",
+        ]
+
+
+class PackageBlogPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlogPost
+        fields = [
+            "title",
+            "content",
+            "created_at",
         ]
 
 
