@@ -58,15 +58,15 @@ class BlogPostViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = BlogPost.objects.all()
 
-        is_published = self.request.query_params.get("is_published")
+        is_draft = self.request.query_params.get("is_draft")
 
-        if is_published:
-            is_published = is_published.lower()
+        if is_draft:
+            is_draft = is_draft.lower()
 
-            if is_published != "true" and is_published != "false":
-                raise ValueError("is_published should be either true or false")
+            if is_draft != "true" and is_draft != "false":
+                raise ValueError("is_draft should be either true or false")
 
-            queryset = queryset.filter(is_published=is_published)
+            queryset = queryset.filter(is_draft=is_draft)
 
         return queryset
 

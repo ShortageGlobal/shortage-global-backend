@@ -14,6 +14,7 @@ from thumbnails.fields import ImageField
 from django_countries.fields import CountryField
 from shortage.apps import storage
 from shortage.apps.catalog.models import Product, Organization
+from shortage.apps.blog.models import BlogPost
 from shortage.apps.file_paths import (
     get_package_path,
     get_corporate_donation_path,
@@ -88,6 +89,13 @@ class Package(models.Model):
     # valid for 24 hours
     checkout_url = models.TextField(null=True, blank=True, validators=[URLValidator()])
 
+    # related blog posts
+    blog_posts = models.ManyToManyField(
+        BlogPost,
+        through="PackageBlogPost",
+        through_fields=("package", "blog_post"),
+    )
+
     # package details
     note = models.TextField(null=True, blank=True)
     type = models.CharField(
@@ -158,6 +166,15 @@ class Package(models.Model):
 
     def package_delivered(self):
         self.status = PackageStatus.DELIVERED
+
+
+class PackageBlogPost(models.Model):
+    package = models.ForeignKey(Package, on_delete=models.CASCADE)
+    blog_post = models.ForeignKey(BlogPost, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ["package", "blog_post"]
 
 
 class PackageItem(models.Model):

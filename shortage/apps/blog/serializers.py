@@ -15,7 +15,7 @@ class PrivateBlogPostSerializer(serializers.ModelSerializer):
             "author",
             "title",
             "content",
-            "is_published",
+            "is_draft",
         ]
 
 
@@ -27,6 +27,6 @@ class BlogPostSerializer(serializers.ModelSerializer):
             "author",
             "title",
             "content",
-            "is_published",
+            "is_draft",
         ]
         read_only_fields = fields

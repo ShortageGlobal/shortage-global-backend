@@ -3,20 +3,22 @@ from shortage.apps.blog.models import BlogPost
 
 
 class BlogPostAdmin(admin.ModelAdmin):
-    list_display = [
-        "title",
-        "author",
-        "created_at",
-        "is_published",
-    ]
+    list_display = ["title", "author", "created_at", "is_draft", "is_deleted"]
     fields = [
         "author",
         "title",
         "content",
-        "is_published",
+        "created_at",
+        "updated_at",
+        "is_draft",
+        "is_deleted",
     ]
-    readonly_fields = ["author"]
-    list_filter = ["created_at", "is_published"]
+    readonly_fields = [
+        "author",
+        "created_at",
+        "updated_at",
+    ]
+    list_filter = ["created_at", "is_draft", "is_deleted"]
     search_fields = ["author__email", "title"]
     ordering = ["-created_at"]
 
