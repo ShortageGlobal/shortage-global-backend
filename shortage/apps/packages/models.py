@@ -173,6 +173,9 @@ class PackageBlogPost(models.Model):
     blog_post = models.ForeignKey(BlogPost, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ["package", "blog_post"]
+
 
 class PackageItem(models.Model):
     package = models.ForeignKey(Package, related_name="items", on_delete=models.CASCADE)
