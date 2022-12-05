@@ -91,7 +91,7 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
     @action(detail=True)
     def blog_posts(self, request, *args, **kwargs):
-        """Get logs for the package"""
+        """Get blog posts for the package"""
         package = self.get_object()
         queryset = package.blog_posts.public().order_by("-created_at")
         serializer = self.get_serializer(queryset, many=True)
