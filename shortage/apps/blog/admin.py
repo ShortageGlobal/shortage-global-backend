@@ -1,5 +1,4 @@
 from django.contrib import admin
-from shortage.apps.blog.models import BlogPost
 
 
 class BlogPostAdmin(admin.ModelAdmin):
@@ -7,7 +6,10 @@ class BlogPostAdmin(admin.ModelAdmin):
     fields = [
         "author",
         "title",
+        "slug",
+        "image",
         "content",
+        "meta_description",
         "created_at",
         "updated_at",
         "is_draft",
@@ -27,6 +29,3 @@ class BlogPostAdmin(admin.ModelAdmin):
         if getattr(obj, "author", None) is None:
             obj.author = request.user
         return super().save_model(request, obj, form, change)
-
-
-admin.site.register(BlogPost, BlogPostAdmin)

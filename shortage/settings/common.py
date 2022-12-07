@@ -222,6 +222,51 @@ THUMBNAILS = {
                 },
             ],
         },
+        "blog_post_medium": {
+            "PROCESSORS": [
+                {
+                    "PATH": "thumbnails.processors.resize",
+                    "width": 355,
+                    "height": 200,
+                    "method": "fill",
+                },
+                {
+                    "PATH": "thumbnails.processors.crop",
+                    "width": 355,
+                    "height": 200,
+                },
+            ],
+        },
+        "blog_post_large": {
+            "PROCESSORS": [
+                {
+                    "PATH": "thumbnails.processors.resize",
+                    "width": 1244,
+                    "height": 700,
+                    "method": "fill",
+                },
+                {
+                    "PATH": "thumbnails.processors.crop",
+                    "width": 1244,
+                    "height": 700,
+                },
+            ],
+        },
+        "card_preview": {
+            "PROCESSORS": [
+                {
+                    "PATH": "thumbnails.processors.resize",
+                    "width": 533,
+                    "height": 400,
+                    "method": "fill",
+                },
+                {
+                    "PATH": "thumbnails.processors.crop",
+                    "width": 533,
+                    "height": 400,
+                },
+            ],
+        },
     },
 }
 

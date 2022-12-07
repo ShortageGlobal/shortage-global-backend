@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
-
 from shortage.apps.blog.models import BlogPost
-from shortage.apps.catalog.serializers import ProductOrganizationPreviewSerializer
 
 
 class PrivateBlogPostSerializer(serializers.ModelSerializer):
@@ -19,14 +17,34 @@ class PrivateBlogPostSerializer(serializers.ModelSerializer):
         ]
 
 
+class BlogPostPreviewSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(source="card_preview")
+
+    class Meta:
+        # this will fail as BlogPost is abstract. Inherit from this class.
+        model = BlogPost
+        fields = [
+            "title",
+            "slug",
+            "image",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = fields
+
+
 class BlogPostSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(source="large_image")
+
     class Meta:
         model = BlogPost
         fields = [
-            "uuid",
-            "author",
             "title",
+            "slug",
+            "image",
             "content",
-            "is_draft",
+            "meta_description",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = fields

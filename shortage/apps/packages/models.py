@@ -13,8 +13,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from thumbnails.fields import ImageField
 from django_countries.fields import CountryField
 from shortage.apps import storage
-from shortage.apps.catalog.models import Product, Organization
-from shortage.apps.blog.models import BlogPost
+from shortage.apps.catalog.models import Product, Organization, OrganizationBlogPost
 from shortage.apps.file_paths import (
     get_package_path,
     get_corporate_donation_path,
@@ -91,7 +90,7 @@ class Package(models.Model):
 
     # related blog posts
     blog_posts = models.ManyToManyField(
-        BlogPost,
+        OrganizationBlogPost,
         through="PackageBlogPost",
         through_fields=("package", "blog_post"),
     )
@@ -170,11 +169,20 @@ class Package(models.Model):
 
 class PackageBlogPost(models.Model):
     package = models.ForeignKey(Package, on_delete=models.CASCADE)
-    blog_post = models.ForeignKey(BlogPost, on_delete=models.CASCADE)
+    blog_post = models.ForeignKey(OrganizationBlogPost, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ["package", "blog_post"]
+
+    def clean(self):
+        """Validate Package -> Blog Post relationship. Note, this method is called in django admin only"""
+
+        # make sure package doesn't get blog posts from other organizations
+        if self.package.organization != self.blog_post.organization:
+            raise ValidationError(
+                {"blog_post": _("This blog post belongs to another organization")}
+            )
 
 
 class PackageItem(models.Model):

@@ -1,17 +1,15 @@
 from django.db import transaction
-from django.conf import settings
 from rest_framework import generics, viewsets, mixins, permissions, exceptions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.schemas.openapi import AutoSchema
 from shortage.apps.catalog.models import Organization
+from shortage.apps.catalog.serializers import OrganizationBlogPostPreviewSerializer
 from shortage.apps.packages.payments import deserialize_stripe_event
-from shortage.apps.mailing.mail_service import PackageRegistrationEmail
 from .models import Package, Cart, CartItem
 from .package_serializers import (
     PackageSerializer,
     PackageNoteSerializer,
-    PackageBlogPostSerializer,
     PackageCreationSerializer,
     CorporateDonationSerializer,
     PackageStatusLogEntrySerializer,
@@ -41,7 +39,7 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         if self.action == "leave_note":
             return PackageNoteSerializer
         if self.action == "blog_posts":
-            return PackageBlogPostSerializer
+            return OrganizationBlogPostPreviewSerializer
         return PackageSerializer
 
     def get_object(self):

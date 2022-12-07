@@ -15,6 +15,8 @@ from .serializers import (
     InstructionSerializer,
     PromotedProductPreviewSerializer,
     ProductPreviewSerializer,
+    OrganizationBlogPostPreviewSerializer,
+    OrganizationBlogPostSerializer,
     CategorySerializer,
     OrganizationSerializer,
     ProductSerializer,
@@ -165,6 +167,31 @@ class ProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             queryset = queryset.filter(category=category)
 
         return queryset
+
+
+class OrganizationBlogPostsViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
+    """A list of blog posts that belong to the given organization"""
+
+    ordering = ["-created_at"]
+    lookup_field = "slug"
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return OrganizationBlogPostPreviewSerializer
+        return OrganizationBlogPostSerializer
+
+    def get_queryset(self):
+        organization = generics.get_object_or_404(
+            Organization.objects.public(), slug=self.kwargs["org_slug"]
+        )
+        queryset = organization.blog_posts.public()
+        return queryset
+
+    def perform_destroy(self, instance):
+        # TODO: Delete all related images
+        super().perform_destroy(instance)
 
 
 class CategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
