@@ -1,9 +1,11 @@
 from django.contrib import admin
+from shortage.apps.blog.admin import BlogPostAdmin
 from .models import (
     Organization,
     Product,
     Instruction,
     OrganizationRegistrationRequest,
+    OrganizationBlogPost,
 )
 
 
@@ -73,9 +75,15 @@ class OrganizationRegistrationRequestAdmin(admin.ModelAdmin):
         return super().get_ordering(request) or ["-created_at"]
 
 
+class OrganizationBlogPostAdmin(BlogPostAdmin):
+    list_display = ["organization"] + BlogPostAdmin.list_display
+    fields = ["organization"] + BlogPostAdmin.fields
+
+
 admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(Instruction, InstructionAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(
     OrganizationRegistrationRequest, OrganizationRegistrationRequestAdmin
 )
+admin.site.register(OrganizationBlogPost, OrganizationBlogPostAdmin)

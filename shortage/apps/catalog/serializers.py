@@ -1,11 +1,13 @@
 from rest_framework import serializers
+from shortage.apps.blog.serializers import BlogPostPreviewSerializer, BlogPostSerializer
+from shortage.helpers.serializers import AuthorizedUserOrNone
 from .models import (
     Organization,
     Instruction,
     Product,
     OrganizationRegistrationRequest,
+    OrganizationBlogPost,
 )
-from shortage.helpers.serializers import AuthorizedUserOrNone
 
 
 class OrganizationPreviewSerializer(serializers.ModelSerializer):
@@ -171,3 +173,19 @@ class OrganizationRegistrationRequestSerializer(serializers.ModelSerializer):
         # ignore this field after validation
         validated_data.pop("agreed_to_terms_of_use")
         return super().create(validated_data)
+
+
+class OrganizationBlogPostPreviewSerializer(BlogPostPreviewSerializer):
+    organization = OrganizationPreviewSerializer(read_only=True)
+
+    class Meta(BlogPostPreviewSerializer.Meta):
+        model = OrganizationBlogPost
+        fields = BlogPostPreviewSerializer.Meta.fields + ["organization"]
+
+
+class OrganizationBlogPostSerializer(BlogPostSerializer):
+    organization = OrganizationPreviewSerializer(read_only=True)
+
+    class Meta(BlogPostSerializer.Meta):
+        model = OrganizationBlogPost
+        fields = BlogPostSerializer.Meta.fields + ["organization"]

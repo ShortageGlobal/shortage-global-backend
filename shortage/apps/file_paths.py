@@ -31,5 +31,9 @@ def get_corporate_donation_path(instance, filename):
     return get_uuid_path(f"photo/corporate_donations/%Y/%m/%d/", filename)
 
 
-def get_blog_image_path(user, filename):
-    return get_uuid_path(f"blog/images/{user}", filename)
+def get_blog_post_content_uploads_path(user, filename):
+    return get_uuid_path(f"blog/content_uploads/{user}", filename)
+
+
+def get_blog_post_photo_path(instance, filename):
+    return get_uuid_path(f"blog/previews/{instance.author.pk}/%Y/%m/%d/", filename)

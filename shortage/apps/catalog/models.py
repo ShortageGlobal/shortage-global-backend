@@ -7,6 +7,7 @@ from auditlog.registry import auditlog
 from phonenumber_field.modelfields import PhoneNumberField
 from thumbnails.fields import ImageField
 from shortage.apps import storage
+from shortage.apps.blog.models import BlogPost
 from shortage.apps.file_paths import get_organization_path, get_product_path
 from shortage.helpers import get_full_name
 
@@ -185,7 +186,22 @@ class OrganizationRegistrationRequest(models.Model):
         return get_full_name(first_name=self.first_name, last_name=self.last_name)
 
 
+class OrganizationBlogPost(BlogPost):
+    organization = models.ForeignKey(
+        Organization, related_name="blog_posts", on_delete=models.CASCADE
+    )
+
+    class Meta:
+        unique_together = ["organization", "slug"]
+
+    def __str__(self):
+        return '{title} (by "{organization}")'.format(
+            title=self.title, organization=self.organization
+        )
+
+
 auditlog.register(Organization)
 auditlog.register(Instruction)
 auditlog.register(Product)
 auditlog.register(OrganizationRegistrationRequest)
+auditlog.register(OrganizationBlogPost)
