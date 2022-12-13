@@ -36,4 +36,4 @@ def get_blog_post_content_uploads_path(user, filename):
 
 
 def get_blog_post_photo_path(instance, filename):
-    return get_uuid_path(f"blog/previews/{instance.author}/%Y/%m/%d/", filename)
+    return get_uuid_path(f"blog/previews/{instance.author.pk}/%Y/%m/%d/", filename)

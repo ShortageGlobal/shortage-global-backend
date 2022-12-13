@@ -1,7 +1,6 @@
 # we need to resave images after loosing thumbnails source data and metadata
 
-from shortage.apps.catalog.models import Organization, Product
-from shortage.apps.blog.models import BlogPost
+from shortage.apps.catalog.models import Organization, Product, OrganizationBlogPost
 
 
 def resave_images():
@@ -25,7 +24,7 @@ def resave_images():
         product.photo.save(filename, product.photo.file)
         print("resaved photo: %s" % filename)
 
-    blog_posts = BlogPost.objects.all()
+    blog_posts = OrganizationBlogPost.objects.all()
     for blog_post in blog_posts:
         print(">>> Resaving images for blog post: %s" % blog_post.title)
 
