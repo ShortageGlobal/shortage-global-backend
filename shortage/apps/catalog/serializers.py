@@ -210,9 +210,9 @@ class OrganizationBlogPostSerializer(BlogPostSerializer):
         fields = BlogPostSerializer.Meta.fields + ["organization"]
 
 
-class OrganizationBlogPostSlugSerializer(BlogPostSerializer):
+class OrganizationBlogPostSlugSerializer(serializers.ModelSerializer):
     organization = OrganizationSlugSerializer()
 
-    class Meta(BlogPostSerializer.Meta):
+    class Meta:
         model = OrganizationBlogPost
         fields = ["slug", "organization"]
