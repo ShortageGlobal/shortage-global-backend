@@ -13,6 +13,7 @@ from .views import (
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
     OrganizationRegistrationRequestViewSet,
+    SitemapViewSet,
 )
 from .private.views import PrivateProductsSlugExistsViewSet, PrivateProductsViewSet
 
@@ -93,6 +94,13 @@ router.register(
     r"register-nonprofit",
     OrganizationRegistrationRequestViewSet,
     basename="register_nonprofit",
+)
+
+# Sitemap routes
+router.register(
+    r"sitemap",
+    SitemapViewSet,
+    basename="sitemap",
 )
 
 # Wire up our API using automatic URL routing.
