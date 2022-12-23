@@ -270,7 +270,7 @@ class SitemapViewSet(viewsets.ViewSet):
 
     @action(detail=False)
     def all_blog_post_slugs(self, request, *args, **kwargs):
-        """Get slugs of organization blog posts"""
+        """Get slugs of public blog posts of public organizations"""
         queryset = (
             OrganizationBlogPost.objects.public()
             .filter(
