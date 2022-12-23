@@ -1,6 +1,9 @@
 from django.contrib.auth import get_user_model
 from shortage.apps.catalog.models import Organization, Product
 from shortage.apps.packages.models import Package, PackageItem, PackageType
+from io import BytesIO
+from PIL import Image
+from django.core.files.base import ContentFile
 
 
 def create_test_user(**kwargs):
@@ -84,3 +87,21 @@ def setup_test_data():
 
     create_test_package(PackageType.SENT_BY_DONOR, user, product, None)
     create_test_package(PackageType.FUNDED_BY_DONOR, user, product, None)
+
+
+def create_test_image(
+    storage, filename, size=(100, 100), image_mode="RGB", image_format="PNG"
+):
+    """
+    Generate a test image, returning the filename that it was saved as.
+
+    If ``storage`` is ``None``, the BytesIO containing the image data
+    will be passed instead.
+    """
+    data = BytesIO()
+    Image.new(image_mode, size).save(data, image_format)
+    data.seek(0)
+    if not storage:
+        return data
+    image_file = ContentFile(data.read())
+    return storage.save(filename, image_file)

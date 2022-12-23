@@ -14,7 +14,7 @@ django-debug-toolbar==3.6.0
 django-phonenumber-field==7.0.0
 django-split-settings==1.1.0
 django-storages==1.12.3
-django-thumbnails==0.7.0
+easy-thumbnails==2.8.4
 django-tinymce==3.4.0
 djangorestframework==3.13.1
 djangorestframework-simplejwt==5.2.0

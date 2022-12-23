@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "auditlog",
     "storages",
     "rest_framework",
-    "thumbnails",
+    "easy_thumbnails",
     "corsheaders",
     "shortage.apps.mailing",
     "shortage.apps.catalog",
@@ -164,109 +164,16 @@ SIMPLE_JWT = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-THUMBNAILS = {
-    "METADATA": {
-        "BACKEND": "thumbnails.backends.metadata.DatabaseBackend",
-    },
-    "STORAGE": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-        # You can also use Amazon S3 or any other Django storage backends
-    },
-    "SIZES": {
-        "organization_logo_medium": {
-            "PROCESSORS": [
-                {
-                    "PATH": "thumbnails.processors.resize",
-                    "width": 300,
-                    "height": 300,
-                    "method": "fill",
-                },
-            ],
-        },
-        "organization_banner_medium": {
-            "PROCESSORS": [
-                {
-                    "PATH": "thumbnails.processors.resize",
-                    "height": 700,
-                    "method": "fill",
-                },
-            ],
-        },
-        "product_medium": {
-            "PROCESSORS": [
-                {
-                    "PATH": "thumbnails.processors.resize",
-                    "width": 300,
-                    "height": 300,
-                    "method": "fill",
-                },
-            ],
-        },
-        "product_large": {
-            "PROCESSORS": [
-                {
-                    "PATH": "thumbnails.processors.resize",
-                    "width": 1024,
-                    "height": 1024,
-                    "method": "fill",
-                },
-            ],
-        },
-        "package_medium": {
-            "PROCESSORS": [
-                {
-                    "PATH": "thumbnails.processors.resize",
-                    "width": 1024,
-                    "height": 1024,
-                    "method": "fill",
-                },
-            ],
-        },
-        "blog_post_medium": {
-            "PROCESSORS": [
-                {
-                    "PATH": "thumbnails.processors.resize",
-                    "width": 355,
-                    "height": 200,
-                    "method": "fill",
-                },
-                {
-                    "PATH": "thumbnails.processors.crop",
-                    "width": 355,
-                    "height": 200,
-                },
-            ],
-        },
-        "blog_post_large": {
-            "PROCESSORS": [
-                {
-                    "PATH": "thumbnails.processors.resize",
-                    "width": 1244,
-                    "height": 700,
-                    "method": "fill",
-                },
-                {
-                    "PATH": "thumbnails.processors.crop",
-                    "width": 1244,
-                    "height": 700,
-                },
-            ],
-        },
-        "card_preview": {
-            "PROCESSORS": [
-                {
-                    "PATH": "thumbnails.processors.resize",
-                    "width": 533,
-                    "height": 400,
-                    "method": "fill",
-                },
-                {
-                    "PATH": "thumbnails.processors.crop",
-                    "width": 533,
-                    "height": 400,
-                },
-            ],
-        },
+THUMBNAIL_ALIASES = {
+    "": {
+        "organization_logo_medium": {"size": (300, 300), "crop": False},
+        "organization_banner_medium": {"size": (700, 700), "crop": False},
+        "product_medium": {"size": (300, 300), "crop": False},
+        "product_large": {"size": (1024, 1024), "crop": False},
+        "package_medium": {"size": (1024, 1024), "crop": False},
+        "blog_post_medium": {"size": (355, 200), "crop": True},
+        "blog_post_large": {"size": (1244, 700), "crop": True},
+        "card_preview": {"size": (533, 400), "crop": True},
     },
 }
 

@@ -1,6 +1,8 @@
 from django.core.exceptions import ValidationError
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.utils import json
+
+from shortage.apps import storage
 from shortage.apps.packages.models import PackageType, PackageStatus, Package
 from shortage.apps.packages.private.views import (
     PrivateOrganizationPackagesViewSet,
@@ -12,6 +14,7 @@ from shortage.helpers.test_utilities import (
     create_test_organization,
     create_test_product,
     create_test_package,
+    create_test_image,
 )
 
 
@@ -393,3 +396,27 @@ class PackageLeaveNoteTestCase(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["note"], "lorem ipsum")
+
+
+class PackageThumbnailsTestCase(APITestCase):
+    def setUp(self) -> None:
+        self.user = create_test_user()
+        self.organization = create_test_organization(owner=self.user)
+        self.product = create_test_product(organization=self.organization)
+
+    def test_thumbnails(self):
+        image = create_test_image(
+            storage.MediaStorage(), "test_image.png", size=(2048, 2048)
+        )
+
+        package = create_test_package(
+            self.product,
+            owner=self.user,
+            organization=self.organization,
+            photo=image,
+        )
+
+        self.assertNotEqual(package.medium_photo, None)
+        self.assertNotEqual(package.medium_photo, package.photo)
+        self.assertEqual(package.medium_photo.height, 1024)
+        self.assertEqual(package.medium_photo.width, 1024)
