@@ -7,9 +7,10 @@ from rest_framework import (
     exceptions,
     status,
 )
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
-from .models import Organization, Instruction, Product
+from .models import Organization, Instruction, Product, OrganizationBlogPost
 from .serializers import (
     OrganizationPreviewSerializer,
     InstructionSerializer,
@@ -17,9 +18,12 @@ from .serializers import (
     ProductPreviewSerializer,
     OrganizationBlogPostPreviewSerializer,
     OrganizationBlogPostSerializer,
+    OrganizationBlogPostSlugSerializer,
     CategorySerializer,
     OrganizationSerializer,
+    OrganizationSlugSerializer,
     ProductSerializer,
+    OrganizationProductSlugSerializer,
     PrivateOrganizationSerializer,
     OrganizationRegistrationRequestSerializer,
 )
@@ -235,3 +239,46 @@ class OrganizationRegistrationRequestViewSet(
 
     permission_classes = [permissions.AllowAny]
     serializer_class = OrganizationRegistrationRequestSerializer
+
+
+class SitemapViewSet(viewsets.ViewSet):
+    """Fetch enitities for sitemap"""
+
+    permission_classes = [permissions.AllowAny]
+
+    @action(detail=False)
+    def all_organization_slugs(self, request, *args, **kwargs):
+        """Get slugs of public organizations"""
+        queryset = Organization.objects.public()
+        serializer = OrganizationSlugSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False)
+    def all_product_slugs(self, request, *args, **kwargs):
+        """Get slugs of public products of public organizations"""
+        queryset = (
+            Product.objects.public()
+            .filter(
+                organization__is_verified=True,
+                organization__is_draft=False,
+                organization__is_deleted=False,
+            )
+            .prefetch_related("organization")
+        )
+        serializer = OrganizationProductSlugSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False)
+    def all_blog_post_slugs(self, request, *args, **kwargs):
+        """Get slugs of organization blog posts"""
+        queryset = (
+            OrganizationBlogPost.objects.public()
+            .filter(
+                organization__is_verified=True,
+                organization__is_draft=False,
+                organization__is_deleted=False,
+            )
+            .prefetch_related("organization")
+        )
+        serializer = OrganizationBlogPostSlugSerializer(queryset, many=True)
+        return Response(serializer.data)

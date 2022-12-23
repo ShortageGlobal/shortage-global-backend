@@ -127,6 +127,14 @@ class OrganizationSerializer(serializers.ModelSerializer):
         ]
 
 
+class OrganizationSlugSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Organization
+        fields = [
+            "slug",
+        ]
+
+
 class ProductSerializer(serializers.ModelSerializer):
     photo = serializers.ImageField(source="large_photo", read_only=True)
     organization = ProductOrganizationPreviewSerializer(read_only=True)
@@ -142,6 +150,17 @@ class ProductSerializer(serializers.ModelSerializer):
             "requested_amount",
             "description",
             "top_priority",
+            "organization",
+        ]
+
+
+class OrganizationProductSlugSerializer(serializers.ModelSerializer):
+    organization = OrganizationSlugSerializer()
+
+    class Meta:
+        model = Product
+        fields = [
+            "slug",
             "organization",
         ]
 
@@ -189,3 +208,11 @@ class OrganizationBlogPostSerializer(BlogPostSerializer):
     class Meta(BlogPostSerializer.Meta):
         model = OrganizationBlogPost
         fields = BlogPostSerializer.Meta.fields + ["organization"]
+
+
+class OrganizationBlogPostSlugSerializer(BlogPostSerializer):
+    organization = OrganizationSlugSerializer()
+
+    class Meta(BlogPostSerializer.Meta):
+        model = OrganizationBlogPost
+        fields = ["slug", "organization"]
