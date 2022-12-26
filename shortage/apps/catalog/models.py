@@ -5,11 +5,11 @@ from tinymce.models import HTMLField
 from django_countries.fields import CountryField
 from auditlog.registry import auditlog
 from phonenumber_field.modelfields import PhoneNumberField
+from easy_thumbnails.fields import ThumbnailerImageField
 from shortage.apps import storage
-from shortage.apps.blog.models import BlogPost
+from shortage.apps.blog.models import BlogPost, BlogPostManager
 from shortage.apps.file_paths import get_organization_path, get_product_path
 from shortage.helpers import get_full_name
-from easy_thumbnails.fields import ThumbnailerImageField
 from shortage.helpers.thumbnails import get_thumbnail_for_image
 
 
@@ -184,10 +184,21 @@ class OrganizationRegistrationRequest(models.Model):
         return get_full_name(first_name=self.first_name, last_name=self.last_name)
 
 
+class OrganizationBlogPostManager(BlogPostManager):
+    def promoted(self):
+        """
+        Return handpicked list of organization blog posts to show on the main page
+        """
+        return self.public().filter(promote=True)
+
+
 class OrganizationBlogPost(BlogPost):
     organization = models.ForeignKey(
         Organization, related_name="blog_posts", on_delete=models.CASCADE
     )
+    promote = models.BooleanField(default=False, db_index=True)
+
+    objects = OrganizationBlogPostManager()
 
     class Meta:
         unique_together = ["organization", "slug"]
