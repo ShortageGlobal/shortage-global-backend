@@ -44,6 +44,7 @@ MEDIA_URL = "%s/%s/%s/" % (
     AWS_MEDIA_LOCATION,
 )
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+THUMBNAIL_DEFAULT_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 LOGGING = {
     "version": 1,
