@@ -2,9 +2,10 @@ import uuid
 from django.db import models
 from django.conf import settings
 from tinymce.models import HTMLField
-from thumbnails.fields import ImageField
 from shortage.apps import storage
 from shortage.apps.file_paths import get_blog_post_photo_path
+from easy_thumbnails.fields import ThumbnailerImageField
+from shortage.helpers.thumbnails import get_thumbnail_for_image
 
 
 class BlogPostManager(models.Manager):
@@ -26,12 +27,11 @@ class BlogPost(models.Model):
     slug = models.SlugField(max_length=80)
     content = HTMLField()
     meta_description = models.CharField(max_length=200, null=True, blank=True)
-    image = ImageField(
+    image = ThumbnailerImageField(
         null=True,
         blank=True,
         upload_to=get_blog_post_photo_path,
         storage=storage.MediaStorage(),
-        pregenerated_sizes=["blog_post_large", "card_preview"],
     )
     is_draft = models.BooleanField(default=True, db_index=True)
     is_deleted = models.BooleanField(default=False, db_index=True)
@@ -48,8 +48,8 @@ class BlogPost(models.Model):
 
     @property
     def large_image(self):
-        return self.image.thumbnails.blog_post_large
+        return get_thumbnail_for_image(self.image, "blog_post_large")
 
     @property
     def card_preview(self):
-        return self.image.thumbnails.card_preview
+        return get_thumbnail_for_image(self.image, "card_preview")

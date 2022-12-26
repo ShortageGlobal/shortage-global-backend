@@ -5,11 +5,12 @@ from tinymce.models import HTMLField
 from django_countries.fields import CountryField
 from auditlog.registry import auditlog
 from phonenumber_field.modelfields import PhoneNumberField
-from thumbnails.fields import ImageField
 from shortage.apps import storage
 from shortage.apps.blog.models import BlogPost
 from shortage.apps.file_paths import get_organization_path, get_product_path
 from shortage.helpers import get_full_name
+from easy_thumbnails.fields import ThumbnailerImageField
+from shortage.helpers.thumbnails import get_thumbnail_for_image
 
 
 class OrganizationManager(models.Manager):
@@ -38,17 +39,15 @@ class Organization(models.Model):
     slug = models.SlugField(max_length=80, unique=True)
     description = HTMLField(null=True, blank=True)
     meta_description = models.CharField(max_length=200, null=True, blank=True)
-    logo = ImageField(
+    logo = ThumbnailerImageField(
         upload_to=get_organization_path,
         storage=storage.MediaStorage(),
-        pregenerated_sizes=["organization_logo_medium"],
     )
-    banner = ImageField(
+    banner = ThumbnailerImageField(
         upload_to=get_organization_path,
         null=True,
         blank=True,
         storage=storage.MediaStorage(),
-        pregenerated_sizes=["organization_banner_medium"],
     )
     url = models.URLField(max_length=255, null=True, blank=True)
     ein_number = models.CharField(max_length=255, null=True, blank=True)
@@ -66,11 +65,11 @@ class Organization(models.Model):
 
     @property
     def medium_logo_photo(self):
-        return self.logo.thumbnails.organization_logo_medium
+        return get_thumbnail_for_image(self.logo, "organization_logo_medium")
 
     @property
     def medium_banner_photo(self):
-        return self.banner.thumbnails.organization_banner_medium
+        return get_thumbnail_for_image(self.banner, "organization_banner_medium")
 
 
 class Instruction(models.Model):
@@ -124,12 +123,11 @@ class Product(models.Model):
     category = models.CharField(
         max_length=255, choices=ProductCategory.choices, db_index=True
     )
-    photo = ImageField(
+    photo = ThumbnailerImageField(
         upload_to=get_product_path,
         null=True,
         blank=True,
         storage=storage.MediaStorage(),
-        pregenerated_sizes=["product_large", "product_medium"],
     )
     price = models.DecimalField(
         max_digits=8, decimal_places=2, validators=[MinValueValidator(1)]
@@ -161,11 +159,11 @@ class Product(models.Model):
 
     @property
     def large_photo(self):
-        return self.photo.thumbnails.product_large
+        return get_thumbnail_for_image(self.photo, "product_large")
 
     @property
     def medium_photo(self):
-        return self.photo.thumbnails.product_medium
+        return get_thumbnail_for_image(self.photo, "product_medium")
 
 
 class OrganizationRegistrationRequest(models.Model):

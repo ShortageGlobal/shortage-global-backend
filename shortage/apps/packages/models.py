@@ -10,7 +10,6 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from auditlog.registry import auditlog
 from phonenumber_field.modelfields import PhoneNumberField
-from thumbnails.fields import ImageField
 from django_countries.fields import CountryField
 from shortage.apps import storage
 from shortage.apps.catalog.models import Product, Organization, OrganizationBlogPost
@@ -20,6 +19,8 @@ from shortage.apps.file_paths import (
     get_tax_deduction_receipt_path,
 )
 from shortage.helpers import get_full_name
+from easy_thumbnails.fields import ThumbnailerImageField
+from shortage.helpers.thumbnails import get_thumbnail_for_image
 
 
 class PackageStatus(models.TextChoices):
@@ -107,12 +108,11 @@ class Package(models.Model):
         choices=PackageStatus.choices,
         default=PackageStatus.REGISTERED,
     )
-    photo = ImageField(
+    photo = ThumbnailerImageField(
         upload_to=get_package_path,
         null=True,
         blank=True,
         storage=storage.MediaStorage(),
-        pregenerated_sizes=["package_medium"],
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -121,7 +121,7 @@ class Package(models.Model):
 
     @property
     def medium_photo(self):
-        return self.photo.thumbnails.package_medium
+        return get_thumbnail_for_image(self.photo, "package_medium")
 
     @property
     def full_name(self):
@@ -303,12 +303,11 @@ class CorporateDonation(models.Model):
     number_of_pallets = models.CharField(max_length=255, null=True, blank=True)
     estimated_value = models.CharField(max_length=100)
     url = models.URLField(max_length=255, null=True, blank=True)
-    photo = ImageField(
+    photo = ThumbnailerImageField(
         upload_to=get_corporate_donation_path,
         null=True,
         blank=True,
         storage=storage.MediaStorage(),
-        pregenerated_sizes=["package_medium"],
     )
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -4,7 +4,6 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import shortage.apps.file_paths
-import thumbnails.fields
 import tinymce.models
 import uuid
 
@@ -25,7 +24,7 @@ class Migration(migrations.Migration):
                 ('slug', models.SlugField(max_length=80)),
                 ('content', tinymce.models.HTMLField()),
                 ('meta_description', models.CharField(blank=True, max_length=200, null=True)),
-                ('image', thumbnails.fields.ImageField(blank=True, null=True, upload_to=shortage.apps.file_paths.get_blog_post_photo_path)),
+                ('image', models.ImageField(blank=True, null=True, upload_to=shortage.apps.file_paths.get_blog_post_photo_path)),
                 ('is_draft', models.BooleanField(db_index=True, default=True)),
                 ('is_deleted', models.BooleanField(db_index=True, default=False)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
