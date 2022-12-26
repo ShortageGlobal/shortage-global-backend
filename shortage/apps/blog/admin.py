@@ -4,8 +4,8 @@ from django.contrib import admin
 class BlogPostAdmin(admin.ModelAdmin):
     list_display = ["title", "author", "created_at", "is_draft", "is_deleted"]
     fields = [
-        "author",
         "title",
+        "author",
         "slug",
         "image",
         "content",

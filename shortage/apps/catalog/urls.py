@@ -4,6 +4,7 @@ from .views import (
     PromotedOrganizationsViewSet,
     PromotedProductsViewSet,
     PromotedCategoriesViewSet,
+    PromotedOrganizationBlogPostsViewSet,
     OrganizationViewSet,
     InstructionsViewSet,
     CategoriesViewSet,
@@ -30,6 +31,11 @@ router.register(
 )
 router.register(
     r"promoted/categories", PromotedCategoriesViewSet, basename="promoted_categories"
+)
+router.register(
+    r"promoted/blog_posts",
+    PromotedOrganizationBlogPostsViewSet,
+    basename="promoted_blog_posts",
 )
 
 # Organization

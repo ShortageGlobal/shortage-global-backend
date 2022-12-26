@@ -76,8 +76,12 @@ class OrganizationRegistrationRequestAdmin(admin.ModelAdmin):
 
 
 class OrganizationBlogPostAdmin(BlogPostAdmin):
-    list_display = ["organization"] + BlogPostAdmin.list_display
-    fields = ["organization"] + BlogPostAdmin.fields
+    list_display = (
+        ["title", "organization"]
+        + [x for x in BlogPostAdmin.list_display if x != "title"]
+        + ["promote"]
+    )
+    fields = ["organization"] + BlogPostAdmin.fields + ["promote"]
 
 
 admin.site.register(Organization, OrganizationAdmin)

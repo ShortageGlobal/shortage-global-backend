@@ -68,6 +68,16 @@ class PromotedCategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     paginator = None
 
 
+class PromotedOrganizationBlogPostsViewSet(
+    mixins.ListModelMixin, viewsets.GenericViewSet
+):
+    """A list of promoted blog posts"""
+
+    serializer_class = OrganizationBlogPostPreviewSerializer
+    ordering = ["-created_at"]
+    queryset = OrganizationBlogPost.objects.promoted()
+
+
 class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """Returns information about specific organization if that organization was verified"""
 
