@@ -18,7 +18,7 @@ def get_product_path(instance, filename):
 
 
 def get_package_path(instance, filename):
-    return get_uuid_path(f"photo/package/%Y/%m/%d/", filename)
+    return get_uuid_path(f"photo/package/", filename)
 
 
 def get_tax_deduction_receipt_path(instance, filename):
@@ -28,7 +28,7 @@ def get_tax_deduction_receipt_path(instance, filename):
 
 
 def get_corporate_donation_path(instance, filename):
-    return get_uuid_path(f"photo/corporate_donations/%Y/%m/%d/", filename)
+    return get_uuid_path(f"photo/corporate_donations/", filename)
 
 
 def get_blog_post_content_uploads_path(user, filename):
@@ -36,4 +36,4 @@ def get_blog_post_content_uploads_path(user, filename):
 
 
 def get_blog_post_photo_path(instance, filename):
-    return get_uuid_path(f"blog/previews/{instance.author.pk}/%Y/%m/%d/", filename)
+    return get_uuid_path(f"blog/previews/{instance.author.pk}/", filename)

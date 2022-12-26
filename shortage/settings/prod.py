@@ -45,6 +45,7 @@ MEDIA_URL = "%s/%s/%s/" % (
 )
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 THUMBNAIL_DEFAULT_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+THUMBNAIL_BASEDIR = "media"
 
 LOGGING = {
     "version": 1,
