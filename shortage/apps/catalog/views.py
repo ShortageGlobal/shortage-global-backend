@@ -1,3 +1,4 @@
+from django.db import models
 from rest_framework import (
     generics,
     viewsets,
@@ -269,9 +270,9 @@ class SitemapViewSet(viewsets.ViewSet):
         queryset = (
             Product.objects.public()
             .filter(
-                organization__is_verified=True,
-                organization__is_draft=False,
-                organization__is_deleted=False,
+                organization_id__in=models.Subquery(
+                    Organization.objects.public().values("id")
+                )
             )
             .prefetch_related("organization")
         )
