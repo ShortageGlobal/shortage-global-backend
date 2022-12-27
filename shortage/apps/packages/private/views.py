@@ -46,6 +46,5 @@ class PrivateAccountPackagesViewSet(viewsets.ReadOnlyModelViewSet):
                 "organization",
                 "items",
                 "items__product",
-                "items__product__organization",
             )
         )
