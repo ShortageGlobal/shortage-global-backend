@@ -73,29 +73,8 @@ class ProductPreviewSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
-class ProductOrganizationPreviewSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Organization
-        fields = [
-            "name",
-            "slug",
-        ]
-
-
-class PromotedProductOrganizationPreviewSerializer(serializers.ModelSerializer):
-    logo = serializers.ImageField(source="medium_logo_photo", read_only=True)
-
-    class Meta:
-        model = Organization
-        fields = [
-            "name",
-            "slug",
-            "logo",
-        ]
-
-
 class PromotedProductPreviewSerializer(ProductPreviewSerializer):
-    organization = PromotedProductOrganizationPreviewSerializer(read_only=True)
+    organization = OrganizationPreviewSerializer(read_only=True)
 
     class Meta:
         model = Product
@@ -137,7 +116,7 @@ class OrganizationSlugSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     photo = serializers.ImageField(source="large_photo", read_only=True)
-    organization = ProductOrganizationPreviewSerializer(read_only=True)
+    organization = OrganizationPreviewSerializer(read_only=True)
 
     class Meta:
         model = Product

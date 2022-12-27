@@ -109,6 +109,7 @@ class CartItemsTestCase(APITestCase):
                 "organization": {
                     "name": "TestName",
                     "slug": "test_organization",
+                    "logo": None,
                 },
             },
             response.data["items"][0]["product"],
@@ -129,6 +130,7 @@ class CartItemsTestCase(APITestCase):
                 "organization": {
                     "name": "TestName",
                     "slug": "test_organization2",
+                    "logo": None,
                 },
             },
             response.data["items"][1]["product"],
@@ -166,6 +168,7 @@ class CartItemsTestCase(APITestCase):
                 "organization": {
                     "name": "TestName",
                     "slug": "test_organization2",  # note that the first cart item was deleted
+                    "logo": None,
                 },
             },
             response.data["items"][0]["product"],
@@ -243,6 +246,7 @@ class CartItemsTestCase(APITestCase):
                 "organization": {
                     "name": "TestName",
                     "slug": "test_organization2",  # note that the first cart item was deleted
+                    "logo": None,
                 },
             },
             response.data["items"][0]["product"],

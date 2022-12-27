@@ -1,3 +1,4 @@
+from django.db import models
 from rest_framework import (
     generics,
     viewsets,
@@ -46,7 +47,7 @@ class PromotedProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     ordering = ["position", "-created_at"]
 
     def get_queryset(self):
-        queryset = Product.objects.promoted()
+        queryset = Product.objects.promoted().prefetch_related("organization")
 
         # filter by category
         category = self.request.query_params.get("category")
@@ -173,7 +174,7 @@ class ProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         organization = generics.get_object_or_404(
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
-        queryset = Product.objects.filter(organization=organization)
+        queryset = Product.objects.public().filter(organization=organization)
 
         # filter by category
         category = self.request.query_params.get("category")
@@ -269,9 +270,9 @@ class SitemapViewSet(viewsets.ViewSet):
         queryset = (
             Product.objects.public()
             .filter(
-                organization__is_verified=True,
-                organization__is_draft=False,
-                organization__is_deleted=False,
+                organization_id__in=models.Subquery(
+                    Organization.objects.public().values("id")
+                )
             )
             .prefetch_related("organization")
         )

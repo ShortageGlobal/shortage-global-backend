@@ -1,20 +1,11 @@
 from rest_framework import serializers
-from shortage.apps.catalog.models import Product, Organization
+from shortage.apps.catalog.models import Product
+from shortage.apps.catalog.serializers import OrganizationPreviewSerializer
 from shortage.apps.packages.models import Package, PackageItem
-
-
-class PrivatePackageItemProductOrganizationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Organization
-        fields = [
-            "name",
-            "slug",
-        ]
 
 
 class PrivatePackageItemProductSerializer(serializers.ModelSerializer):
     photo = serializers.ImageField(source="medium_photo", read_only=True)
-    organization = PrivatePackageItemProductOrganizationSerializer()
 
     class Meta:
         model = Product
@@ -25,7 +16,6 @@ class PrivatePackageItemProductSerializer(serializers.ModelSerializer):
             "photo",
             "price",
             "requested_amount",
-            "organization",
         ]
 
 
@@ -38,12 +28,15 @@ class PrivatePackageItemSerializer(serializers.ModelSerializer):
 
 
 class PrivatePackageSerializer(serializers.ModelSerializer):
+    organization = OrganizationPreviewSerializer(read_only=True)
     items = PrivatePackageItemSerializer(many=True)
 
     class Meta:
         model = Package
         fields = [
             "uuid",
+            "organization",
+            "items",
             "need_tax_deduction",
             "first_name",
             "last_name",
@@ -61,7 +54,6 @@ class PrivatePackageSerializer(serializers.ModelSerializer):
             "status",
             "photo",
             "type",
-            "items",
             "tax_deduction_receipt",
             "created_at",
         ]

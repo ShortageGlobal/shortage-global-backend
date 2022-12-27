@@ -2,12 +2,12 @@ from django.db import transaction
 from rest_framework import serializers, exceptions
 from shortage.helpers.serializers import AuthorizedUserOrNone
 from shortage.apps.catalog.models import Product
-from shortage.apps.catalog.serializers import ProductOrganizationPreviewSerializer
+from shortage.apps.catalog.serializers import OrganizationPreviewSerializer
 from .models import Cart, CartItem
 
 
 class CartItemProductSerializer(serializers.ModelSerializer):
-    organization = ProductOrganizationPreviewSerializer()
+    organization = OrganizationPreviewSerializer()
     photo = serializers.ImageField(source="medium_photo")
 
     class Meta:
