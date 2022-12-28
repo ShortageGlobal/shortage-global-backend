@@ -75,8 +75,11 @@ class PromotedOrganizationBlogPostsViewSet(
     """A list of promoted blog posts"""
 
     serializer_class = OrganizationBlogPostPreviewSerializer
-    ordering = ["-created_at"]
-    queryset = OrganizationBlogPost.objects.promoted()
+    queryset = (
+        OrganizationBlogPost.objects.promoted()
+        .order_by("-updated_at")
+        .prefetch_related("organization")
+    )
 
 
 class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -285,9 +288,9 @@ class SitemapViewSet(viewsets.ViewSet):
         queryset = (
             OrganizationBlogPost.objects.public()
             .filter(
-                organization__is_verified=True,
-                organization__is_draft=False,
-                organization__is_deleted=False,
+                organization_id__in=models.Subquery(
+                    Organization.objects.public().values("id")
+                )
             )
             .prefetch_related("organization")
         )

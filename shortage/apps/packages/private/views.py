@@ -1,6 +1,8 @@
+from django.db import models
 from rest_framework import generics, viewsets, mixins, permissions, filters
 from rest_framework.schemas.openapi import AutoSchema
-from shortage.apps.catalog.models import Organization
+from shortage.apps.catalog.models import Organization, OrganizationBlogPost
+from shortage.apps.catalog.serializers import OrganizationBlogPostPreviewSerializer
 from shortage.apps.packages.models import Package, PackageStatus, PackageType
 from shortage.apps.packages.private.package_serializers import PrivatePackageSerializer
 from shortage.helpers.permissions import IsObjectOwner
@@ -47,4 +49,28 @@ class PrivateAccountPackagesViewSet(viewsets.ReadOnlyModelViewSet):
                 "items",
                 "items__product",
             )
+        )
+
+
+class PrivatePackageBlogPostsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """List of impact stories associated with the packages of the given user"""
+
+    schema = AutoSchema(
+        tags=["Private", "Packages"],
+    )
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = OrganizationBlogPostPreviewSerializer
+    paginator = None
+
+    def get_queryset(self):
+        return (
+            OrganizationBlogPost.objects.filter(
+                packageblogpost__package__in=Package.objects.filter(
+                    owner=self.request.user
+                )
+            )
+            .distinct()
+            .prefetch_related("organization")
+            .order_by("-updated_at")
         )
