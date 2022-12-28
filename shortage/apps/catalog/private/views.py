@@ -3,7 +3,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 from rest_framework import exceptions
-from shortage.apps.catalog.models import Product, Organization, OrganizationBlogPost
+from shortage.apps.catalog.models import Product, Organization
 from shortage.apps.catalog.private.serializers import PrivateProductSerializer
 from shortage.helpers.permissions import IsObjectOwner
 
