@@ -1,4 +1,3 @@
-from django.db import models
 from rest_framework import generics, viewsets, mixins, permissions, filters
 from rest_framework.schemas.openapi import AutoSchema
 from shortage.apps.catalog.models import Organization, OrganizationBlogPost
