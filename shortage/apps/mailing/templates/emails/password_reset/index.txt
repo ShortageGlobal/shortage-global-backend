@@ -1,0 +1,14 @@
+{% extends "emails/base.txt" %}
+
+{% block body_content %}
+Somebody has requested to reset the password for <a href="{{ frontend_base_url }}">Shortage</a> community.
+
+Please follow the link below to reset your password:
+
+
+{% autoescape off %}{{ url }}{% endautoescape %}
+
+
+If you didn't try to reset your password on Shortage, don't worry. You can safely ignore this email.
+
+{% endblock %}

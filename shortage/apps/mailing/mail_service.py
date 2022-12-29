@@ -248,3 +248,29 @@ class UserConfirmationEmail(MailingBackend):
                 last_name=self.last_name,
             ),
         }
+
+
+class PasswordResetEmail(MailingBackend):
+    """
+    Email send to the user when they request to reset password
+    """
+
+    subject = "Password reset request"
+    html_template = "emails/password_reset/index.html"
+    text_template = "emails/password_reset/index.txt"
+
+    def __init__(self, uid, token):
+        self.uid = uid
+        self.token = token
+
+    def get_context(self):
+        url = "%s/users/check_reset_password_token/?uid=%s&token=%s" % (
+            self.frontend_base_url,
+            self.uid,
+            self.token,
+        )
+
+        return {
+            "frontend_base_url": self.frontend_base_url,
+            "url": url,
+        }
