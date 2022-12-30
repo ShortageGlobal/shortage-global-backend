@@ -1,10 +1,10 @@
+from django.contrib.auth.password_validation import validate_password, password_changed
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.debug import sensitive_post_parameters
 from rest_framework import generics, permissions, status, exceptions
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
+from rest_framework.utils import json
 from rest_framework.views import APIView
 
 from .serializers import RegistrationSerializer, ActivationSerializer, ProfileSerializer
@@ -54,21 +54,20 @@ class RequestPasswordResetView(APIView):
     permission_classes = [permissions.AllowAny]
     token_generator = PasswordResetTokenGenerator()
 
-    @csrf_protect
-    def post(self, request, format=None):
-        user = request.user or None
+    def post(self, request, *args, **kwargs):
+        request_data = json.loads(request.body)
+        email = request_data.get("email", None)
 
-        email = request.POST.get("email", "")
+        assert email
 
-        user_obj = get_user_model().objects.filter(email=email)
-        if email and user_obj.exists():
-            user = user_obj.get()
+        user = get_object_or_404(get_user_model().objects.all(), email=email)
 
         if user:
-            email = PasswordResetEmail(
+            reset_email = PasswordResetEmail(
                 token=self.token_generator.make_token(user), uid=user.id
             )
-            result = email.send()
+            reset_email.add_recipient(email)
+            result = reset_email.send()
 
             if result:
                 return Response(status=status.HTTP_200_OK)
@@ -84,15 +83,14 @@ class CheckPasswordResetTokenView(APIView):
     permission_classes = [permissions.AllowAny]
     token_generator = PasswordResetTokenGenerator()
 
-    @sensitive_post_parameters()
-    @never_cache
-    def post(self, request, format=None):
-        uid = request.POST.get("uid", "")
-        token = request.POST.get("token", "")
+    def post(self, request, *args, **kwargs):
+        request_data = json.loads(request.body)
+        uid = request_data.get("uid", None)
+        token = request_data.get("token", None)
 
         assert uid and token
 
-        user = get_user_model().objects.filter(pk=uid).get()
+        user = get_object_or_404(get_user_model().objects.all(), pk=uid)
 
         if user and self.token_generator.check_token(user, token):
             return Response(status=status.HTTP_200_OK)
@@ -108,20 +106,21 @@ class ConfirmResetPasswordView(APIView):
     permission_classes = [permissions.AllowAny]
     token_generator = PasswordResetTokenGenerator()
 
-    @sensitive_post_parameters()
-    @never_cache
-    def post(self, request, format=None):
-        uid = request.POST.get("uid", "")
-        token = request.POST.get("token", "")
-        password = request.POST.get("password", "")
+    def post(self, request, *args, **kwargs):
+        request_data = json.loads(request.body)
+        uid = request_data.get("uid", None)
+        token = request_data.get("token", None)
+        password = request_data.get("password", None)
 
-        assert uid and token
+        assert uid and token and password
 
-        user = get_user_model().objects.filter(pk=uid).get()
+        user = get_object_or_404(get_user_model().objects.all(), pk=uid)
 
         if user and self.token_generator.check_token(user, token):
+            validate_password(password=password, user=user)
             user.set_password(password)
             user.save()
+            password_changed(password=password, user=user)
 
             return Response(status=status.HTTP_200_OK)
 

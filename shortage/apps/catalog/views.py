@@ -256,7 +256,7 @@ class OrganizationRegistrationRequestViewSet(
 
 
 class SitemapViewSet(viewsets.ViewSet):
-    """Fetch enitities for sitemap"""
+    """Fetch entities for sitemap"""
 
     permission_classes = [permissions.AllowAny]
 
