@@ -183,7 +183,7 @@ class PackageDeliveryEmail(PackageBaseEmail):
     Email sent on package delivery
     """
 
-    subject = "Your donation was delivered"
+    subject = "Your donation was delivered - Shortage"
     html_template = "emails/package_delivered/index.html"
     text_template = "emails/package_delivered/index.txt"
 
@@ -223,7 +223,7 @@ class UserConfirmationEmail(MailingBackend):
     Email sent on user registration to confirm their email
     """
 
-    subject = "Confirm your Shortage account"
+    subject = "Confirm your account - Shortage"
     html_template = "emails/user_confirmation/index.html"
     text_template = "emails/user_confirmation/index.txt"
 
@@ -255,7 +255,7 @@ class PasswordResetEmail(MailingBackend):
     Email send to the user when they request to reset password
     """
 
-    subject = "Password reset request"
+    subject = "Password Reset - Shortage"
     html_template = "emails/password_reset/index.html"
     text_template = "emails/password_reset/index.txt"
 
@@ -264,7 +264,7 @@ class PasswordResetEmail(MailingBackend):
         self.token = token
 
     def get_context(self):
-        url = "%s/users/check_reset_password_token/?uid=%s&token=%s" % (
+        url = "%s/account/reset-password/?uid=%s&token=%s" % (
             self.frontend_base_url,
             self.uid,
             self.token,

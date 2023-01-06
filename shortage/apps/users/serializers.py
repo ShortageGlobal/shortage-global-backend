@@ -1,13 +1,12 @@
 from django.db import transaction
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
 from rest_framework import serializers
 from rest_framework.exceptions import APIException, NotFound
 from phonenumber_field.serializerfields import PhoneNumberField
 from shortage.apps.mailing.mail_service import UserConfirmationEmail
 from shortage.helpers import get_full_name
+from shortage.helpers.decode_encode_uid import encode_uid, decode_uid
 from .models import Profile
 from .tokens import user_activation_token
 
@@ -75,7 +74,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         )
         profile.save()
 
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        uid = encode_uid(user.pk)
         token = user_activation_token.make_token(user)
 
         email = UserConfirmationEmail(
@@ -124,7 +123,7 @@ class ActivationSerializer(serializers.Serializer):
 
     def __decode_uid(self, data):
         try:
-            return force_str(urlsafe_base64_decode(data))
+            return decode_uid(data)
         except (TypeError, ValueError, OverflowError):
             raise serializers.ValidationError({"uid": "The given uid is not valid."})
 

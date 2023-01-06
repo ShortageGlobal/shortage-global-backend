@@ -1,20 +1,16 @@
 from django.contrib.auth.password_validation import validate_password, password_changed
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import ValidationError
-from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from rest_framework import generics, permissions, status
-from rest_framework.generics import get_object_or_404
+from rest_framework import generics, permissions, status, exceptions
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 from rest_framework.utils import json
 from rest_framework.views import APIView
-
+from shortage.apps.mailing.mail_service import PasswordResetEmail
+from shortage.helpers.get_active_user_or_none import get_active_user_or_none
+from shortage.helpers.decode_encode_uid import encode_uid, decode_uid
 from .serializers import RegistrationSerializer, ActivationSerializer, ProfileSerializer
 from .models import Profile
-from django.contrib.auth import get_user_model
-
-from ..mailing.mail_service import PasswordResetEmail
 
 
 class RegistrationView(generics.CreateAPIView):
@@ -58,22 +54,17 @@ class RequestPasswordResetView(APIView):
     token_generator = PasswordResetTokenGenerator()
 
     def post(self, request, *args, **kwargs):
-        request_data = json.loads(request.body)
+        """Send email with the reset password link"""
+        request_data = json.loads(request.body or "{}")
         email = request_data.get("email", None)
 
         if not email:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            raise exceptions.ParseError()
 
-        user = None
-        try:
-            # Do not use get_object_or_404 since we don't want 404 if email doesn't exist
-            user = get_user_model().objects.active().filter(email=email).get()
-        except get_user_model().DoesNotExist:
-            pass
+        user = get_active_user_or_none(email=email)
 
         if user:
-            uid = urlsafe_base64_encode(force_bytes(user.id))
-
+            uid = encode_uid(user.id)
             reset_email = PasswordResetEmail(
                 token=self.token_generator.make_token(user), uid=uid
             )
@@ -93,19 +84,23 @@ class CheckPasswordResetTokenView(APIView):
     token_generator = PasswordResetTokenGenerator()
 
     def post(self, request, *args, **kwargs):
-        request_data = json.loads(request.body)
-        uid = force_str(urlsafe_base64_decode(request_data.get("uid", None)))
+        """Check the uid/token pair is valid for resetting the password"""
+        request_data = json.loads(request.body or "{}")
+        uid = request_data.get("uid", None)
         token = request_data.get("token", None)
 
-        if not uid or not token:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        is_token_valid = False
+        try:
+            pk = decode_uid(uid)
+            user = get_active_user_or_none(pk=pk)
+            is_token_valid = self.token_generator.check_token(user, token)
+        except:
+            pass
 
-        user = get_object_or_404(get_user_model().objects.active(), pk=uid)
-
-        if user and self.token_generator.check_token(user, token):
+        if is_token_valid:
             return Response(status=status.HTTP_200_OK)
 
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        raise exceptions.ParseError()
 
 
 class ConfirmResetPasswordView(APIView):
@@ -117,7 +112,7 @@ class ConfirmResetPasswordView(APIView):
     token_generator = PasswordResetTokenGenerator()
 
     def post(self, request, *args, **kwargs):
-        request_data = json.loads(request.body)
+        request_data = json.loads(request.body or "{}")
 
         user = None
         password = request_data.get("password", None)
@@ -129,13 +124,13 @@ class ConfirmResetPasswordView(APIView):
         ):
             user = request.user
         else:
-            uid = force_str(urlsafe_base64_decode(request_data.get("uid", None)))
+            uid = decode_uid(request_data.get("uid", None))
             token = request_data.get("token", None)
 
             if not uid or not token:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+                raise exceptions.ParseError()
 
-            user = get_object_or_404(get_user_model().objects.active(), pk=uid)
+            user = get_active_user_or_none(pk=uid)
 
             if not self.token_generator.check_token(user, token):
                 # Reset user if the token is invalid to prevent the method from proceeding
