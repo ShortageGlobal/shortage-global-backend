@@ -112,6 +112,7 @@ class ProductCategory(models.TextChoices):
     HOUSEHOLD_ITEMS = settings.PRODUCT_CATEGORY["HOUSEHOLD_ITEMS"], "Household Items"
     FOOD = settings.PRODUCT_CATEGORY["FOOD"], "Food"
     TOYS = settings.PRODUCT_CATEGORY["TOYS"], "Toys"
+    HYGIENE = settings.PRODUCT_CATEGORY["HYGIENE"], "Hygiene"
 
 
 class Product(models.Model):
