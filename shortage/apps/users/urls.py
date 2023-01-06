@@ -12,7 +12,6 @@ from .views import (
     CheckPasswordResetTokenView,
     ConfirmResetPasswordView,
 )
-from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path(r"token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),

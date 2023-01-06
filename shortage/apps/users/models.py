@@ -29,6 +29,10 @@ class ShortageUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    def active(self):
+        """Return all available users which have been activated"""
+        return self.get_queryset().filter(is_active=True)
+
 
 class ShortageUser(AbstractUser):
     username = None

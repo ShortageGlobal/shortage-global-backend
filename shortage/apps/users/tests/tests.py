@@ -1,5 +1,7 @@
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from rest_framework.test import APITestCase, APIRequestFactory
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 
 from shortage.apps.users.views import (
     RequestPasswordResetView,
@@ -13,6 +15,7 @@ class ResetPasswordTestCase(APITestCase):
     def setUp(self) -> None:
         self.user = create_test_user()
         self.requestFactory = APIRequestFactory()
+        self.encoded_uid = urlsafe_base64_encode(force_bytes(self.user.id))
 
     def test_password_reset(self):
         request_data = {
@@ -28,7 +31,7 @@ class ResetPasswordTestCase(APITestCase):
         token = PasswordResetTokenGenerator().make_token(self.user)
 
         request_data = {
-            "uid": self.user.id,
+            "uid": self.encoded_uid,
             "token": token,
         }
 
@@ -38,7 +41,7 @@ class ResetPasswordTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
 
         request_data = {
-            "uid": self.user.id,
+            "uid": self.encoded_uid,
             "token": token,
             "password": "testPW1@3",
         }
@@ -57,14 +60,15 @@ class ResetPasswordTestCase(APITestCase):
         request = self.requestFactory.post("", data=request_data, format="json")
         response = RequestPasswordResetView.as_view()(request)
 
-        self.assertEqual(response.status_code, 404)
+        # Should also return 200
+        self.assertEqual(response.status_code, 200)
 
         # Test user/token mismatch
         other_user = create_test_user(email="other.user@shortage.global")
         token = PasswordResetTokenGenerator().make_token(other_user)
 
         request_data = {
-            "uid": self.user.id,
+            "uid": self.encoded_uid,
             "token": token,
         }
 
@@ -75,7 +79,7 @@ class ResetPasswordTestCase(APITestCase):
 
         # Test user/token mismatch
         request_data = {
-            "uid": self.user.id,
+            "uid": self.encoded_uid,
             "token": token,
             "password": "test2",
         }
@@ -84,10 +88,12 @@ class ResetPasswordTestCase(APITestCase):
         response = ConfirmResetPasswordView.as_view()(request)
 
         self.assertEqual(response.status_code, 404)
+
+        token = PasswordResetTokenGenerator().make_token(self.user)
 
         # Test weak new password
         request_data = {
-            "uid": self.user.id,
+            "uid": self.encoded_uid,
             "token": token,
             "password": "test2",
         }
@@ -95,4 +101,22 @@ class ResetPasswordTestCase(APITestCase):
         request = self.requestFactory.post("", data=request_data, format="json")
         response = ConfirmResetPasswordView.as_view()(request)
 
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.data[0],
+            "This password is too short. It must contain at least 8 characters.",
+        )
+
+    def test_password_reset_authorized_user(self):
+        # Make sure UID and token are ignored if user is provided
+        request_data = {
+            "password": "testPW1@3",
+            "uid": "Mq",
+            "token": "token",
+        }
+
+        request = self.requestFactory.post("", data=request_data, format="json")
+        force_authenticate(request, user=self.user)
+        response = ConfirmResetPasswordView.as_view()(request)
+
+        self.assertEqual(response.status_code, 200)
