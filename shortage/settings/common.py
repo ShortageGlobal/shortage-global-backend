@@ -212,6 +212,7 @@ PRODUCT_CATEGORY = {
     "HOUSEHOLD_ITEMS": "HOUSEHOLD_ITEMS",
     "FOOD": "FOOD",
     "TOYS": "TOYS",
+    "HYGIENE": "HYGIENE",
 }
 
 # IMPORTANT: the list of package statuses must be synchronized with frontend
