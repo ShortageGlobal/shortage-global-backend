@@ -7,6 +7,7 @@ from shortage.apps.users.views import (
     RequestPasswordResetView,
     CheckPasswordResetTokenView,
     ConfirmResetPasswordView,
+    PrivateChangePasswordView,
 )
 from shortage.helpers.test_utilities import create_test_user
 
@@ -43,7 +44,8 @@ class ResetPasswordTestCase(APITestCase):
         request_data = {
             "uid": self.encoded_uid,
             "token": token,
-            "password": "testPW1@3",
+            "new_password": "testPW1@3",
+            "confirm_password": "testPW1@3",
         }
 
         request = self.requestFactory.post("", data=request_data, format="json")
@@ -75,48 +77,44 @@ class ResetPasswordTestCase(APITestCase):
         request = self.requestFactory.post("", data=request_data, format="json")
         response = CheckPasswordResetTokenView.as_view()(request)
 
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
         # Test user/token mismatch
         request_data = {
             "uid": self.encoded_uid,
             "token": token,
-            "password": "test2",
+            "new_password": "testPW1@3",
+            "confirm_password": "testPW1@3",
         }
-
         request = self.requestFactory.post("", data=request_data, format="json")
         response = ConfirmResetPasswordView.as_view()(request)
-
-        self.assertEqual(response.status_code, 404)
-
-        token = PasswordResetTokenGenerator().make_token(self.user)
+        self.assertEqual(response.status_code, 400)
 
         # Test weak new password
+        token = PasswordResetTokenGenerator().make_token(self.user)
         request_data = {
             "uid": self.encoded_uid,
             "token": token,
-            "password": "test2",
+            "new_password": "test2",
+            "confirm_password": "test2",
         }
-
         request = self.requestFactory.post("", data=request_data, format="json")
         response = ConfirmResetPasswordView.as_view()(request)
-
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
-            response.data[0],
+            response.data["new_password"][0],
             "This password is too short. It must contain at least 8 characters.",
         )
 
     def test_password_reset_authorized_user(self):
-        # Make sure UID and token are ignored if user is provided
         request_data = {
-            "password": "testPW1@3",
-            "uid": "Mq",
-            "token": "token",
+            "old_password": "Password123$",
+            "new_password": "testPW1@3",
+            "confirm_password": "testPW1@3",
         }
 
-        request = self.requestFactory.post("", data=request_data, format="json")
+        request = self.requestFactory.put("", data=request_data, format="json")
         force_authenticate(request, user=self.user)
-        response = ConfirmResetPasswordView.as_view()(request)
+        response = PrivateChangePasswordView.as_view()(request)
 
         self.assertEqual(response.status_code, 200)

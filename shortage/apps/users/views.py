@@ -1,15 +1,23 @@
-from django.contrib.auth.password_validation import validate_password, password_changed
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.core.exceptions import ValidationError
 from rest_framework import generics, permissions, status, exceptions
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 from rest_framework.utils import json
 from rest_framework.views import APIView
 from shortage.apps.mailing.mail_service import PasswordResetEmail
-from shortage.helpers.get_active_user_or_none import get_active_user_or_none
-from shortage.helpers.decode_encode_uid import encode_uid, decode_uid
-from .serializers import RegistrationSerializer, ActivationSerializer, ProfileSerializer
+from shortage.helpers.users import (
+    encode_uid,
+    decode_uid,
+    get_active_user_or_none,
+    check_password_reset_token,
+)
+from .serializers import (
+    RegistrationSerializer,
+    ActivationSerializer,
+    ProfileSerializer,
+    ChangePasswordSerializer,
+    ResetPasswordSerializer,
+)
 from .models import Profile
 
 
@@ -24,6 +32,8 @@ class ActivationView(generics.CreateAPIView):
 
 
 class ProfileView(generics.RetrieveUpdateAPIView):
+    """Get user profile data"""
+
     schema = AutoSchema(
         tags=["Profiles"],
     )
@@ -47,7 +57,7 @@ class ProfileView(generics.RetrieveUpdateAPIView):
 
 class RequestPasswordResetView(APIView):
     schema = AutoSchema(
-        tags=["PasswordReset"],
+        tags=["Profiles"],
     )
 
     permission_classes = [permissions.AllowAny]
@@ -77,30 +87,56 @@ class RequestPasswordResetView(APIView):
 
 class CheckPasswordResetTokenView(APIView):
     schema = AutoSchema(
-        tags=["PasswordReset"],
+        tags=["Profiles"],
     )
 
     permission_classes = [permissions.AllowAny]
-    token_generator = PasswordResetTokenGenerator()
 
     def post(self, request, *args, **kwargs):
-        """Check the uid/token pair is valid for resetting the password"""
+        """Check if the uid/token pair is valid for resetting the password"""
         request_data = json.loads(request.body or "{}")
         uid = request_data.get("uid", None)
         token = request_data.get("token", None)
 
-        is_token_valid = False
-        try:
-            pk = decode_uid(uid)
-            user = get_active_user_or_none(pk=pk)
-            is_token_valid = self.token_generator.check_token(user, token)
-        except:
-            pass
-
+        is_token_valid = check_password_reset_token(uid=uid, token=token)
         if is_token_valid:
             return Response(status=status.HTTP_200_OK)
 
         raise exceptions.ParseError()
+
+
+class PrivateChangePasswordView(generics.UpdateAPIView):
+    """An endpoint for changing password by an authenticated user"""
+
+    schema = AutoSchema(
+        tags=["Profiles"],
+    )
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ChangePasswordSerializer
+
+    http_method_names = ["put", "head", "options"]
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            # check old password
+            if not user.check_password(serializer.data.get("old_password")):
+                return Response(
+                    {"old_password": ["Wrong password."]},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            # set new password
+            user.set_password(serializer.data.get("new_password"))
+            user.save()
+            return Response(status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ConfirmResetPasswordView(APIView):
@@ -109,45 +145,18 @@ class ConfirmResetPasswordView(APIView):
     )
 
     permission_classes = [permissions.AllowAny]
-    token_generator = PasswordResetTokenGenerator()
 
     def post(self, request, *args, **kwargs):
-        request_data = json.loads(request.body or "{}")
+        """Reset password if uid/token are valid"""
+        serializer = ResetPasswordSerializer(data=request.data)
 
-        user = None
-        password = request_data.get("password", None)
+        if serializer.is_valid():
+            pk = decode_uid(serializer.data.get("uid"))
+            user = get_active_user_or_none(pk=pk)
 
-        if (
-            request.user
-            and request.user.is_authenticated
-            and not request.user.is_anonymous
-        ):
-            user = request.user
-        else:
-            uid = decode_uid(request_data.get("uid", None))
-            token = request_data.get("token", None)
-
-            if not uid or not token:
-                raise exceptions.ParseError()
-
-            user = get_active_user_or_none(pk=uid)
-
-            if not self.token_generator.check_token(user, token):
-                # Reset user if the token is invalid to prevent the method from proceeding
-                user = None
-
-        if user and password:
-            try:
-                validate_password(password=password, user=user)
-            except ValidationError as exception:
-                return Response(
-                    status=status.HTTP_400_BAD_REQUEST, data=exception.messages
-                )
-
-            user.set_password(password)
+            # set new password
+            user.set_password(serializer.data.get("new_password"))
             user.save()
-            password_changed(password=password, user=user)
-
             return Response(status=status.HTTP_200_OK)
 
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -11,6 +11,7 @@ from .views import (
     RequestPasswordResetView,
     CheckPasswordResetTokenView,
     ConfirmResetPasswordView,
+    PrivateChangePasswordView,
 )
 
 urlpatterns = [
@@ -21,18 +22,23 @@ urlpatterns = [
     path(r"users/activate/", ActivationView.as_view(), name="users_activate"),
     path(r"private/users/profile/", ProfileView.as_view(), name="users_profile"),
     path(
+        r"private/users/change_password/",
+        PrivateChangePasswordView.as_view(),
+        name="users_change_password",
+    ),
+    path(
         r"users/reset_password/",
         RequestPasswordResetView.as_view(),
-        name="reset_password",
+        name="users_reset_password",
     ),
     path(
         r"users/check_reset_password_token/",
         CheckPasswordResetTokenView.as_view(),
-        name="check_reset_password_token",
+        name="users_check_reset_password_token",
     ),
     path(
         r"users/confirm_reset_password/",
         ConfirmResetPasswordView.as_view(),
-        name="confirm_reset_password",
+        name="users_confirm_reset_password",
     ),
 ]
