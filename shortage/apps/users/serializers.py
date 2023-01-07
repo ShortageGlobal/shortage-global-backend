@@ -1,13 +1,12 @@
 from django.db import transaction
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
 from rest_framework import serializers
 from rest_framework.exceptions import APIException, NotFound
 from phonenumber_field.serializerfields import PhoneNumberField
 from shortage.apps.mailing.mail_service import UserConfirmationEmail
 from shortage.helpers import get_full_name
+from shortage.helpers.users import encode_uid, decode_uid, check_password_reset_token
 from .models import Profile
 from .tokens import user_activation_token
 
@@ -75,7 +74,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         )
         profile.save()
 
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        uid = encode_uid(user.pk)
         token = user_activation_token.make_token(user)
 
         email = UserConfirmationEmail(
@@ -124,7 +123,7 @@ class ActivationSerializer(serializers.Serializer):
 
     def __decode_uid(self, data):
         try:
-            return force_str(urlsafe_base64_decode(data))
+            return decode_uid(data)
         except (TypeError, ValueError, OverflowError):
             raise serializers.ValidationError({"uid": "The given uid is not valid."})
 
@@ -161,3 +160,48 @@ class ProfileSerializer(serializers.ModelSerializer):
         user_serializer.update(user, user_data)
         # update profile data
         return super().update(instance, validated_data)
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    """Serializer for password change endpoint of an authorized user"""
+
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True, validators=[validate_password])
+    confirm_password = serializers.CharField(required=True)
+
+    def validate(self, attrs):
+        new_password = attrs.get("new_password")
+        confirm_password = attrs.get("confirm_password")
+
+        if new_password != confirm_password:
+            raise serializers.ValidationError(
+                {"confirm_password": ["Passwords do not match."]}
+            )
+
+        return super().validate(attrs)
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+    """Serializer for confirming password reset for an unauthorized user"""
+
+    uid = serializers.CharField(required=True)
+    token = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True, validators=[validate_password])
+    confirm_password = serializers.CharField(required=True)
+
+    def validate(self, attrs):
+        uid = attrs.get("uid")
+        token = attrs.get("token")
+        new_password = attrs.get("new_password")
+        confirm_password = attrs.get("confirm_password")
+
+        is_token_valid = check_password_reset_token(uid=uid, token=token)
+        if not is_token_valid:
+            raise serializers.ValidationError("Token is not valid.")
+
+        if new_password != confirm_password:
+            raise serializers.ValidationError(
+                {"confirm_password": ["Passwords do not match."]}
+            )
+
+        return super().validate(attrs)

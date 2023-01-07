@@ -9,7 +9,7 @@ from django.core.files.base import ContentFile
 def create_test_user(**kwargs):
     test_data = {
         "email": "testuser@shortage.global",
-        "password": "12345",
+        "password": "Password123$",
         **kwargs,
     }
 
