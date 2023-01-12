@@ -125,12 +125,6 @@ class PrivateChangePasswordView(generics.UpdateAPIView):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            # check old password
-            if not user.check_password(serializer.data.get("old_password")):
-                return Response(
-                    {"old_password": ["Wrong password."]},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
             # set new password
             user.set_password(serializer.data.get("new_password"))
             user.save()
