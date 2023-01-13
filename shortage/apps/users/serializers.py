@@ -35,16 +35,10 @@ class RegistrationSerializer(serializers.ModelSerializer):
             "agreed_to_terms_of_use",
         ]
 
-    def validate(self, attrs):
-        password = attrs.get("password")
-        confirm_password = attrs.get("confirm_password")
-
-        if password != confirm_password:
-            raise serializers.ValidationError(
-                {"confirm_password": ["Passwords do not match."]}
-            )
-
-        return super().validate(attrs)
+    def validate_confirm_password(self, value):
+        if value != self.initial_data["password"]:
+            raise serializers.ValidationError("Passwords do not match.")
+        return value
 
     def validate_agreed_to_terms_of_use(self, value):
         if not value:
@@ -175,7 +169,7 @@ class ChangePasswordSerializer(serializers.Serializer):
         return value
 
     def validate_confirm_password(self, value):
-        if value != self.context["request"].data["new_password"]:
+        if value != self.initial_data["new_password"]:
             raise serializers.ValidationError("Passwords do not match.")
         return value
 
@@ -188,19 +182,17 @@ class ResetPasswordSerializer(serializers.Serializer):
     new_password = serializers.CharField(required=True, validators=[validate_password])
     confirm_password = serializers.CharField(required=True)
 
+    def validate_confirm_password(self, value):
+        if value != self.initial_data["new_password"]:
+            raise serializers.ValidationError("Passwords do not match.")
+        return value
+
     def validate(self, attrs):
         uid = attrs.get("uid")
         token = attrs.get("token")
-        new_password = attrs.get("new_password")
-        confirm_password = attrs.get("confirm_password")
 
         is_token_valid = check_password_reset_token(uid=uid, token=token)
         if not is_token_valid:
             raise serializers.ValidationError("Token is not valid.")
-
-        if new_password != confirm_password:
-            raise serializers.ValidationError(
-                {"confirm_password": ["Passwords do not match."]}
-            )
 
         return super().validate(attrs)
