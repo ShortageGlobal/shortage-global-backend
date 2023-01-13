@@ -56,6 +56,8 @@ class ProfileView(generics.RetrieveUpdateAPIView):
 
 
 class RequestPasswordResetView(APIView):
+    """Send email with the reset password link"""
+
     schema = AutoSchema(
         tags=["Profiles"],
     )
@@ -64,7 +66,6 @@ class RequestPasswordResetView(APIView):
     token_generator = PasswordResetTokenGenerator()
 
     def post(self, request, *args, **kwargs):
-        """Send email with the reset password link"""
         request_data = json.loads(request.body or "{}")
         email = request_data.get("email", None)
 
@@ -86,6 +87,8 @@ class RequestPasswordResetView(APIView):
 
 
 class CheckPasswordResetTokenView(APIView):
+    """Check if the uid/token pair is valid for resetting the password"""
+
     schema = AutoSchema(
         tags=["Profiles"],
     )
@@ -93,7 +96,6 @@ class CheckPasswordResetTokenView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request, *args, **kwargs):
-        """Check if the uid/token pair is valid for resetting the password"""
         request_data = json.loads(request.body or "{}")
         uid = request_data.get("uid", None)
         token = request_data.get("token", None)
@@ -103,6 +105,31 @@ class CheckPasswordResetTokenView(APIView):
             return Response(status=status.HTTP_200_OK)
 
         raise exceptions.ParseError()
+
+
+class ConfirmResetPasswordView(APIView):
+    """Reset password if uid/token are valid"""
+
+    schema = AutoSchema(
+        tags=["Profiles"],
+    )
+
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ResetPasswordSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            pk = decode_uid(serializer.data.get("uid"))
+            user = get_active_user_or_none(pk=pk)
+
+            # set new password
+            user.set_password(serializer.data.get("new_password"))
+            user.save()
+            return Response(status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PrivateChangePasswordView(generics.UpdateAPIView):
@@ -125,29 +152,6 @@ class PrivateChangePasswordView(generics.UpdateAPIView):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            # set new password
-            user.set_password(serializer.data.get("new_password"))
-            user.save()
-            return Response(status=status.HTTP_200_OK)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class ConfirmResetPasswordView(APIView):
-    schema = AutoSchema(
-        tags=["PasswordReset"],
-    )
-
-    permission_classes = [permissions.AllowAny]
-
-    def post(self, request, *args, **kwargs):
-        """Reset password if uid/token are valid"""
-        serializer = ResetPasswordSerializer(data=request.data)
-
-        if serializer.is_valid():
-            pk = decode_uid(serializer.data.get("uid"))
-            user = get_active_user_or_none(pk=pk)
-
             # set new password
             user.set_password(serializer.data.get("new_password"))
             user.save()
