@@ -37,14 +37,9 @@ CSRF_TRUSTED_ORIGINS = []
 hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
 INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
 
+ADMIN_BASE_URL = os.getenv("DJANGO_ADMIN_BASE_URL", "http://127.0.0.1:8080/admin")
 FRONTEND_BASE_URL = os.getenv("DJANGO_FRONTEND_BASE_URL", "http://localhost:3000")
 
 EMAIL_HOST = os.getenv("DJANGO_EMAIL_HOST", "mailcatcher")
 EMAIL_PORT = os.getenv("DJANGO_EMAIL_PORT", "1025")
 SERVER_EMAIL = os.getenv("DJANGO_SERVER_EMAIL", "support@shortage.global")
-MANAGERS = [
-    ("", email)
-    for email in os.getenv(
-        "DJANGO_MANAGERS", "manager1@shortage.global,manager2@shortage.global"
-    ).split(",")
-]

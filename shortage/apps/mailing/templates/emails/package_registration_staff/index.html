@@ -1,0 +1,127 @@
+{% extends "emails/base.html" %}
+
+{% block body_content %}
+<p 
+  style="
+    margin: 0 0 12px 0;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+  "
+>
+  <a href="{{ package_admin_url }}" style="color: #00b657; text-decoration: underline; word-break: break-word;">
+    Package details
+  </a>
+</p>
+
+<p 
+  style="
+    margin: 0 0 12px 0;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+  "
+>
+  <a href="{{ package_items_admin_url }}" style="color: #00b657; text-decoration: underline; word-break: break-word;">
+    Package items
+  </a>
+</p>
+
+<table
+  role="presentation"
+  style="
+    width: 540px;
+    border-collapse: collapse;
+    border: 1px solid #e5e5e5;
+    border-spacing: 0;
+    text-align: left;
+  "
+>
+  <tbody>
+    <tr>
+      <td 
+        style="
+          padding: 12px 12px 12px 12px;
+          border-collapse: collapse;
+          border: 1px solid #e5e5e5;
+        "
+      >
+        Type
+      </td>
+      <td
+        style="
+          padding: 12px 12px 12px 12px;
+          border-collapse: collapse;
+          border: 1px solid #e5e5e5;
+        "
+      >
+        {{ package.get_type_display }}
+      </td>
+    </tr>
+
+    <tr>
+      <td 
+        style="
+          padding: 12px 12px 12px 12px;
+          border-collapse: collapse;
+          border: 1px solid #e5e5e5;
+        "
+      >
+        Organization
+      </td>
+      <td
+        style="
+          padding: 12px 12px 12px 12px;
+          border-collapse: collapse;
+          border: 1px solid #e5e5e5;
+        "
+      >
+        <a href="{{ organization_url }}" style="color: #00b657; text-decoration: underline; word-break: break-word;">{{organization.name}}</a>
+      </td>
+    </tr>
+
+    <tr>
+      <td 
+        style="
+          padding: 12px 12px 12px 12px;
+          border-collapse: collapse;
+          border: 1px solid #e5e5e5;
+        "
+      >
+        Needs tax deduction
+      </td>
+      <td
+        style="
+          padding: 12px 12px 12px 12px;
+          border-collapse: collapse;
+          border: 1px solid #e5e5e5;
+        "
+      >
+        {{ package.need_tax_deduction | yesno }}
+      </td>
+    </tr>
+
+    <tr>
+      <td 
+        style="
+          padding: 12px 12px 12px 12px;
+          border-collapse: collapse;
+          border: 1px solid #e5e5e5;
+        "
+      >
+        Donor
+      </td>
+      <td
+        style="
+          padding: 12px 12px 12px 12px;
+          border-collapse: collapse;
+          border: 1px solid #e5e5e5;
+        "
+      >
+        {{ package.email }}
+      </td>
+    </tr>
+  </tbody>
+</table>
+{% endblock %}
+
+{% block body_contact_support %}{% endblock %}
+{% block body_signature %}{% endblock %}

@@ -1,8 +1,10 @@
 from django.db import models
+from django.db.models import Q
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
 from auditlog.registry import auditlog
 from phonenumber_field.modelfields import PhoneNumberField
+from shortage.helpers import get_full_name
 
 
 class ShortageUserManager(BaseUserManager):
@@ -33,6 +35,15 @@ class ShortageUserManager(BaseUserManager):
         """Return all available users which have been activated"""
         return self.get_queryset().filter(is_active=True)
 
+    def staff_with_permission(self, codename=None):
+        """Return all active staff users with a permission"""
+        permission = Permission.objects.get(codename=codename)
+        return (
+            self.get_queryset()
+            .filter(is_active=True, is_staff=True)
+            .filter(Q(groups__permissions=permission) | Q(user_permissions=permission))
+        )
+
 
 class ShortageUser(AbstractUser):
     username = None
@@ -45,6 +56,10 @@ class ShortageUser(AbstractUser):
 
     class Meta:
         verbose_name = "User"
+
+    @property
+    def full_name(self):
+        return get_full_name(first_name=self.first_name, last_name=self.last_name)
 
 
 class Profile(models.Model):
