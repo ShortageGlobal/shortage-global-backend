@@ -232,6 +232,7 @@ PACKAGE_TYPE = {
     "FUNDED_BY_DONOR": "FUNDED_BY_DONOR",
 }
 
+ADMIN_BASE_URL = os.getenv("DJANGO_ADMIN_BASE_URL", "")
 FRONTEND_BASE_URL = os.getenv("DJANGO_FRONTEND_BASE_URL", "")
 
 AUTH_USER_MODEL = "users.ShortageUser"
@@ -243,7 +244,6 @@ EMAIL_HOST_PASSWORD = os.getenv("DJANGO_HOST_PASSWORD", "")
 EMAIL_USE_TLS = os.getenv("DJANGO_EMAIL_USE_TLS", "False") == "True"
 EMAIL_USE_SSL = os.getenv("DJANGO_EMAIL_USE_SSL", "False") == "True"
 SERVER_EMAIL = os.getenv("DJANGO_SERVER_EMAIL", "")
-MANAGERS = [("", email) for email in os.getenv("DJANGO_MANAGERS", "").split(",")]
 
 STRIPE_SECRET_KEY = os.getenv("DJANGO_STRIPE_SECRET_KEY", "")
 STRIPE_ENDPOINT_SECRET = os.getenv("DJANGO_STRIPE_ENDPOINT_SECRET", "")

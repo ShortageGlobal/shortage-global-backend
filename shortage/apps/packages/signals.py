@@ -1,8 +1,9 @@
+from django.contrib.auth import get_user_model
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-
 from shortage.apps.mailing.mail_service import (
     PackageRegistrationEmail,
+    PackageRegistationServiceEmail,
     PackageDeliveryEmail,
 )
 from shortage.apps.packages.models import (
@@ -50,3 +51,7 @@ def package_status_change_handler(package):
     if status_change_email:
         status_change_email.add_recipient(email=package.email, name=package.full_name)
         status_change_email.send()
+
+        # send service email to staff
+        service_email = PackageRegistationServiceEmail(package=package)
+        service_email.send()

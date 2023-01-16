@@ -1,1 +1,0 @@
-A status of the package {{ package_uuid }} has been updated to {{ new_status }}.

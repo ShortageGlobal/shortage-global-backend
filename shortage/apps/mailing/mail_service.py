@@ -1,7 +1,8 @@
 import logging
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.template.loader import render_to_string
-from django.core.mail import EmailMultiAlternatives, mail_managers
+from django.core.mail import EmailMultiAlternatives
 from email.headerregistry import Address
 from shortage.helpers import get_full_name
 
@@ -21,8 +22,10 @@ class MailingBackend:
     attachments = None
 
     service_email = False
+    permission_codename = None
 
     frontend_base_url = settings.FRONTEND_BASE_URL
+    admin_base_url = settings.ADMIN_BASE_URL
 
     def get_subject(self):
         assert self.subject is not None, (
@@ -68,10 +71,18 @@ class MailingBackend:
         return self.attachments
 
     def add_recipient(self, email, name=""):
+        assert (
+            not self.service_email
+        ), "Do not set recipients for service emails manually"
+
         self.to = self.to if self.to else []
         self.to.append({"name": name, "email": email})
 
     def add_bcc_recipient(self, email, name=""):
+        assert (
+            not self.service_email
+        ), "Do not set bcc recipients for service emails manually"
+
         self.bcc = self.bcc if self.bcc else []
         self.bcc.append({"name": name, "email": email})
 
@@ -84,34 +95,39 @@ class MailingBackend:
         Send email using SMTP
         """
 
-        result = None
+        recipients = None
         if self.service_email:
-            result = mail_managers(
-                subject=self.get_subject(),
-                message=self.get_text(),
-                html_message=self.get_html(),
-                fail_silently=True,
+            assert (
+                self.permission_codename != None
+            ), "Service email must have `permission_codename` property"
+
+            users = get_user_model().objects.staff_with_permission(
+                codename=self.permission_codename
             )
+            recipients = [
+                self.format_email({"email": user.email, "name": user.full_name})
+                for user in users
+            ]
         else:
             recipients = self.get_to()
             assert (
                 recipients
             ), "Add at least one recipient using `add_recipient` method."
 
-            message = EmailMultiAlternatives(
-                subject=self.get_subject(),
-                body=self.get_text(),
-                from_email=self.get_from(),
-                to=recipients,
-                bcc=self.get_bcc(),
-                attachments=self.get_attachments(),
-            )
+        message = EmailMultiAlternatives(
+            subject=self.get_subject(),
+            body=self.get_text(),
+            from_email=self.get_from(),
+            to=recipients,
+            bcc=self.get_bcc(),
+            attachments=self.get_attachments(),
+        )
 
-            # html version
-            message.attach_alternative(self.get_html(), "text/html")
+        # html version
+        message.attach_alternative(self.get_html(), "text/html")
 
-            # send email
-            result = message.send(fail_silently=True)
+        # send email
+        result = message.send(fail_silently=True)
 
         if result == 0:
             logging.error(
@@ -199,23 +215,29 @@ class PackageDeliveryEmail(PackageBaseEmail):
             )
 
 
-class PackagePaymentStatusUpdatedServiceEmail(MailingBackend):
+class PackageRegistationServiceEmail(PackageBaseEmail):
     """
-    Email sent on package payment status updated
+    Email sent to staff on package registration
     """
 
-    subject = "[Requires action] Package payment status is updated"
-    html_template = "emails/package_payment_status_updated/index.html"
-    text_template = "emails/package_payment_status_updated/index.txt"
+    subject = "New package is registered"
+    html_template = "emails/package_registration_staff/index.html"
+    text_template = "emails/package_registration_staff/index.txt"
 
     service_email = True
-
-    def __init__(self, package_uuid, new_status):
-        self.package_uuid = package_uuid
-        self.new_status = new_status
+    permission_codename = "can_receive_package_registration_emails"
 
     def get_context(self):
-        return {"package_uuid": self.package_uuid, "new_status": self.new_status}
+        context = super().get_context()
+        context["package_admin_url"] = "%s/packages/package/%s/" % (
+            self.admin_base_url,
+            self.package.uuid,
+        )
+        context["package_items_admin_url"] = "%s/packages/packageitem/?q=%s" % (
+            self.admin_base_url,
+            self.package.uuid,
+        )
+        return context
 
 
 class UserConfirmationEmail(MailingBackend):

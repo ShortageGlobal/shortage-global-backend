@@ -1,0 +1,16 @@
+Package details:
+{{ package_admin_url }}
+
+Package items:
+{{ package_items_admin_url }}
+
+Type: {{ package.get_type_display }}
+
+Organization: {{organization.name}}
+{{ organization_url }}
+
+Needs tax deduction:
+{{ package.need_tax_deduction | yesno }}
+
+Donor:
+{{ package.email }}

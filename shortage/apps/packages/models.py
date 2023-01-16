@@ -116,6 +116,15 @@ class Package(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        # …
+        permissions = (
+            (
+                "can_receive_package_registration_emails",
+                "Receive emails about package registration",
+            ),
+        )
+
     def __str__(self):
         return self.uuid.__str__()
 
