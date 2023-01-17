@@ -117,7 +117,6 @@ class Package(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        # …
         permissions = (
             (
                 "can_receive_package_registration_emails",
@@ -319,6 +318,14 @@ class CorporateDonation(models.Model):
         storage=storage.MediaStorage(),
     )
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        permissions = (
+            (
+                "can_receive_corporate_donation_emails",
+                "Receive emails about corporate donations",
+            ),
+        )
 
     def __str__(self):
         return self.company_name

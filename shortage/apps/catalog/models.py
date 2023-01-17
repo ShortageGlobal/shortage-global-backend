@@ -177,6 +177,14 @@ class OrganizationRegistrationRequest(models.Model):
     url = models.URLField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        permissions = (
+            (
+                "can_receive_organization_registration_request_emails",
+                "Receive emails about organization registration request",
+            ),
+        )
+
     def __str__(self):
         return self.full_name
 

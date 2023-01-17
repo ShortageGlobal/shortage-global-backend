@@ -1,16 +1,18 @@
 from django.contrib.auth import get_user_model
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from shortage.apps.mailing.mail_service import (
     PackageRegistrationEmail,
-    PackageRegistationServiceEmail,
     PackageDeliveryEmail,
+    PackageRegistationServiceEmail,
+    CorporateDonationRequestServiceEmail,
 )
 from shortage.apps.packages.models import (
     Package,
     PackageStatus,
     PackageType,
     PackageStatusLogEntry,
+    CorporateDonation,
 )
 
 
@@ -54,4 +56,23 @@ def package_status_change_handler(package):
 
         # send service email to staff
         service_email = PackageRegistationServiceEmail(package=package)
+        service_email.send()
+
+
+@receiver(
+    post_save,
+    sender=CorporateDonation,
+    dispatch_uid="send_email_on_corporate_donation_request_creation",
+)
+def send_email_on_corporate_donation_request_creation(
+    sender, instance, created, **kwargs
+):
+    """
+    Send a service email when Corporate Donation is created
+    """
+    if created:
+        # send service email to staff
+        service_email = CorporateDonationRequestServiceEmail(
+            corporate_donation=instance
+        )
         service_email.send()
