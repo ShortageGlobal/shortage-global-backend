@@ -296,3 +296,49 @@ class PasswordResetEmail(MailingBackend):
             "frontend_base_url": self.frontend_base_url,
             "url": url,
         }
+
+
+class OrganizationRegistrationRequestServiceEmail(MailingBackend):
+
+    subject = "New organization registration request"
+    html_template = "emails/organization_registration_request_staff/index.html"
+    text_template = "emails/organization_registration_request_staff/index.txt"
+
+    service_email = True
+    permission_codename = "can_receive_organization_registration_request_emails"
+
+    def __init__(self, organization_registration_request):
+        self.instance = organization_registration_request
+
+    def get_context(self):
+        organization_registration_request_url = (
+            "%s/catalog/organizationregistrationrequest/%s/change/"
+            % (self.admin_base_url, self.instance.pk)
+        )
+
+        return {
+            "organization_registration_request_url": organization_registration_request_url,
+        }
+
+
+class CorporateDonationRequestServiceEmail(MailingBackend):
+
+    subject = "New corporate donation request"
+    html_template = "emails/corporate_donation_staff/index.html"
+    text_template = "emails/corporate_donation_staff/index.txt"
+
+    service_email = True
+    permission_codename = "can_receive_corporate_donation_emails"
+
+    def __init__(self, corporate_donation):
+        self.instance = corporate_donation
+
+    def get_context(self):
+        corporate_donation_request_url = "%s/packages/corporatedonation/%s/change/" % (
+            self.admin_base_url,
+            self.instance.pk,
+        )
+
+        return {
+            "corporate_donation_request_url": corporate_donation_request_url,
+        }
