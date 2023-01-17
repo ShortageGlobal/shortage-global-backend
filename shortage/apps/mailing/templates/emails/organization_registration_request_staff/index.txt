@@ -1,0 +1,4 @@
+A new organization registration request has been submitted.
+
+View the request:
+{{ organization_registration_request_url }}

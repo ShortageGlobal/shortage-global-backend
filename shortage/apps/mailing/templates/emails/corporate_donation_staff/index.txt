@@ -1,0 +1,4 @@
+A new corporate donation request has been submitted.
+
+View the request:
+{{ corporate_donation_request_url }}
