@@ -8,7 +8,11 @@ from phonenumber_field.modelfields import PhoneNumberField
 from easy_thumbnails.fields import ThumbnailerImageField
 from shortage.apps import storage
 from shortage.apps.blog.models import BlogPost, BlogPostManager
-from shortage.apps.file_paths import get_organization_path, get_product_path
+from shortage.apps.file_paths import (
+    get_organization_path,
+    get_external_organization_path,
+    get_product_path,
+)
 from shortage.helpers import get_full_name
 from shortage.helpers.thumbnails import get_thumbnail_for_image
 
@@ -70,6 +74,30 @@ class Organization(models.Model):
     @property
     def medium_banner_photo(self):
         return get_thumbnail_for_image(self.banner, "organization_banner_medium")
+
+
+class ExternalOrganization(models.Model):
+    name = models.CharField(max_length=80)
+    logo = ThumbnailerImageField(
+        upload_to=get_external_organization_path,
+        storage=storage.MediaStorage(),
+    )
+    url = models.URLField(max_length=255)
+    position = models.PositiveIntegerField(
+        default=0,
+        blank=False,
+        null=False,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = OrganizationManager()
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def medium_logo_photo(self):
+        return get_thumbnail_for_image(self.logo, "organization_logo_medium")
 
 
 class Instruction(models.Model):

@@ -2,6 +2,7 @@ from django.urls import include, path
 from rest_framework import routers
 from .views import (
     PromotedOrganizationsViewSet,
+    PromotedExternalOrganizationsViewSet,
     PromotedProductsViewSet,
     PromotedCategoriesViewSet,
     PromotedOrganizationBlogPostsViewSet,
@@ -25,6 +26,11 @@ router.register(
     r"promoted/organizations",
     PromotedOrganizationsViewSet,
     basename="promoted_organizations",
+)
+router.register(
+    r"promoted/external_organizations",
+    PromotedExternalOrganizationsViewSet,
+    basename="promoted_external_organizations",
 )
 router.register(
     r"promoted/products", PromotedProductsViewSet, basename="promoted_products"

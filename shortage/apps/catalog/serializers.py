@@ -22,6 +22,18 @@ class OrganizationPreviewSerializer(serializers.ModelSerializer):
         ]
 
 
+class ExternalOrganizationPreviewSerializer(serializers.ModelSerializer):
+    logo = serializers.ImageField(source="medium_logo_photo", read_only=True)
+
+    class Meta:
+        model = Organization
+        fields = [
+            "name",
+            "logo",
+            "url",
+        ]
+
+
 class PrivateOrganizationSerializer(serializers.ModelSerializer):
     logo = serializers.ImageField(required=False)
     banner = serializers.ImageField(required=False)
