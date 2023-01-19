@@ -14,7 +14,7 @@ def get_organization_path(instance, filename):
 
 
 def get_external_organization_path(instance, filename):
-    return get_uuid_path(f"photo/external_organization/{str(instance.pk)}/", filename)
+    return get_uuid_path(f"photo/external_organizations/", filename)
 
 
 def get_product_path(instance, filename):
