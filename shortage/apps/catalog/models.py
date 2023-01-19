@@ -77,12 +77,12 @@ class Organization(models.Model):
 
 
 class ExternalOrganization(models.Model):
-    name = models.CharField(max_length=80, null=True, blank=True)
+    name = models.CharField(max_length=80)
     logo = ThumbnailerImageField(
         upload_to=get_external_organization_path,
         storage=storage.MediaStorage(),
     )
-    url = models.URLField(max_length=255, null=True, blank=True)
+    url = models.URLField(max_length=255)
     position = models.PositiveIntegerField(
         default=0,
         blank=False,
