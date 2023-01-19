@@ -50,7 +50,7 @@ class PromotedExternalOrganizationsViewSet(
 ):
     """A list of promoted external organizations"""
 
-    queryset = ExternalOrganization.objects.order_by("-position", "-created_at")
+    queryset = ExternalOrganization.objects.order_by("position", "-created_at")
     serializer_class = ExternalOrganizationPreviewSerializer
     paginator = None
 

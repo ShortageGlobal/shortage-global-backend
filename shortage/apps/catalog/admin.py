@@ -26,6 +26,8 @@ class ExternalOrganizationAdmin(admin.ModelAdmin):
     list_display = [
         "name",
         "created_at",
+        "url",
+        "position",
     ]
     search_fields = ["name"]
 
