@@ -11,9 +11,16 @@ from rest_framework import (
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
-from .models import Organization, Instruction, Product, OrganizationBlogPost
+from .models import (
+    Organization,
+    ExternalOrganization,
+    Instruction,
+    Product,
+    OrganizationBlogPost,
+)
 from .serializers import (
     OrganizationPreviewSerializer,
+    ExternalOrganizationPreviewSerializer,
     InstructionSerializer,
     PromotedProductPreviewSerializer,
     ProductPreviewSerializer,
@@ -36,6 +43,16 @@ class PromotedOrganizationsViewSet(mixins.ListModelMixin, viewsets.GenericViewSe
 
     queryset = Organization.objects.promoted().order_by("-created_at")
     serializer_class = OrganizationPreviewSerializer
+
+
+class PromotedExternalOrganizationsViewSet(
+    mixins.ListModelMixin, viewsets.GenericViewSet
+):
+    """A list of promoted external organizations"""
+
+    queryset = ExternalOrganization.objects.order_by("-position", "-created_at")
+    serializer_class = ExternalOrganizationPreviewSerializer
+    paginator = None
 
 
 class PromotedProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):

@@ -2,6 +2,7 @@ from django.contrib import admin
 from shortage.apps.blog.admin import BlogPostAdmin
 from .models import (
     Organization,
+    ExternalOrganization,
     Product,
     Instruction,
     OrganizationRegistrationRequest,
@@ -16,6 +17,14 @@ class OrganizationAdmin(admin.ModelAdmin):
         "is_draft",
         "promote",
         "owner",
+        "created_at",
+    ]
+    search_fields = ["name"]
+
+
+class ExternalOrganizationAdmin(admin.ModelAdmin):
+    list_display = [
+        "name",
         "created_at",
     ]
     search_fields = ["name"]
@@ -85,6 +94,7 @@ class OrganizationBlogPostAdmin(BlogPostAdmin):
 
 
 admin.site.register(Organization, OrganizationAdmin)
+admin.site.register(ExternalOrganization, ExternalOrganizationAdmin)
 admin.site.register(Instruction, InstructionAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(
