@@ -108,6 +108,10 @@ class MailingBackend:
                 self.format_email({"email": user.email, "name": user.full_name})
                 for user in users
             ]
+
+            if len(recipients) == 0:
+                # no users with the permission
+                return False
         else:
             recipients = self.get_to()
             assert (
@@ -132,7 +136,7 @@ class MailingBackend:
         if result == 0:
             logging.error(
                 'Failed to send email "{0}" to {1}'.format(
-                    self.get_subject(), ",".join(recipients)
+                    self.get_subject(), ",".join(recipients) or None
                 )
             )
             return False
