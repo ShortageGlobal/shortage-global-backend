@@ -99,6 +99,20 @@ class PrivateOrganizationTestCase(APITestCase):
         self.assertEqual(None, json_response["logo"])
         self.assertEqual(None, json_response["banner"])
 
+    def test_organization_slug_blacklist(self):
+        test_data = self.testData.copy()
+        test_data["slug"] = "next"  # blacklisted value
+        request = self.requestFactory.post(
+            "/api/private/organizations/", data=test_data, format="json"
+        )
+        force_authenticate(request, user=self.user)
+        response = PrivateOrganizationViewSet.as_view({"post": "create"})(request)
+
+        self.assertEqual(response.status_code, 400, "Organization was created")
+        self.assertEqual(
+            response.data["slug"][0], "'next' cannot be used as an organization slug."
+        )
+
     def test_image_upload(self):
         image = create_test_image(None, "test_image.png")
         logo_file = SimpleUploadedFile("test_image.png", image.getvalue())

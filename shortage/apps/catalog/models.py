@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 from tinymce.models import HTMLField
 from django_countries.fields import CountryField
 from auditlog.registry import auditlog
@@ -35,12 +36,22 @@ class OrganizationManager(models.Manager):
         return self.get_queryset().filter(is_deleted=False)
 
 
+def validate_organization_slug_blacklist(value):
+    if value in settings.ORGANIZATION_SLUG_BLACKLIST:
+        raise ValidationError(
+            "'%s' cannot be used as an organization slug." % value,
+            params={"value": value},
+        )
+
+
 class Organization(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="organizations", on_delete=models.CASCADE
     )
     name = models.CharField(max_length=80, null=True, blank=True)
-    slug = models.SlugField(max_length=80, unique=True)
+    slug = models.SlugField(
+        max_length=80, unique=True, validators=[validate_organization_slug_blacklist]
+    )
     description = HTMLField(null=True, blank=True)
     meta_description = models.CharField(max_length=200, null=True, blank=True)
     logo = ThumbnailerImageField(

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from rest_framework import (
     generics,
@@ -124,10 +125,16 @@ class PrivateOrganizationSlugExistsViewSet(viewsets.ViewSet):
     lookup_field = "slug"
 
     def retrieve(self, request, slug):
+        # check blacklist
+        if slug in settings.ORGANIZATION_SLUG_BLACKLIST:
+            return Response(status=status.HTTP_200_OK)
+
+        # check existing organizations
         if Organization.objects.filter(slug=slug).exists():
             return Response(status=status.HTTP_200_OK)
-        else:
-            raise exceptions.NotFound()
+
+        # slug not found, meaning it's safe to create
+        raise exceptions.NotFound()
 
 
 class PrivateOrganizationViewSet(

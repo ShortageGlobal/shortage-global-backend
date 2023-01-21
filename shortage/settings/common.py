@@ -202,6 +202,33 @@ TINYMCE_EXTRA_MEDIA = {
     "js": ["{static_url}blog/tinymce_extra.js".format(static_url=STATIC_URL)],
 }
 
+# Since frontend serves nonprofit pages from the root, e.g. `https://shortage.global/[orgSlug]/...`,
+# we should mark certain organization slugs as restricted to avoid collisions
+ORGANIZATION_SLUG_BLACKLIST = [
+    # automatically generated
+    "robots.txt",
+    "sitemap.xml",
+    # /pages
+    "account",
+    "api",
+    "donation",
+    "private",
+    "server-sitemap.xml",
+    "for-corporate",
+    "for-individuals",
+    "for-nonprofits",
+    "privacy-policy",
+    "terms-of-use",
+    # /public
+    "images",
+    "favicon.png",
+    "manifest.json",
+    # next.js
+    "_next",
+    "next",
+    "build",
+]
+
 # IMPORTANT: the list of category keys must be synchronized with frontend
 PRODUCT_CATEGORY = {
     "VITAL_GOODS": "VITAL_GOODS",
