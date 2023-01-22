@@ -24,3 +24,26 @@ class AmazonProduct(models.Model):
     created_at = models.DateField(auto_now_add=True)
 
     objects = AmazonProductsManager()
+
+
+class AmazonProductAdapter:
+    rainforest_response = None
+
+    def __init__(self, rainforest_response):
+        self.rainforest_response = rainforest_response
+
+    def get_amazon_product(self):
+        product_data = self.rainforest_response["product"]
+
+        assert product_data
+
+        return AmazonProduct.objects.create(
+            **{
+                "asin": product_data["asin"],
+                "title": product_data["title"],
+                "link": product_data["link"],
+                "description": product_data["description"],
+                "image_url": product_data["main_image"]["link"],
+                "price": product_data["buybox_winner"]["new_offers_from"]["value"],
+            }
+        )

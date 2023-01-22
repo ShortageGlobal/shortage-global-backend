@@ -1,29 +1,16 @@
 import base64
 
-from rest_framework.response import Response
 from rest_framework import (
     viewsets,
     mixins,
     permissions,
 )
+from rest_framework.exceptions import NotFound
 from rest_framework.schemas.openapi import AutoSchema
 
-from shortage.apps.catalog.amazon.models import AmazonProduct, AmazonProductsManager
+from shortage.apps.catalog.amazon.models import AmazonProduct, AmazonProductAdapter
 from shortage.apps.catalog.amazon.rainforest import RainforestWrapper
 from shortage.apps.catalog.amazon.serializers import AmazonProductSerializer
-
-
-def create_product_description_from_rainforest_product_data(product_data):
-    assert product_data
-
-    return {
-        "asin": product_data["asin"],
-        "title": product_data["title"],
-        "link": product_data["link"],
-        "description": product_data["description"],
-        "image_url": product_data["main_image"]["link"],
-        "price": product_data["buybox_winner"]["new_offers_from"]["value"],
-    }
 
 
 class GetProductByAsinViewSet(
@@ -37,23 +24,22 @@ class GetProductByAsinViewSet(
     serializer_class = AmazonProductSerializer
 
     def get_object(self):
-        product = AmazonProduct.objects.valid_cached_products().filter(
-            asin=self.kwargs["asin"]
-        )
+        asin = self.kwargs.get("asin")
+
+        if not asin:
+            raise NotFound()
+
+        product = AmazonProduct.objects.valid_cached_products().filter(asin=asin)
 
         if not product:
             rainforest = RainforestWrapper()
 
-            response = rainforest.send_request(asin=self.kwargs["asin"])
+            response = rainforest.send_request(asin=asin)
 
             if 200 == response.status_code:
-                response_object = (
-                    create_product_description_from_rainforest_product_data(
-                        response.data["product"]
-                    )
-                )
+                adapter = AmazonProductAdapter(rainforest_response=response.data)
 
-                product = AmazonProduct.objects.create(**response_object)
+                product = adapter.get_amazon_product()
                 product.save()
 
         return product
@@ -68,12 +54,18 @@ class GetProductsByAmazonUrlViewSet(GetProductByAsinViewSet):
     serializer_class = AmazonProductSerializer
 
     def get_object(self):
+        url = self.kwargs.get("url")
+
+        if not url:
+            raise NotFound()
+
         rainforest = RainforestWrapper()
 
-        amazon_url = base64.urlsafe_b64decode(str.encode(self.kwargs["url"])).decode()
+        amazon_url = base64.urlsafe_b64decode(str.encode(url)).decode()
         asin = rainforest.get_asin_from_url(amazon_url)
 
-        assert asin
+        if not asin:
+            raise NotFound()
 
         self.kwargs["asin"] = asin
 
