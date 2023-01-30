@@ -8,14 +8,17 @@ from shortage.apps.catalog.amazon.views import (
     GetProductByAsinViewSet,
     GetProductsByAmazonUrlViewSet,
 )
+from shortage.helpers.test_utilities import create_test_user
 
 
 class GetProductFromAmazonTestCase(APITestCase):
     def setUp(self) -> None:
         self.requestFactory = APIRequestFactory()
+        self.user = create_test_user()
 
     def test_get_products_by_asin(self):
         request = self.requestFactory.get("", format="json")
+        force_authenticate(request, user=self.user)
         response = GetProductByAsinViewSet.as_view({"get": "retrieve"})(
             request, asin="B000YDDF6O"
         )
@@ -56,6 +59,7 @@ class GetProductFromAmazonTestCase(APITestCase):
         url = url.decode()
 
         request = self.requestFactory.get("", format="json")
+        force_authenticate(request, user=self.user)
         response = GetProductsByAmazonUrlViewSet.as_view({"get": "retrieve"})(
             request,
             url=url,
