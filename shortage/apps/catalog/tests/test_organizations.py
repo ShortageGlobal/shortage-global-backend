@@ -1,7 +1,7 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.utils import json
-from shortage.apps.catalog.views import (
+from shortage.apps.catalog.private.views import (
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
 )
