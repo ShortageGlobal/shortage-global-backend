@@ -87,7 +87,7 @@ class PrivateOrganizationTestCase(APITestCase):
 
         self.assertEqual(response.status_code, 200, "Organization was not retrieved")
 
-        json_response = json.loads(response.render().content)["results"][0]
+        json_response = json.loads(response.render().content)[0]
 
         self.assertEqual(self.testData["name"], json_response["name"])
         self.assertEqual(self.testData["slug"], json_response["slug"])

@@ -6,7 +6,8 @@ from rest_framework.schemas.openapi import AutoSchema
 from rest_framework import exceptions
 from shortage.apps.catalog.models import Product, Organization
 from shortage.apps.catalog.private.serializers import (
-    PrivateOrganizationSerializer,
+    PrivateOrganizationReadSerializer,
+    PrivateOrganizationWriteSerializer,
     PrivateProductSerializer,
 )
 from shortage.apps.catalog.exceptions import OneOrganizationPerUser
@@ -52,9 +53,13 @@ class PrivateOrganizationViewSet(
     )
 
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = PrivateOrganizationSerializer
     paginator = None
     lookup_field = "slug"
+
+    def get_serializer_class(self):
+        if self.action == "create" or self.action == "update":
+            return PrivateOrganizationWriteSerializer
+        return PrivateOrganizationReadSerializer
 
     def get_queryset(self):
         if "retrieve" == self.action or "list" == self.action:

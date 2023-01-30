@@ -3,10 +3,10 @@ from shortage.apps.catalog.models import Organization, Product
 from shortage.helpers.serializers import AuthorizedUserOrNone
 
 
-class PrivateOrganizationSerializer(serializers.ModelSerializer):
-    logo = serializers.ImageField(required=False, source="medium_logo_photo")
-    banner = serializers.ImageField(required=False, source="medium_banner_photo")
+class PrivateOrganizationWriteSerializer(serializers.ModelSerializer):
     owner = serializers.HiddenField(default=AuthorizedUserOrNone())
+    logo = serializers.ImageField(required=False)
+    banner = serializers.ImageField(required=False)
 
     class Meta:
         model = Organization
@@ -24,9 +24,19 @@ class PrivateOrganizationSerializer(serializers.ModelSerializer):
             "is_draft",
             "promote",
             "deadline",
+        ]
+
+
+class PrivateOrganizationReadSerializer(PrivateOrganizationWriteSerializer):
+    logo = serializers.ImageField(required=False, source="medium_logo_photo")
+    banner = serializers.ImageField(required=False, source="medium_banner_photo")
+
+    class Meta(PrivateOrganizationWriteSerializer.Meta):
+        fields = PrivateOrganizationWriteSerializer.Meta.fields + [
+            "updated_at",
             "created_at",
         ]
-        read_only_fields = ["is_verified", "created_at"]
+        read_only_fields = fields
 
 
 class PrivateProductSerializer(serializers.ModelSerializer):
