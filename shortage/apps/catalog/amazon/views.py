@@ -14,7 +14,7 @@ from shortage.apps.catalog.amazon.serializers import AmazonProductSerializer
 
 
 class GetProductByAsinViewSet(
-    mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
+    mixins.RetrieveModelMixin, viewsets.GenericViewSet
 ):
     schema = AutoSchema(
         tags=["Private", "Products", "External Integration"],
