@@ -23,9 +23,4 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateField(auto_now_add=True)),
             ],
         ),
-        migrations.AlterField(
-            model_name='organization',
-            name='slug',
-            field=models.SlugField(max_length=80, unique=True, validators=[shortage.apps.catalog.models.validate_organization_slug_blacklist]),
-        ),
     ]
