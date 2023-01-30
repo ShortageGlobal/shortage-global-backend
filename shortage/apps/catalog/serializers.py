@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from shortage.apps.blog.serializers import BlogPostPreviewSerializer, BlogPostSerializer
-from shortage.helpers.serializers import AuthorizedUserOrNone
 from .models import (
     Organization,
     Instruction,
@@ -32,29 +31,6 @@ class ExternalOrganizationPreviewSerializer(serializers.ModelSerializer):
             "logo",
             "url",
         ]
-
-
-class PrivateOrganizationSerializer(serializers.ModelSerializer):
-    logo = serializers.ImageField(required=False)
-    banner = serializers.ImageField(required=False)
-    owner = serializers.HiddenField(default=AuthorizedUserOrNone())
-
-    class Meta:
-        model = Organization
-        fields = [
-            "owner",
-            "name",
-            "slug",
-            "description",
-            "meta_description",
-            "logo",
-            "banner",
-            "url",
-            "ein_number",
-            "is_verified",
-            "is_draft",
-        ]
-        read_only_fields = ["is_verified"]
 
 
 class InstructionSerializer(serializers.ModelSerializer):

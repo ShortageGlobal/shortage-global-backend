@@ -12,12 +12,15 @@ from .views import (
     ProductsViewSet,
     ProductViewSet,
     OrganizationBlogPostsViewSet,
-    PrivateOrganizationViewSet,
-    PrivateOrganizationSlugExistsViewSet,
     OrganizationRegistrationRequestViewSet,
     SitemapViewSet,
 )
-from .private.views import PrivateProductsSlugExistsViewSet, PrivateProductsViewSet
+from .private.views import (
+    PrivateProductsSlugExistsViewSet,
+    PrivateProductsViewSet,
+    PrivateOrganizationViewSet,
+    PrivateOrganizationSlugExistsViewSet,
+)
 
 router = routers.DefaultRouter()
 

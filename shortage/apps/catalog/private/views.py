@@ -1,11 +1,81 @@
-from rest_framework import viewsets, permissions, status
+from django.conf import settings
+from rest_framework import viewsets, mixins, permissions, status, exceptions, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 from rest_framework import exceptions
 from shortage.apps.catalog.models import Product, Organization
-from shortage.apps.catalog.private.serializers import PrivateProductSerializer
+from shortage.apps.catalog.private.serializers import (
+    PrivateOrganizationSerializer,
+    PrivateProductSerializer,
+)
+from shortage.apps.catalog.exceptions import OneOrganizationPerUser
 from shortage.helpers.permissions import IsObjectOwner
+
+
+class PrivateOrganizationSlugExistsViewSet(viewsets.ViewSet):
+    """
+    Checks if organization with specified slug exists
+    """
+
+    schema = AutoSchema(
+        tags=["Organizations"],
+    )
+
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = "slug"
+
+    def retrieve(self, request, slug):
+        # check blacklist
+        if slug in settings.ORGANIZATION_SLUG_BLACKLIST:
+            return Response(status=status.HTTP_200_OK)
+
+        # check existing organizations
+        if Organization.objects.filter(slug=slug).exists():
+            return Response(status=status.HTTP_200_OK)
+
+        # slug not found, meaning it's safe to create
+        raise exceptions.NotFound()
+
+
+class PrivateOrganizationViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
+    """Retrieve/create/update organization owned by a current user"""
+
+    schema = AutoSchema(
+        tags=["Private", "Organizations"],
+    )
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = PrivateOrganizationSerializer
+    paginator = None
+    lookup_field = "slug"
+
+    def get_queryset(self):
+        if "retrieve" == self.action or "list" == self.action:
+            return Organization.objects.active().filter(owner=self.request.user)
+        else:
+            # Prevent changes to organizations which you don't own and which are already verified
+            return Organization.objects.filter(
+                owner=self.request.user, is_verified=False
+            )
+
+    def create(self, request, *args, **kwargs):
+        # Allow only one organization per user
+        if Organization.objects.filter(owner=self.request.user).exists():
+            raise OneOrganizationPerUser()
+
+        # Todo: Send an email about organization's creation
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        # Todo: Send an email about changes to the organization
+        return super().update(request, *args, **kwargs)
 
 
 class PrivateProductsViewSet(viewsets.ModelViewSet):
