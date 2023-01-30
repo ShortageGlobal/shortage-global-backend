@@ -1,4 +1,6 @@
 from datetime import date
+
+from auditlog.registry import auditlog
 from django.db import models
 
 
@@ -47,3 +49,6 @@ class AmazonProductAdapter:
                 "price": product_data["buybox_winner"]["new_offers_from"]["value"],
             }
         )
+
+
+auditlog.register(AmazonProductAdapter)
