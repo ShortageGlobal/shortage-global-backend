@@ -118,12 +118,12 @@ router.register(
 )
 
 router.register(
-    r"products/asin/(?P<asin>[^/.]+)",
+    r"private/products/asin/(?P<asin>[^/.]+)",
     GetProductByAsinViewSet,
     basename="products_by_asin",
 )
 router.register(
-    r"products/url/(?P<url>[^/.]+)",
+    r"private/products/url/(?P<url>[^/.]+)",
     GetProductsByAmazonUrlViewSet,
     basename="products_by_url",
 )

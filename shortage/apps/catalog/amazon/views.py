@@ -13,14 +13,12 @@ from shortage.apps.catalog.amazon.rainforest import RainforestWrapper
 from shortage.apps.catalog.amazon.serializers import AmazonProductSerializer
 
 
-class GetProductByAsinViewSet(
-    mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
-):
+class GetProductByAsinViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     schema = AutoSchema(
-        tags=["Products", "External Integration"],
+        tags=["Private", "Products", "External Integration"],
     )
 
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = AmazonProductSerializer
 
     def get_object(self):
@@ -47,10 +45,10 @@ class GetProductByAsinViewSet(
 
 class GetProductsByAmazonUrlViewSet(GetProductByAsinViewSet):
     schema = AutoSchema(
-        tags=["Products", "External Integration"],
+        tags=["Private", "Products", "External Integration"],
     )
 
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = AmazonProductSerializer
 
     def get_object(self):
