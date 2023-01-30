@@ -7,7 +7,7 @@ import shortage.apps.catalog.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('catalog', '0013_externalorganization'),
+        ('catalog', '0014_alter_organization_slug_alter_product_category'),
     ]
 
     operations = [
