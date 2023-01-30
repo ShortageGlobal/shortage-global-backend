@@ -51,4 +51,4 @@ class AmazonProductAdapter:
         )
 
 
-auditlog.register(AmazonProductAdapter)
+auditlog.register(AmazonProduct)
