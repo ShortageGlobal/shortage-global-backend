@@ -13,9 +13,7 @@ from shortage.apps.catalog.amazon.rainforest import RainforestWrapper
 from shortage.apps.catalog.amazon.serializers import AmazonProductSerializer
 
 
-class GetProductByAsinViewSet(
-    mixins.RetrieveModelMixin, viewsets.GenericViewSet
-):
+class GetProductByAsinViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     schema = AutoSchema(
         tags=["Private", "Products", "External Integration"],
     )
