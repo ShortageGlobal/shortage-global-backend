@@ -65,12 +65,19 @@ class AmazonProductAdapter:
         elif product_data.get("more_buying_choices"):
             price = product_data["more_buying_choices"][0]["price"]["value"]
 
+        description = None
+
+        if product_data.get("description"):
+            description = product_data["description"]
+        elif product_data.get("book_description"):
+            description = product_data["book_description"]
+
         return AmazonProduct.objects.create(
             **{
                 "asin": product_data.get("asin"),
                 "title": product_data.get("title"),
                 "link": product_data.get("link"),
-                "description": product_data.get("description"),
+                "description": description,
                 "image_url": product_data.get("main_image").get("link"),
                 "price": price,
             }
