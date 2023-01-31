@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from .amazon.views import GetProductByAsinViewSet, GetProductsByAmazonUrlViewSet
+from .amazon.views import PrivateProductByAsinViewSet, PrivateProductByAmazonUrlViewSet
 from .views import (
     PromotedOrganizationsViewSet,
     PromotedExternalOrganizationsViewSet,
@@ -121,13 +121,13 @@ router.register(
 )
 
 router.register(
-    r"private/products/asin/(?P<asin>[^/.]+)",
-    GetProductByAsinViewSet,
+    r"private/products/asin",
+    PrivateProductByAsinViewSet,
     basename="products_by_asin",
 )
 router.register(
-    r"private/products/url/(?P<url>[^/.]+)",
-    GetProductsByAmazonUrlViewSet,
+    r"private/products/url",
+    PrivateProductByAmazonUrlViewSet,
     basename="products_by_url",
 )
 

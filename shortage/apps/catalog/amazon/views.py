@@ -13,13 +13,14 @@ from shortage.apps.catalog.amazon.rainforest import RainforestWrapper
 from shortage.apps.catalog.amazon.serializers import AmazonProductSerializer
 
 
-class GetProductByAsinViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class PrivateProductByAsinViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     schema = AutoSchema(
         tags=["Private", "Products", "External Integration"],
     )
 
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = AmazonProductSerializer
+    lookup_field = "asin"
 
     def get_object(self):
         asin = self.kwargs.get("asin")
@@ -27,15 +28,19 @@ class GetProductByAsinViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet
         if not asin:
             raise NotFound()
 
-        product = AmazonProduct.objects.valid_cached_products().filter(asin=asin)
+        product = None
+        cached_product = AmazonProduct.objects.valid_cached_products().filter(asin=asin)
 
-        if not product:
+        if cached_product.exists():
+            product = cached_product.get()
+        else:
             rainforest = RainforestWrapper()
 
             response = rainforest.send_request(asin=asin)
+            response.raise_for_status()
 
             if 200 == response.status_code:
-                adapter = AmazonProductAdapter(rainforest_response=response.data)
+                adapter = AmazonProductAdapter(rainforest_response=response.json())
 
                 product = adapter.get_amazon_product()
                 product.save()
@@ -43,13 +48,14 @@ class GetProductByAsinViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet
         return product
 
 
-class GetProductsByAmazonUrlViewSet(GetProductByAsinViewSet):
+class PrivateProductByAmazonUrlViewSet(PrivateProductByAsinViewSet):
     schema = AutoSchema(
         tags=["Private", "Products", "External Integration"],
     )
 
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = AmazonProductSerializer
+    lookup_field = "url"
 
     def get_object(self):
         url = self.kwargs.get("url")
