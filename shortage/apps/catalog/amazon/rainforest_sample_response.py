@@ -2190,3 +2190,573 @@ RAINFOREST_SAMPLE_RESPONSE_2 = {
         },
     ],
 }
+
+RAINFOREST_SAMPLE_RESPONSE_3 = {
+   "request_info":{
+      "success":True,
+      "credits_used":15,
+      "credits_remaining":85,
+      "credits_used_this_request":1
+   },
+   "request_parameters":{
+      "type":"product",
+      "amazon_domain":"amazon.com",
+      "asin":"1443434876"
+   },
+   "request_metadata":{
+      "created_at":"2023-01-31T21:03:18.708Z",
+      "processed_at":"2023-01-31T21:03:24.701Z",
+      "total_time_taken":5.99,
+      "amazon_url":"https://www.amazon.com/dp/1443434876?th=1&psc=1"
+   },
+   "product":{
+      "title":"Station Eleven",
+      "search_alias":{
+         "title":"Books",
+         "value":"stripbooks"
+      },
+      "keywords":"Station,Eleven",
+      "keywords_list":[
+         "Station",
+         "Eleven"
+      ],
+      "asin":"1443434876",
+      "link":"https://www.amazon.com/dp/1443434876??th=1&psc=1",
+      "sell_on_amazon":True,
+      "variants":[
+         {
+            "asin":"B00J1IQUYM",
+            "title":"Kindle",
+            "link":"https://www.amazon.com/Station-Eleven-Emily-John-Mandel-ebook/dp/B00J1IQUYM/ref=tmm_kin_swatch_0?_encoding=UTF8&qid=&sr=",
+            "price":{
+               "symbol":"$",
+               "value":11.99,
+               "currency":"USD",
+               "raw":"$11.99"
+            }
+         },
+         {
+            "asin":"B00M284KO0",
+            "title":"Audiobook",
+            "link":"https://www.amazon.com/Station-Eleven-audiobook/dp/B00M284KO0/ref=tmm_aud_swatch_0?_encoding=UTF8&qid=&sr=",
+            "price":{
+               "symbol":"$",
+               "value":0,
+               "currency":"USD",
+               "raw":"$0.00"
+            }
+         },
+         {
+            "asin":"0385353308",
+            "title":"Hardcover",
+            "link":"https://www.amazon.com/Station-Eleven-Emily-John-Mandel/dp/0385353308/ref=tmm_hrd_swatch_0?_encoding=UTF8&qid=&sr=",
+            "price":{
+               "symbol":"$",
+               "value":27,
+               "currency":"USD",
+               "raw":"$27.00"
+            }
+         },
+         {
+            "asin":"1443434876",
+            "link":"https://www.amazon.com/Station-Eleven-Emily-John-Mandel/dp/0804172447?th=1&psc=1",
+            "is_current_product":True,
+            "title":"Paperback",
+            "price":{
+               "symbol":"$",
+               "value":7.06,
+               "currency":"USD",
+               "raw":"$7.06"
+            }
+         },
+         {
+            "asin":"1489458514",
+            "title":"Audio CD",
+            "link":"https://www.amazon.com/Station-Eleven-Emily-John-Mandel/dp/1489458514/ref=tmm_abk_swatch_0?_encoding=UTF8&qid=&sr=",
+            "price":{
+               "symbol":"$",
+               "value":28.5,
+               "currency":"USD",
+               "raw":"$28.50"
+            }
+         }
+      ],
+      "variant_asins_flat":"B00J1IQUYM,B00M284KO0,0385353308,1443434876,1489458514",
+      "authors":[
+         {
+            "name":"Emily St. John Mandel",
+            "link":"https://www.amazon.com/Emily-St-John-Mandel/e/B002BMMGK2/ref=dp_byline_cont_pop_book_1",
+            "asin":"B002BMMGK2"
+         }
+      ],
+      "format":"Paperback",
+      "categories":[
+         {
+            "name":"Books",
+            "link":"https://www.amazon.com/books-used-books-textbooks/b/ref=dp_bc_aui_C_1?ie=UTF8&node=283155",
+            "category_id":"283155"
+         },
+         {
+            "name":"Literature & Fiction",
+            "link":"https://www.amazon.com/Literature-Fiction-Books/b/ref=dp_bc_aui_C_2?ie=UTF8&node=17",
+            "category_id":"17"
+         },
+         {
+            "name":"Genre Fiction",
+            "link":"https://www.amazon.com/Genre-Fiction-Literature-Books/b/ref=dp_bc_aui_C_3?ie=UTF8&node=10134",
+            "category_id":"10134"
+         }
+      ],
+      "categories_flat":"Books > Literature & Fiction > Genre Fiction",
+      "sub_title":{
+         "text":"by               Emily St. John Mandel (Author)  › Visit Amazon's Emily St. John Mandel Page Find all the books, read about the author, and more. See search results for this author  Emily St. John Mandel         (Author)",
+         "link":"https://www.amazon.com/Emily-St-John-Mandel/e/B002BMMGK2/ref=dp_byline_cont_pop_book_1"
+      },
+      "marketplace_id":"ATVPDKIKX0DER",
+      "rating":4.4,
+      "rating_breakdown":{
+         "five_star":{
+            "percentage":60,
+            "count":14223
+         },
+         "four_star":{
+            "percentage":25,
+            "count":5926
+         },
+         "three_star":{
+            "percentage":10,
+            "count":2370
+         },
+         "two_star":{
+            "percentage":3,
+            "count":711
+         },
+         "one_star":{
+            "percentage":2,
+            "count":474
+         }
+      },
+      "ratings_total":23705,
+      "book_description":"NOW A MAJOR TV SERIESWinner of the Toronto Book Award and the Arthur C. Clarke Award Finalist for the National Book Award, the PEN/Faulkner Award, and the Sunburst AwardLonglisted for the Baileys Prize and for the Andrew Carnegie Medal for Excellence in FictionA New York Times and Globe and Mail bestsellerThe international publishing sensation now available in paperback: an audacious, darkly glittering novel about art, fame and ambition, set in the eerie days of civilization’s collapseOne snowy night, a famous Hollywood actor dies onstage during a production of King Lear. Hours later, the world as we know it begins to dissolve. Moving back and forth in time—from the actor’s early days as a film star to fifteen years in the future, when a theatre troupe known as the Travelling Symphony roams the wasteland of what remains—this suspenseful, elegiac, spellbinding novel charts the strange twists of fate that connect five people: the actor, the man who tried to save him, the actor’s first wife, his oldest friend and a young actress with the Travelling Symphony caught in the crosshairs of a dangerous self-proclaimed prophet. Sometimes terrifying, sometimes tender, Station Eleven tells a story about the relationships that sustain us, the ephemeral nature of fame and the beauty of the world as we know it.",
+      "editorial_reviews":[
+         {
+            "title":"Review",
+            "body":"Deeply melancholy, but beautifully written, and wonderfully elegiac. . . . A book that I will long remember, and return to. George R. R. MartinStation Eleven is so compelling, so fearlessly imagined, that I wouldnt have put it down for anything. Ann PatchettA novel that carries a magnificent depth. . . . Its a sweeping look at where we are, how we got here and where we might go. While her previous novels are cracking good reads, this is her best yet. The Globe and MailGracefully written and suspenseful. . . . Its evocation of the collapse of our civilization is powerful. National PostIts hard to imagine a novel more perfectly suited, in both form and content, to this literary moment. The New Yorker"
+         },
+         {
+            "title":"From the Back Cover",
+            "body":"Winner of the toronto book award Winner of the Arthur C. Clarke Award Finalist for a National Book Award, the PEN/Faulkner Award, and the Sunburst Award Longlisted for the Baileys womens Prize for fiction, the international dublin Literary award, and the Andrew Carnegie Medal for Excellence in Fiction A New York Times bestseller A Globe and Mail bestseller An entertainment weekly best book of the year An audacious, darkly glittering novel about art, fame, and ambition set in the eerie days of civilizations collapseOne snowy night Arthur Leander, a famous Hollywood actor, dies onstage during a production of King Lear. Hours later, the world as we know it begins to dissolve. Moving back and forth in timefrom Arthurs early days as a film star to twenty years in the future, when a theatre troupe known as the Travelling Symphony roams the wasteland of what remainsthis suspenseful, elegiac, spellbinding novel charts the strange twists of fate that connect five people: Arthur, the man who tried to save him, Arthurs first wife, his oldest friend, and a young actress with the Travelling Symphony caught in the crosshairs of a dangerous self-proclaimed prophet. Sometimes terrifying, sometimes tender, Station Eleven tells a story about the relationships that sustain us, the ephemeral nature of fame, and the beauty of the world as we know it."
+         },
+         {
+            "title":"About the Author",
+            "body":"EMILY ST. JOHN MANDEL is the author of six novels, most recently Sea of Tranquility. The Glass Hotel was a finalist for the Scotiabank Giller Prize and was longlisted for the IMPAC Dublin Literary Award. Station Eleven was a finalist for a National Book Award and the PEN/Faulkner Award. It also won the 2015 Arthur C. Clarke Award, the Toronto Book Award and the Morning News Tournament of Books. Translated into thirty-four languages, Station Eleven was made into an acclaimed limited TV series. Emily St. John Mandel lives in New York City with her husband and daughter."
+         }
+      ],
+      "editorial_reviews_flat":"Review\nDeeply melancholy, but beautifully written, and wonderfully elegiac. . . . A book that I will long remember, and return to. George R. R. MartinStation Eleven is so compelling, so fearlessly imagined, that I wouldnt have put it down for anything. Ann PatchettA novel that carries a magnificent depth. . . . Its a sweeping look at where we are, how we got here and where we might go. While her previous novels are cracking good reads, this is her best yet. The Globe and MailGracefully written and suspenseful. . . . Its evocation of the collapse of our civilization is powerful. National PostIts hard to imagine a novel more perfectly suited, in both form and content, to this literary moment. The New Yorker\n\n\nFrom the Back Cover\nWinner of the toronto book award Winner of the Arthur C. Clarke Award Finalist for a National Book Award, the PEN/Faulkner Award, and the Sunburst Award Longlisted for the Baileys womens Prize for fiction, the international dublin Literary award, and the Andrew Carnegie Medal for Excellence in Fiction A New York Times bestseller A Globe and Mail bestseller An entertainment weekly best book of the year An audacious, darkly glittering novel about art, fame, and ambition set in the eerie days of civilizations collapseOne snowy night Arthur Leander, a famous Hollywood actor, dies onstage during a production of King Lear. Hours later, the world as we know it begins to dissolve. Moving back and forth in timefrom Arthurs early days as a film star to twenty years in the future, when a theatre troupe known as the Travelling Symphony roams the wasteland of what remainsthis suspenseful, elegiac, spellbinding novel charts the strange twists of fate that connect five people: Arthur, the man who tried to save him, Arthurs first wife, his oldest friend, and a young actress with the Travelling Symphony caught in the crosshairs of a dangerous self-proclaimed prophet. Sometimes terrifying, sometimes tender, Station Eleven tells a story about the relationships that sustain us, the ephemeral nature of fame, and the beauty of the world as we know it.\n\n\nAbout the Author\nEMILY ST. JOHN MANDEL is the author of six novels, most recently Sea of Tranquility. The Glass Hotel was a finalist for the Scotiabank Giller Prize and was longlisted for the IMPAC Dublin Literary Award. Station Eleven was a finalist for a National Book Award and the PEN/Faulkner Award. It also won the 2015 Arthur C. Clarke Award, the Toronto Book Award and the Morning News Tournament of Books. Translated into thirty-four languages, Station Eleven was made into an acclaimed limited TV series. Emily St. John Mandel lives in New York City with her husband and daughter.",
+      "main_image":{
+         "link":"https://m.media-amazon.com/images/I/513K7oMuSVL.jpg"
+      },
+      "images":[
+         {
+            "link":"https://m.media-amazon.com/images/I/81Y4yiUofGL.jpg"
+         }
+      ],
+      "images_count":1,
+      "images_flat":"https://m.media-amazon.com/images/I/81Y4yiUofGL.jpg",
+      "is_bundle":False,
+      "attributes":[
+         {
+            "name":"variant",
+            "value":"Paperback"
+         }
+      ],
+      "top_reviews":[
+         {
+            "id":"R39X5FP1RCNL81",
+            "title":"Read this book now. It's so relevant.",
+            "body":"Station Eleven Emily St. John Mandel  Imagine a world where the libraries and bookstores are closed. No theatres, concerts or films. Singing and laughing together can be deadly. Wait… we don’t need to imagine it. We’re living in this world now. There are so many parallels between the world of Station Eleven, and the present day Covid 19 pandemic, except the pandemic in the novel spreads even faster and is inevitably fatal. Victims die within two days of getting sick. So, it could be worse. This fictional pandemic manages to wipe out 99.9% of Earth’s population, more or less. There’s no way to be sure of the statistics because there’s no internet, or gas, or electricity. Small bands of survivors find each other, and sometimes form settlements, sometimes murder each other. The people who are interested in rebuilding a nonviolent civilization sometimes need to kill in self-defense, in attempts to save their friends or themselves, and their vision of a better, peaceful, productive life. The story begins before most people are aware of this deadly virus. Jeevan, a former paparazzi photographer, and paramedic in training, receives a phone call from a friend, warning him to stock up on groceries, and hide away in quarantine. He listens to his friend’s advice, and tries to warn his girlfriend, who replies, “It’ll be like SARS…They made such a big deal about it, then it blew over so fast.” Sound familiar? Seems to me that I heard someone say, “When the warm weather arrives, the Corona Virus will just disappear.” It hasn’t yet; after seven months we still have no vaccine and people are still dying. It’s August, it’s been warm for more than two months now, and the virus is still going strong. The story, like everyone’s life, is divided into chapters that take place before and after the pandemic. Kirsten, a young actress who was eight years old when the virus struck doesn’t remember much about her early life. After the pandemic, as an adult, she’s part of a traveling Shakespearean theatre troupe. They travel from “town” to “town” with a small orchestra, giving performances and concerts. “Because survival is insufficient.” – a quote from Star Trek that’s repeated throughout the novel, and is painted on the side of the players’ horse-drawn van. It’s their motto, their words to live by. Shakespeare’s life and career were also defined by and shaped by the plague. The Globe Theatre was often closed due to the disease. “Plague closed the theaters again and again, death flickering over the landscape.” Shakespeare lost people he loved and understood how death can strike fast, hot and sharp like a bolt of lightning. “Hell is the absence of the people you long for.” Tell me about it. I haven’t seen one of my daughters for a full year, but at least she’s still alive, and there’s a strong possibility we’ll be able to spend time together soon. I’ve visited my ninety-year-old father once in seven months, just last week. Yesterday, his assisted living facility went back into lockdown. The CEO tested positive for Covid. Again, and again, the characters of Station Eleven, their lives, thoughts, and dialogue resonate with me. Along with the lives of Kirsten and Javeen, another common thread holds the narrative together: a science fiction graphic novel, titled Station Eleven, created by Miranda, an artist. The fictional Dr. Eleven has also survived an apocalypse. He lives on a spaceship called Station Eleven, that’s disguised as an island, and says, “I stood looking over my damaged home and tried to forget the sweetness of life on Earth.” Kirsten, one of the main characters has forgotten, defensively blocked out, a memory of her life on the road when she was still a child. She also has difficulty remembering happier times. Kirsten has the only known copy of Station Eleven and its sequel, The Pursuit. She has memorized all of the text. “We long only to go home…We have been lost for so long…We long only for the world we were born into.” At one point in the story, these words buy her time and save her life. Groups of people have banded together and formed townships. One of them has a school, a library and a museum. There’s a debate about whether or not the school children should learn about history, the way civilization was before they were born. Do they need to picture what life was like when you could connect to other humans across vast distances via cellphones and computers, to travel in cars, and even airplanes? In their quest to reach this unusually evolved civilization, the Shakespearean theatre troupe and orchestra meet a vicious, homicidal Doomsday cult with a prophet who spouts such horrific nonsense that no one can logically argue with him. “They tell you they were saved (from the plague) because they’re superior people and free from sin…You just remember your own lost family and either cry or harbor murderous thoughts.” This prophet actually carries with him a page torn from a copy of Station Eleven. There is so much to admire and enjoy in this novel. It asks a question that most of us are asking ourselves now: Can we rebuild civilization the way we knew it, only even better? In most ways, this fictional pandemic and its aftermath are so much more horrific than our present-day pandemic, but in some ways this fictional world is more beautiful. The strength and heroism of the best of the survivors is inspiring to witness. I loved this book, and won’t stop thinking about it for a long time. I’ve recommended it to all of my friends who read books and like to discuss them, a pastime I’m very fond of, even more-so during this difficult time. “Because survival is insufficient.”Read more",
+            "body_html":"<div data-a-expander-name=\"review_text_read_more\" data-a-expander-collapsed-height=\"300\" class=\"a-expander-collapsed-height a-row a-expander-container a-expander-partial-collapse-container\" style=\"max-height:300px\"><div data-hook=\"review-collapsed\" aria-expanded=\"False\" class=\"a-expander-content reviewText review-text-content a-expander-partial-collapse-content\">             <span>Station Eleven<br>Emily St. John Mandel<br><br>Imagine a world where the libraries and bookstores are closed. No theatres, concerts or films. Singing and laughing together can be deadly. Wait… we don’t need to imagine it. We’re living in this world now. There are so many parallels between the world of Station Eleven, and the present day Covid 19 pandemic, except the pandemic in the novel spreads even faster and is inevitably fatal. Victims die within two days of getting sick. So, it could be worse. This fictional pandemic manages to wipe out 99.9% of Earth’s population, more or less. There’s no way to be sure of the statistics because there’s no internet, or gas, or electricity. Small bands of survivors find each other, and sometimes form settlements, sometimes murder each other. The people who are interested in rebuilding a nonviolent civilization sometimes need to kill in self-defense, in attempts to save their friends or themselves, and their vision of a better, peaceful, productive life.<br>The story begins before most people are aware of this deadly virus. Jeevan, a former paparazzi photographer, and paramedic in training, receives a phone call from a friend, warning him to stock up on groceries, and hide away in quarantine. He listens to his friend’s advice, and tries to warn his girlfriend, who replies, “It’ll be like SARS…They made such a big deal about it, then it blew over so fast.” Sound familiar? Seems to me that I heard someone say, “When the warm weather arrives, the Corona Virus will just disappear.” It hasn’t yet; after seven months we still have no vaccine and people are still dying. It’s August, it’s been warm for more than two months now, and the virus is still going strong.<br>The story, like everyone’s life, is divided into chapters that take place before and after the pandemic. Kirsten, a young actress who was eight years old when the virus struck doesn’t remember much about her early life. After the pandemic, as an adult, she’s part of a traveling Shakespearean theatre troupe. They travel from “town” to “town” with a small orchestra, giving performances and concerts. “Because survival is insufficient.” – a quote from Star Trek that’s repeated throughout the novel, and is painted on the side of the players’ horse-drawn van. It’s their motto, their words to live by. Shakespeare’s life and career were also defined by and shaped by the plague. The Globe Theatre was often closed due to the disease. “Plague closed the theaters again and again, death flickering over the landscape.” Shakespeare lost people he loved and understood how death can strike fast, hot and sharp like a bolt of lightning. “Hell is the absence of the people you long for.” Tell me about it. I haven’t seen one of my daughters for a full year, but at least she’s still alive, and there’s a strong possibility we’ll be able to spend time together soon. I’ve visited my ninety-year-old father once in seven months, just last week. Yesterday, his assisted living facility went back into lockdown. The CEO tested positive for Covid. Again, and again, the characters of Station Eleven, their lives, thoughts, and dialogue resonate with me.<br>Along with the lives of Kirsten and Javeen, another common thread holds the narrative together: a science fiction graphic novel, titled Station Eleven, created by Miranda, an artist. The fictional Dr. Eleven has also survived an apocalypse. He lives on a spaceship called Station Eleven, that’s disguised as an island, and says, “I stood looking over my damaged home and tried to forget the sweetness of life on Earth.” Kirsten, one of the main characters has forgotten, defensively blocked out, a memory of her life on the road when she was still a child. She also has difficulty remembering happier times. Kirsten has the only known copy of Station Eleven and its sequel, The Pursuit. She has memorized all of the text. “We long only to go home…We have been lost for so long…We long only for the world we were born into.” At one point in the story, these words buy her time and save her life.<br>Groups of people have banded together and formed townships. One of them has a school, a library and a museum. There’s a debate about whether or not the school children should learn about history, the way civilization was before they were born. Do they need to picture what life was like when you could connect to other humans across vast distances via cellphones and computers, to travel in cars, and even airplanes?<br>In their quest to reach this unusually evolved civilization, the Shakespearean theatre troupe and orchestra meet a vicious, homicidal Doomsday cult with a prophet who spouts such horrific nonsense that no one can logically argue with him.<br>“They tell you they were saved (from the plague) because they’re superior people and free from sin…You just remember your own lost family and either cry or harbor murderous thoughts.”<br>This prophet actually carries with him a page torn from a copy of Station Eleven.<br>There is so much to admire and enjoy in this novel. It asks a question that most of us are asking ourselves now: Can we rebuild civilization the way we knew it, only even better?<br>In most ways, this fictional pandemic and its aftermath are so much more horrific than our present-day pandemic, but in some ways this fictional world is more beautiful. The strength and heroism of the best of the survivors is inspiring to witness.<br>I loved this book, and won’t stop thinking about it for a long time. I’ve recommended it to all of my friends who read books and like to discuss them, a pastime I’m very fond of, even more-so during this difficult time. “Because survival is insufficient.”</span>   </div><div class=\"a-expander-header a-expander-partial-collapse-header\"><div class=\"a-expander-content-fade\"></div><a href=\"javascript:void(0)\" data-csa-c-func-deps=\"aui-da-a-expander-toggle\" data-csa-c-type=\"widget\" data-csa-interaction-events=\"click\" data-hook=\"expand-collapse-read-more-less\" aria-label=\"Toggle full review text\" aria-expanded=\"False\" role=\"button\" data-action=\"a-expander-toggle\" class=\"a-declarative\" data-a-expander-toggle=\"{&quot;allowLinkDefault&quot;:True, &quot;expand_prompt&quot;:&quot;Read more&quot;, &quot;collapse_prompt&quot;:&quot;Read less&quot;}\"><i class=\"a-icon a-icon-extender-expand\"></i><span class=\"a-expander-prompt\">Read more</span></a></div></div>",
+            "link":"https://www.amazon.com/gp/customer-reviews/R39X5FP1RCNL81/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8&ASIN=1443434876",
+            "rating":5,
+            "date":{
+               "raw":"Reviewed in the United States 🇺🇸 on August 7, 2020",
+               "utc":"2020-08-07T00:00:00.000Z"
+            },
+            "profile":{
+               "name":"Alyson Larrabee",
+               "link":"https://www.amazon.com/gp/profile/amzn1.account.AGTTW7H7E4B372KZA4OCYMJ6SKCQ/ref=cm_cr_dp_d_gw_tr?ie=UTF8",
+               "id":"AGTTW7H7E4B372KZA4OCYMJ6SKCQ",
+               "image":"https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/d5fb52d1-c373-42b2-9bf3-3139a2355d61._CR0,1.0,330,330_SX48_.jpg"
+            },
+            "vine_program":False,
+            "verified_purchase":True,
+            "helpful_votes":40,
+            "review_country":"us",
+            "is_global_review":False
+         },
+         {
+            "id":"R3MQ2XUFGM4Z7D",
+            "title":"One of the very best dystopian novels I've read in many years",
+            "body":"This is not the plot for Emily St. John Mandel’s captivating post-apocalyptic novel, Station Eleven:  Doctor Eleven has fled the destruction of Earth to take up residence on Station Eleven, a space station the size of a small planet that is nearly covered by water. (He has taken his name from that of the station.) There, he struggles against the dark forces of the Undersea, who have murdered his mentor and the station’s former chief, Lonagan.  That was no plot synthesis. It’s the prophetic storyline of a series of graphic novels created over several years by Miranda Carroll, one of the central characters in the intricate web of events St. John Mandel relates in her engrossing novel. Though the comic books appear to be incidental early in the story, they crop up again and again along the way and will prove to be the thread that ties together the fates of the novel’s characters.  Station Eleven is, at heart, the story of an A-list Hollywood film star named Arthur Leander and several of the people whose lives cross with him before the Collapse. Leander, playing the part of King Lear in a stage production in Toronto, suffers a heart attack and collapses on-stage during Act IV. A paramedic-in-training named Jeevan Chaudhary instantly leaps onto the stage from the audience but is unable to save him. The tragedy is witnessed by Kirsten Raymonde, one of three eight-year-old girls who have been playing small, silent roles in the production. Meanwhile, a virulent mutation of influenza, called the Georgian Flu, has been killing off the population of Georgia and Russia and is rapidly fanning out across the world in airplanes filled with refugees from the pandemic. Arthur has died just days before the disease reaches North America.  St. John Mandel’s story unfolds in a rapid succession of short scenes in the post-apocalyptic world along the shores of Lakes Huron and Michigan 15 and 20 years after the collapse. “Collapse” is the popular term for the apocalypse brought on by the pandemic. There are frequent flashbacks into the lives of the central characters: Arthur Leander; Miranda Carroll, Arthur’s first wife; Elizabeth Colton, his second wife, and their son Tyler; Clark Thompson, Arthur’s British friend from acting classes in Toronto decades earlier; Kirsten, whose life St. John Mandel chronicles in detail throughout the years after the Collapse; and Jeevan Chaudhary. Through the twists and turns of the plot, the lives of these characters frequently intersect. One of them dies of the Georgian Flu. We visit the others both in flashbacks to their pre-pandemic lives and many years after the collapse.  In the post-apocalyptic world of this wonderful novel, a National Book Award Finalist, there are no functioning cities. Survivors have scattered over the countryside, some of them coming together in communities of at most a couple of hundred people. The most populous community is one that occupies the airport at a fictional Michigan town, Severn City, near the shore of Lake Michigan. There, someone has set up a Museum of Civilization in the Skymiles Lounge, displaying mobile phones, electronic games, credit cards, and other artifacts of lives long gone.  This is a world fraught with danger. In the years immediately following the collapse, many survivors walk for hundreds of miles in search of food and other resources. Distrust leads many to kill anyone who approaches them. Meanwhile, feral humans rove the earth, preying on travelers unable to defend themselves. Soon, madness takes hold of many, and would-be prophets begin to collect followers, imposing their will through force on anyone they encounter.  “Civilization in Year Twenty is an archipelago of small towns. These towns had fought off ferals, buried their neighbors, lived and died and suffered together in the blood-drenched years just after the collapse, survived against unspeakable odds and then only by holding together into the calm, and these places didn’t go out of their way to welcome strangers.”  In this bleak environment, the Traveling Symphony provides a desperately needed break from the tedium and danger of survival, wandering from town to town in old pickup trucks drawn by horses. The lead truck displays the Symphony’s motto: “Because survival is insufficient.” A merger between a small troupe of actors and the survivors of a symphony orchestra, the “Symphony performed music—classical, jazz, orchestral arrangements of pre-collapse pop songs—and Shakespeare.” Kirsten, the eight-year-old girl who witnessed Arthur Leander’s death, has joined the Symphony as an actor. “[T]his collection of petty jealousies, neuroses, undiagnosed PTSD cases, and simmering resentments lived together, traveled together, rehearsed together, performed together, 365 days of the year, permanent company, permanent tour.”  St. John Mandel writes, “What was lost in the collapse: almost everything, almost everyone, but there is still beauty. Twilight in the altered world, a performance of a Midsummer Night’s Dream in a parking lot . . . Lake Michigan shining a half mile away. Kirsten as Titania, a crown of flowers on her close-cropped hair . . .”  As Kirsten observes in an interview in Year 15 with the first newspaper to appear in the region (a hand-printed monthly) , “Some places, you pass through once and never return, because you can tell something’s very wrong. Everyone’s afraid, or it seems like some people have enough to eat and other people are starving, or you see pregnant eleven-year-olds and you know the place is either lawless or in the grip of something, a cult of some kind. There are towns that are perfectly reasonable, logical systems of governance and such, and then you pass through two years later and they’ve slid into disarray.”  But this is not a story without hope. In the final scenes of the novel, electric streetlights are shining brightly in a town distant from the Symphony’s last stop at the Museum of Civilization. A livable world may yet come to life.  Station Eleven is science fiction at its best, a powerful depiction of a dystopian future.Read more",
+            "body_html":"<div data-a-expander-name=\"review_text_read_more\" data-a-expander-collapsed-height=\"300\" class=\"a-expander-collapsed-height a-row a-expander-container a-expander-partial-collapse-container\" style=\"max-height:300px\"><div data-hook=\"review-collapsed\" aria-expanded=\"False\" class=\"a-expander-content reviewText review-text-content a-expander-partial-collapse-content\">             <span>This is not the plot for Emily St. John Mandel’s captivating post-apocalyptic novel, Station Eleven:<br><br>Doctor Eleven has fled the destruction of Earth to take up residence on Station Eleven, a space station the size of a small planet that is nearly covered by water. (He has taken his name from that of the station.) There, he struggles against the dark forces of the Undersea, who have murdered his mentor and the station’s former chief, Lonagan.<br><br>That was no plot synthesis. It’s the prophetic storyline of a series of graphic novels created over several years by Miranda Carroll, one of the central characters in the intricate web of events St. John Mandel relates in her engrossing novel. Though the comic books appear to be incidental early in the story, they crop up again and again along the way and will prove to be the thread that ties together the fates of the novel’s characters.<br><br>Station Eleven is, at heart, the story of an A-list Hollywood film star named Arthur Leander and several of the people whose lives cross with him before the Collapse. Leander, playing the part of King Lear in a stage production in Toronto, suffers a heart attack and collapses on-stage during Act IV. A paramedic-in-training named Jeevan Chaudhary instantly leaps onto the stage from the audience but is unable to save him. The tragedy is witnessed by Kirsten Raymonde, one of three eight-year-old girls who have been playing small, silent roles in the production. Meanwhile, a virulent mutation of influenza, called the Georgian Flu, has been killing off the population of Georgia and Russia and is rapidly fanning out across the world in airplanes filled with refugees from the pandemic. Arthur has died just days before the disease reaches North America.<br><br>St. John Mandel’s story unfolds in a rapid succession of short scenes in the post-apocalyptic world along the shores of Lakes Huron and Michigan 15 and 20 years after the collapse. “Collapse” is the popular term for the apocalypse brought on by the pandemic. There are frequent flashbacks into the lives of the central characters: Arthur Leander; Miranda Carroll, Arthur’s first wife; Elizabeth Colton, his second wife, and their son Tyler; Clark Thompson, Arthur’s British friend from acting classes in Toronto decades earlier; Kirsten, whose life St. John Mandel chronicles in detail throughout the years after the Collapse; and Jeevan Chaudhary. Through the twists and turns of the plot, the lives of these characters frequently intersect. One of them dies of the Georgian Flu. We visit the others both in flashbacks to their pre-pandemic lives and many years after the collapse.<br><br>In the post-apocalyptic world of this wonderful novel, a National Book Award Finalist, there are no functioning cities. Survivors have scattered over the countryside, some of them coming together in communities of at most a couple of hundred people. The most populous community is one that occupies the airport at a fictional Michigan town, Severn City, near the shore of Lake Michigan. There, someone has set up a Museum of Civilization in the Skymiles Lounge, displaying mobile phones, electronic games, credit cards, and other artifacts of lives long gone.<br><br>This is a world fraught with danger. In the years immediately following the collapse, many survivors walk for hundreds of miles in search of food and other resources. Distrust leads many to kill anyone who approaches them. Meanwhile, feral humans rove the earth, preying on travelers unable to defend themselves. Soon, madness takes hold of many, and would-be prophets begin to collect followers, imposing their will through force on anyone they encounter.<br><br>“Civilization in Year Twenty is an archipelago of small towns. These towns had fought off ferals, buried their neighbors, lived and died and suffered together in the blood-drenched years just after the collapse, survived against unspeakable odds and then only by holding together into the calm, and these places didn’t go out of their way to welcome strangers.”<br><br>In this bleak environment, the Traveling Symphony provides a desperately needed break from the tedium and danger of survival, wandering from town to town in old pickup trucks drawn by horses. The lead truck displays the Symphony’s motto: “Because survival is insufficient.” A merger between a small troupe of actors and the survivors of a symphony orchestra, the “Symphony performed music—classical, jazz, orchestral arrangements of pre-collapse pop songs—and Shakespeare.” Kirsten, the eight-year-old girl who witnessed Arthur Leander’s death, has joined the Symphony as an actor. “[T]his collection of petty jealousies, neuroses, undiagnosed PTSD cases, and simmering resentments lived together, traveled together, rehearsed together, performed together, 365 days of the year, permanent company, permanent tour.”<br><br>St. John Mandel writes, “What was lost in the collapse: almost everything, almost everyone, but there is still beauty. Twilight in the altered world, a performance of a Midsummer Night’s Dream in a parking lot . . . Lake Michigan shining a half mile away. Kirsten as Titania, a crown of flowers on her close-cropped hair . . .”<br><br>As Kirsten observes in an interview in Year 15 with the first newspaper to appear in the region (a hand-printed monthly) , “Some places, you pass through once and never return, because you can tell something’s very wrong. Everyone’s afraid, or it seems like some people have enough to eat and other people are starving, or you see pregnant eleven-year-olds and you know the place is either lawless or in the grip of something, a cult of some kind. There are towns that are perfectly reasonable, logical systems of governance and such, and then you pass through two years later and they’ve slid into disarray.”<br><br>But this is not a story without hope. In the final scenes of the novel, electric streetlights are shining brightly in a town distant from the Symphony’s last stop at the Museum of Civilization. A livable world may yet come to life.<br><br>Station Eleven is science fiction at its best, a powerful depiction of a dystopian future.</span>   </div><div class=\"a-expander-header a-expander-partial-collapse-header\"><div class=\"a-expander-content-fade\"></div><a href=\"javascript:void(0)\" data-csa-c-func-deps=\"aui-da-a-expander-toggle\" data-csa-c-type=\"widget\" data-csa-interaction-events=\"click\" data-hook=\"expand-collapse-read-more-less\" aria-label=\"Toggle full review text\" aria-expanded=\"False\" role=\"button\" data-action=\"a-expander-toggle\" class=\"a-declarative\" data-a-expander-toggle=\"{&quot;allowLinkDefault&quot;:True, &quot;expand_prompt&quot;:&quot;Read more&quot;, &quot;collapse_prompt&quot;:&quot;Read less&quot;}\"><i class=\"a-icon a-icon-extender-expand\"></i><span class=\"a-expander-prompt\">Read more</span></a></div></div>",
+            "link":"https://www.amazon.com/gp/customer-reviews/R3MQ2XUFGM4Z7D/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8&ASIN=1443434876",
+            "rating":5,
+            "date":{
+               "raw":"Reviewed in the United States 🇺🇸 on May 1, 2017",
+               "utc":"2017-05-01T00:00:00.000Z"
+            },
+            "profile":{
+               "name":"Mal Warwick",
+               "link":"https://www.amazon.com/gp/profile/amzn1.account.AHNTZUIP4IVA6EOUNB36RBEBKAFA/ref=cm_cr_dp_d_gw_tr?ie=UTF8",
+               "id":"AHNTZUIP4IVA6EOUNB36RBEBKAFA",
+               "image":"https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/1cbc908a-5323-4e15-a20f-f82c1ea8a437._CR0,0,150,150_SX48_.jpg"
+            },
+            "vine_program":False,
+            "verified_purchase":True,
+            "helpful_votes":26,
+            "review_country":"us",
+            "is_global_review":False
+         },
+         {
+            "id":"RTF0UV10NOP73",
+            "title":"It was exactly like waking up from a dream.",
+            "body":"Station Eleven is misleading. Because what it's purportedly about is a troupe of traveling thespians who keep the arts alive in a post-apocalyptic world. But what it's really about is people.  It's somewhat easy to identify bifurcating points in history; to condense things down to a before, and an after. It's done all the time, on scales large and small. You can identify hundreds—thousands—of such points, and you will find that they are all measured in more or less the same way. That measurement, of course, being the affect these points had on people.  And so Station Eleven is about one of these bifurcations. A societal collapse brought on by pandemic (and yes, this was far more terrifying to read about in a post-covid world, thank you) that broke the world, and left it unrecognizable. But even in a dead world of broken dreams roots grow, and from them come flowers (because survival is insufficient, after all).  What Emily St. John Mandel has written here then is a dystopic post-apocalypse story, yes. But you don't go in for that. You go in for the way the webs of the past are interwoven with the threads of the present; inextricably bound together in ways that are all too human. You go in because whether before or after the dividing line, we are touched most by the regrets and the beauty that make up a life.Read more",
+            "body_html":"<div data-a-expander-name=\"review_text_read_more\" data-a-expander-collapsed-height=\"300\" class=\"a-expander-collapsed-height a-row a-expander-container a-expander-partial-collapse-container\" style=\"max-height:300px\"><div data-hook=\"review-collapsed\" aria-expanded=\"False\" class=\"a-expander-content reviewText review-text-content a-expander-partial-collapse-content\">             <span>Station Eleven is misleading. Because what it\\'s purportedly about is a troupe of traveling thespians who keep the arts alive in a post-apocalyptic world. But what it\\'s really about is people.<br><br>It\\'s somewhat easy to identify bifurcating points in history; to condense things down to a before, and an after. It\\'s done all the time, on scales large and small. You can identify hundreds—thousands—of such points, and you will find that they are all measured in more or less the same way. That measurement, of course, being the affect these points had on people.<br><br>And so Station Eleven is about one of these bifurcations. A societal collapse brought on by pandemic (and yes, this was far more terrifying to read about in a post-covid world, thank you) that broke the world, and left it unrecognizable. But even in a dead world of broken dreams roots grow, and from them come flowers (because survival is insufficient, after all).<br><br>What Emily St. John Mandel has written here then is a dystopic post-apocalypse story, yes. But you don\\'t go in for that. You go in for the way the webs of the past are interwoven with the threads of the present; inextricably bound together in ways that are all too human. You go in because whether before or after the dividing line, we are touched most by the regrets and the beauty that make up a life.</span>   </div><div class=\"a-expander-header a-expander-partial-collapse-header\"><div class=\"a-expander-content-fade\"></div><a href=\"javascript:void(0)\" data-csa-c-func-deps=\"aui-da-a-expander-toggle\" data-csa-c-type=\"widget\" data-csa-interaction-events=\"click\" data-hook=\"expand-collapse-read-more-less\" aria-label=\"Toggle full review text\" aria-expanded=\"False\" role=\"button\" data-action=\"a-expander-toggle\" class=\"a-declarative\" data-a-expander-toggle=\"{&quot;allowLinkDefault&quot;:True, &quot;expand_prompt&quot;:&quot;Read more&quot;, &quot;collapse_prompt&quot;:&quot;Read less&quot;}\"><i class=\"a-icon a-icon-extender-expand\"></i><span class=\"a-expander-prompt\">Read more</span></a></div></div>",
+            "link":"https://www.amazon.com/gp/customer-reviews/RTF0UV10NOP73/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8&ASIN=1443434876",
+            "rating":4,
+            "date":{
+               "raw":"Reviewed in the United States 🇺🇸 on November 14, 2022",
+               "utc":"2022-11-14T00:00:00.000Z"
+            },
+            "profile":{
+               "name":"Bryan Desmond",
+               "link":"https://www.amazon.com/gp/profile/amzn1.account.AFR6FSPESGVDVDM7LXGX4CWS2AXA/ref=cm_cr_dp_d_gw_tr?ie=UTF8",
+               "id":"AFR6FSPESGVDVDM7LXGX4CWS2AXA",
+               "image":"https://images-na.ssl-images-amazon.com/images/S/amazon-avatars-global/00eb7f3a-dd1c-4987-b82a-7188a38cabb1._CR0,0,376,376_SX48_.jpg"
+            },
+            "vine_program":False,
+            "verified_purchase":True,
+            "helpful_votes":3,
+            "review_country":"us",
+            "is_global_review":False
+         },
+         {
+            "id":"R1U63FQUF50LML",
+            "title":"Wow.",
+            "body":"I’m impressed. The story is appropriately elaborate. The characters are deep. Her writing captured my mind and forced me to ask questions about, not only the lives of the characters, but my own life. I wanted to continue to know more and more. She explains everything with enough details to give a clear and focused image, but succinct enough not to lose my interest. I recommend this to anyone with a penchant for end-of-the-world-as-we-know-it stories.Read more",
+            "body_html":"<div data-a-expander-name=\"review_text_read_more\" data-a-expander-collapsed-height=\"300\" class=\"a-expander-collapsed-height a-row a-expander-container a-expander-partial-collapse-container\" style=\"max-height:300px\"><div data-hook=\"review-collapsed\" aria-expanded=\"False\" class=\"a-expander-content reviewText review-text-content a-expander-partial-collapse-content\">             <span>I’m impressed. The story is appropriately elaborate. The characters are deep. Her writing captured my mind and forced me to ask questions about, not only the lives of the characters, but my own life. I wanted to continue to know more and more. She explains everything with enough details to give a clear and focused image, but succinct enough not to lose my interest. I recommend this to anyone with a penchant for end-of-the-world-as-we-know-it stories.</span>   </div><div class=\"a-expander-header a-expander-partial-collapse-header\"><div class=\"a-expander-content-fade\"></div><a href=\"javascript:void(0)\" data-csa-c-func-deps=\"aui-da-a-expander-toggle\" data-csa-c-type=\"widget\" data-csa-interaction-events=\"click\" data-hook=\"expand-collapse-read-more-less\" aria-label=\"Toggle full review text\" aria-expanded=\"False\" role=\"button\" data-action=\"a-expander-toggle\" class=\"a-declarative\" data-a-expander-toggle=\"{&quot;allowLinkDefault&quot;:True, &quot;expand_prompt&quot;:&quot;Read more&quot;, &quot;collapse_prompt&quot;:&quot;Read less&quot;}\"><i class=\"a-icon a-icon-extender-expand\"></i><span class=\"a-expander-prompt\">Read more</span></a></div></div>",
+            "link":"https://www.amazon.com/gp/customer-reviews/R1U63FQUF50LML/ref=cm_cr_dp_d_rvw_ttl?ie=UTF8&ASIN=1443434876",
+            "rating":5,
+            "date":{
+               "raw":"Reviewed in the United States 🇺🇸 on January 22, 2023",
+               "utc":"2023-01-22T00:00:00.000Z"
+            },
+            "profile":{
+               "name":"kate",
+               "link":"https://www.amazon.com/gp/profile/amzn1.account.AGWP3W7NZEZ2JHQRBDRK7IF5GD5Q/ref=cm_cr_dp_d_gw_tr?ie=UTF8",
+               "id":"AGWP3W7NZEZ2JHQRBDRK7IF5GD5Q"
+            },
+            "vine_program":False,
+            "verified_purchase":True,
+            "review_country":"us",
+            "is_global_review":False
+         },
+         {
+            "id":"R3JE4NKECZCRCR",
+            "title":"Not your usual post-apocalyptic novel",
+            "body":"It all begins an evening in Toronto. A man goes to see King Lear with his girlfriend. A famous actor plays Lear but during the madness scene he collapses on stage. The man, who has medical training rushes to the stage to help but the famous actor dies. He goes out of the theatre. It's night, everyone is gone, his girlfriend didn't wait for him. He starts walking back home when he receives a call on his mobile from one of his friend who works in a hospital. He tells him to stock on food and to lock himself in his flat: a pandemic is spreading.  Station Eleven isn't your usual apocalyptic or post-apocalyptic novel: the focus isn't the pandemic itself. The story isn't a linear one and alternates, without any obvious logic at first, between moments before the pandemic, during the pandemic or after it. The reader realises quite quickly that the focus actually is the characters and the consequences of the pandemic on them. There's no epic tale of survival, but tales of self-discovery and how to find your place in this world.  I have really loved the style: it's beautiful written, sometimes very striking, and Emily St John Mandel varies her narrative choices. Some readers may dislike the absence of linearity: clearly, it's not Flood by Baxter, and it can be frustrating to lose the storyline of one character without knowing if St John Mandel will go back to him or her. But this absence of linearity is actually what makes the beauty of the story: the characters' fate and their choices are examined under an unexpected angle. In a linear story, you wouldn't have felt a single shred of pity for some of them, but with this storytelling choice, they suddenly appear in a completely different light. The story doesn't really bring anything new to the apocalyptic and post-apocalyptic genre, but it is gripping and sometimes very touching.  It is a remarkably beautiful and emotional novel that left me speechless for a few minutes after having finished it.Read more",
+            "body_html":"<div data-a-expander-name=\"review_text_read_more\" data-a-expander-collapsed-height=\"300\" class=\"a-expander-collapsed-height a-row a-expander-container a-expander-partial-collapse-container\" style=\"max-height:300px\"><div data-hook=\"review-collapsed\" aria-expanded=\"False\" class=\"a-expander-content reviewText review-text-content a-expander-partial-collapse-content\">             <span>It all begins an evening in Toronto. A man goes to see King Lear with his girlfriend. A famous actor plays Lear but during the madness scene he collapses on stage. The man, who has medical training rushes to the stage to help but the famous actor dies. He goes out of the theatre. It\\'s night, everyone is gone, his girlfriend didn\\'t wait for him. He starts walking back home when he receives a call on his mobile from one of his friend who works in a hospital. He tells him to stock on food and to lock himself in his flat: a pandemic is spreading.<br><br>Station Eleven isn\\'t your usual apocalyptic or post-apocalyptic novel: the focus isn\\'t the pandemic itself. The story isn\\'t a linear one and alternates, without any obvious logic at first, between moments before the pandemic, during the pandemic or after it. The reader realises quite quickly that the focus actually is the characters and the consequences of the pandemic on them. There\\'s no epic tale of survival, but tales of self-discovery and how to find your place in this world.<br><br>I have really loved the style: it\\'s beautiful written, sometimes very striking, and Emily St John Mandel varies her narrative choices. Some readers may dislike the absence of linearity: clearly, it\\'s not Flood by Baxter, and it can be frustrating to lose the storyline of one character without knowing if St John Mandel will go back to him or her. But this absence of linearity is actually what makes the beauty of the story: the characters\\' fate and their choices are examined under an unexpected angle. In a linear story, you wouldn\\'t have felt a single shred of pity for some of them, but with this storytelling choice, they suddenly appear in a completely different light.<br>The story doesn\\'t really bring anything new to the apocalyptic and post-apocalyptic genre, but it is gripping and sometimes very touching.<br><br>It is a remarkably beautiful and emotional novel that left me speechless for a few minutes after having finished it.</span>   </div><div class=\"a-expander-header a-expander-partial-collapse-header\"><div class=\"a-expander-content-fade\"></div><a href=\"javascript:void(0)\" data-csa-c-func-deps=\"aui-da-a-expander-toggle\" data-csa-c-type=\"widget\" data-csa-interaction-events=\"click\" data-hook=\"expand-collapse-read-more-less\" aria-label=\"Toggle full review text\" aria-expanded=\"False\" role=\"button\" data-action=\"a-expander-toggle\" class=\"a-declarative\" data-a-expander-toggle=\"{&quot;allowLinkDefault&quot;:True, &quot;expand_prompt&quot;:&quot;Read more&quot;, &quot;collapse_prompt&quot;:&quot;Read less&quot;}\"><i class=\"a-icon a-icon-extender-expand\"></i><span class=\"a-expander-prompt\">Read more</span></a></div></div>",
+            "rating":5,
+            "date":{
+               "raw":"Reviewed in the United Kingdom 🇬🇧 on April 21, 2017",
+               "utc":"2017-04-21T00:00:00.000Z"
+            },
+            "profile":{
+               "name":"The Middle Shelf",
+               "image":"https://images-eu.ssl-images-amazon.com/images/S/amazon-avatars-global/353e40b0-9a01-4a16-a953-280fc0895533._CR84,0,331,331_SX48_.jpg"
+            },
+            "vine_program":False,
+            "verified_purchase":True,
+            "helpful_votes":108,
+            "review_country":"gb",
+            "is_global_review":True
+         },
+         {
+            "id":"R2D3X1OON6EPM4",
+            "title":"A Thoughtful Read",
+            "body":"As you can see there are a number of lower starred reviews on this site, and there is probably a good reason for this. It seems that people expected to read a post-apocalyptic novel, and that is it, but although of course although this story does fall into that category, there is a lot more to it, meaning that this is more of a genre crossing tale.  We have the years after the singular event that causes the post-apocalyptic dystopia that we read of, but we also have before then and not only the events that led up to the massive flu pandemic, Georgia Flu here, but people who are in one way or another circling the actor, Arthur Leander. As we read this we see how important this character is, although he spectacularly dies on stage near the beginning of this, whilst playing King Lear.  Of course, it is unlikely that a pandemic would kill so many people throughout the world in so quick a period, and there is missing some of the really hard-hitting pieces about life immediately after such an event, although rape and murder do come up in the story. This tale concentrates on other things, which makes it so interesting and giving us food for thought that is usually missed.  We meet throughout this book then characters who are related to Leander, through marriage, and even his child, as well as friends of his, and those who for one reason or another have come into contact with him. This may not seem that important at the beginning of this, but it is as you read further into the tale.  By flicking between the past and the present so Emily St John Mandel keeps us intently reading, as we see how all the different pieces come together. We read of Kirsten here then who is travelling with the Symphony, a company that puts on musical events and Shakespearean plays, and as we see, when they eventually reach a town on their usual circuit to pick up a couple of their members, so things have changed, with the so-called Prophet in charge, and his cult. Kirsten was a child actor, who was there when Leander died, and also who was given a couple of comics by him, which were created by his first wife. This is only one link we see between the past and present.  This makes us think of the importance of art and culture on our lives, as well as the loss of those we know, and nostalgia for a past that no longer exists. Therefore memory plays a part here, and how civilisation plays an important part of our lives. By the latter years mentioned here, so life has sort of fallen into a routine, where some control and a touch of normality has started to seep into the everyday. This reminds us that although after some cataclysmic event life may change, eventually it will all fall back into a certain normality, and we can see this throughout history, with the plague, and other epidemics. Whilst people from before such an event are alive, so things can be passed onto newer generations, to keep certain practices and thoughts and ideals alive. Along with this we are also reminded that it is not in living that people gain immortality, but in what we do, and what we are remembered for – although nowadays for some people they think that just posting endless selfies is a fulfilling life. Therefore if you are looking for a basic post-apocalyptic novel you will not find it here. However, if you are looking for something a bit more thoughtful and intelligent, as well as literary, then here you have something that you should enjoy.Read more",
+            "body_html":"<div data-a-expander-name=\"review_text_read_more\" data-a-expander-collapsed-height=\"300\" class=\"a-expander-collapsed-height a-row a-expander-container a-expander-partial-collapse-container\" style=\"max-height:300px\"><div data-hook=\"review-collapsed\" aria-expanded=\"False\" class=\"a-expander-content reviewText review-text-content a-expander-partial-collapse-content\">             <span>As you can see there are a number of lower starred reviews on this site, and there is probably a good reason for this. It seems that people expected to read a post-apocalyptic novel, and that is it, but although of course although this story does fall into that category, there is a lot more to it, meaning that this is more of a genre crossing tale.<br><br>We have the years after the singular event that causes the post-apocalyptic dystopia that we read of, but we also have before then and not only the events that led up to the massive flu pandemic, Georgia Flu here, but people who are in one way or another circling the actor, Arthur Leander. As we read this we see how important this character is, although he spectacularly dies on stage near the beginning of this, whilst playing King Lear.<br><br>Of course, it is unlikely that a pandemic would kill so many people throughout the world in so quick a period, and there is missing some of the really hard-hitting pieces about life immediately after such an event, although rape and murder do come up in the story. This tale concentrates on other things, which makes it so interesting and giving us food for thought that is usually missed.<br><br>We meet throughout this book then characters who are related to Leander, through marriage, and even his child, as well as friends of his, and those who for one reason or another have come into contact with him. This may not seem that important at the beginning of this, but it is as you read further into the tale.<br><br>By flicking between the past and the present so Emily St John Mandel keeps us intently reading, as we see how all the different pieces come together. We read of Kirsten here then who is travelling with the Symphony, a company that puts on musical events and Shakespearean plays, and as we see, when they eventually reach a town on their usual circuit to pick up a couple of their members, so things have changed, with the so-called Prophet in charge, and his cult. Kirsten was a child actor, who was there when Leander died, and also who was given a couple of comics by him, which were created by his first wife. This is only one link we see between the past and present.<br><br>This makes us think of the importance of art and culture on our lives, as well as the loss of those we know, and nostalgia for a past that no longer exists. Therefore memory plays a part here, and how civilisation plays an important part of our lives. By the latter years mentioned here, so life has sort of fallen into a routine, where some control and a touch of normality has started to seep into the everyday. This reminds us that although after some cataclysmic event life may change, eventually it will all fall back into a certain normality, and we can see this throughout history, with the plague, and other epidemics. Whilst people from before such an event are alive, so things can be passed onto newer generations, to keep certain practices and thoughts and ideals alive. Along with this we are also reminded that it is not in living that people gain immortality, but in what we do, and what we are remembered for – although nowadays for some people they think that just posting endless selfies is a fulfilling life. Therefore if you are looking for a basic post-apocalyptic novel you will not find it here. However, if you are looking for something a bit more thoughtful and intelligent, as well as literary, then here you have something that you should enjoy.</span>   </div><div class=\"a-expander-header a-expander-partial-collapse-header\"><div class=\"a-expander-content-fade\"></div><a href=\"javascript:void(0)\" data-csa-c-func-deps=\"aui-da-a-expander-toggle\" data-csa-c-type=\"widget\" data-csa-interaction-events=\"click\" data-hook=\"expand-collapse-read-more-less\" aria-label=\"Toggle full review text\" aria-expanded=\"False\" role=\"button\" data-action=\"a-expander-toggle\" class=\"a-declarative\" data-a-expander-toggle=\"{&quot;allowLinkDefault&quot;:True, &quot;expand_prompt&quot;:&quot;Read more&quot;, &quot;collapse_prompt&quot;:&quot;Read less&quot;}\"><i class=\"a-icon a-icon-extender-expand\"></i><span class=\"a-expander-prompt\">Read more</span></a></div></div>",
+            "rating":5,
+            "date":{
+               "raw":"Reviewed in the United Kingdom 🇬🇧 on June 3, 2018",
+               "utc":"2018-06-03T00:00:00.000Z"
+            },
+            "profile":{
+               "name":"M. Dowden",
+               "image":"https://images-eu.ssl-images-amazon.com/images/S/amazon-avatars-global/533bb7b2-c9a6-4bcf-830d-8d517f54912e._CR100,0,300,300_SX48_.jpg"
+            },
+            "vine_program":False,
+            "verified_purchase":True,
+            "helpful_votes":72,
+            "review_country":"gb",
+            "is_global_review":True
+         },
+         {
+            "id":"R2KAAU4N5EXUV8",
+            "title":"A frustrating read",
+            "body":"Long rambling narrative with a scattered plotline that doesnt deliver. The sample reads great if, like me, you love post apocalyptic novels but after that, this story goes nowhere over a very long time. I persevered to the end but it really was not worth it. It was well written but it's not a climactic page turner. If you appreciate good sci-fi then you will also find this is full of holes. Best post apocalyptic sci-fi I read recently is the Bobiverse series, which was recommended on a review here somewhere, try that instead.Read more",
+            "body_html":"<div data-a-expander-name=\"review_text_read_more\" data-a-expander-collapsed-height=\"300\" class=\"a-expander-collapsed-height a-row a-expander-container a-expander-partial-collapse-container\" style=\"max-height:300px\"><div data-hook=\"review-collapsed\" aria-expanded=\"False\" class=\"a-expander-content reviewText review-text-content a-expander-partial-collapse-content\">             <span>Long rambling narrative with a scattered plotline that doesnt deliver. The sample reads great if, like me, you love post apocalyptic novels but after that, this story goes nowhere over a very long time. I persevered to the end but it really was not worth it. It was well written but it\\'s not a climactic page turner. If you appreciate good sci-fi then you will also find this is full of holes. Best post apocalyptic sci-fi I read recently is the Bobiverse series, which was recommended on a review here somewhere, try that instead.</span>   </div><div class=\"a-expander-header a-expander-partial-collapse-header\"><div class=\"a-expander-content-fade\"></div><a href=\"javascript:void(0)\" data-csa-c-func-deps=\"aui-da-a-expander-toggle\" data-csa-c-type=\"widget\" data-csa-interaction-events=\"click\" data-hook=\"expand-collapse-read-more-less\" aria-label=\"Toggle full review text\" aria-expanded=\"False\" role=\"button\" data-action=\"a-expander-toggle\" class=\"a-declarative\" data-a-expander-toggle=\"{&quot;allowLinkDefault&quot;:True, &quot;expand_prompt&quot;:&quot;Read more&quot;, &quot;collapse_prompt&quot;:&quot;Read less&quot;}\"><i class=\"a-icon a-icon-extender-expand\"></i><span class=\"a-expander-prompt\">Read more</span></a></div></div>",
+            "rating":1,
+            "date":{
+               "raw":"Reviewed in the United Kingdom 🇬🇧 on August 2, 2018",
+               "utc":"2018-08-02T00:00:00.000Z"
+            },
+            "profile":{
+               "name":"J. Holt"
+            },
+            "vine_program":False,
+            "verified_purchase":True,
+            "helpful_votes":43,
+            "review_country":"gb",
+            "is_global_review":True
+         },
+         {
+            "id":"R1NUP1TOIF9SJ0",
+            "title":"Beautiful concept but didn’t deliver",
+            "body":"I feel I need to apologise for not enjoying this book, considering the rave reviews for it. The concept of it, for me was wonderful, and although throughout the story there was the odd part that I enjoyed, I found our more of a chore to read, than anything. They say life’s too short to finish a book you don’t enjoy but considering the current pandemic I thought it may be interesting to make It to the end, and see if it improved. Unfortunately, it really didn’t. Not for me anyway. Life is too short to read to the end of a book you don’t enjoy. Pandemic or no pandemic.Read more",
+            "body_html":"<div data-a-expander-name=\"review_text_read_more\" data-a-expander-collapsed-height=\"300\" class=\"a-expander-collapsed-height a-row a-expander-container a-expander-partial-collapse-container\" style=\"max-height:300px\"><div data-hook=\"review-collapsed\" aria-expanded=\"False\" class=\"a-expander-content reviewText review-text-content a-expander-partial-collapse-content\">             <span>I feel I need to apologise for not enjoying this book, considering the rave reviews for it. The concept of it, for me was wonderful, and although throughout the story there was the odd part that I enjoyed, I found our more of a chore to read, than anything. They say life’s too short to finish a book you don’t enjoy but considering the current pandemic I thought it may be interesting to make<br>It to the end, and see if it improved.<br>Unfortunately, it really didn’t. Not for me anyway. Life is too short to read to the end of a book you don’t enjoy. Pandemic or no pandemic.</span>   </div><div class=\"a-expander-header a-expander-partial-collapse-header\"><div class=\"a-expander-content-fade\"></div><a href=\"javascript:void(0)\" data-csa-c-func-deps=\"aui-da-a-expander-toggle\" data-csa-c-type=\"widget\" data-csa-interaction-events=\"click\" data-hook=\"expand-collapse-read-more-less\" aria-label=\"Toggle full review text\" aria-expanded=\"False\" role=\"button\" data-action=\"a-expander-toggle\" class=\"a-declarative\" data-a-expander-toggle=\"{&quot;allowLinkDefault&quot;:True, &quot;expand_prompt&quot;:&quot;Read more&quot;, &quot;collapse_prompt&quot;:&quot;Read less&quot;}\"><i class=\"a-icon a-icon-extender-expand\"></i><span class=\"a-expander-prompt\">Read more</span></a></div></div>",
+            "rating":1,
+            "date":{
+               "raw":"Reviewed in the United Kingdom 🇬🇧 on April 9, 2020",
+               "utc":"2020-04-09T00:00:00.000Z"
+            },
+            "profile":{
+               "name":"Colette"
+            },
+            "vine_program":False,
+            "verified_purchase":True,
+            "helpful_votes":18,
+            "review_country":"gb",
+            "is_global_review":True
+         },
+         {
+            "id":"R14QIXXX5XUK6F",
+            "title":"War of Attrition",
+            "body":"Where to start? I`d say that this type of book: overhyped and poorly executed is the reason I listen to most audiobooks for free and resist buying hard copies. The first three pages have so many recommendations and glowing reviews but this is the world we live in.  This book reminds me of the type of restaurant where the waiter places a silver platter in front of you. When he removes the silver lid it`s a white plate with a single golden fish finger and a squirt of ketchup on the side. The price for this culinary masterpiece?  Why £10,000 of course! \"This fish finger is made from a fish that had poems sang to it from birth good sir.\" Yikes, you look around the room and everyone seems to be enjoying their single fish finger so who are you to complain.  The novel starts ok but just as it starts to get interesting it jumps to the future. It plods and becomes a chore to read so much so I would have been happy to give it away or throw it in the bin. You may have already read in other reviews the back and forth that doesn`t work. I would add conversations that don`t go anywhere.  As has been mentioned I could not care less who lived or if everyone died, I started to skip large chunks; whole chapters. I`d see a character that keeps getting mentioned and be like: skip, then skip. At first, it felt like cheating, but after a while, I liked it because this boring stogy book was getting smaller.  What a shame: I wait years to buy a highly recommended book and get this. Top-rated Post-apocalyptic fiction to me is The Road by Cormac McCarthy.  The waiter returns to my table I gawk at the final bill: \"£17,000 for a fish finger!\" I say.  The waiter smiles thinly. \"Sir £10,000 for the fish finger and £7,000 for the tomato sauce.\"  Well, it`s highly recommended, so it must be worth it.Read more",
+            "body_html":"<div data-a-expander-name=\"review_text_read_more\" data-a-expander-collapsed-height=\"300\" class=\"a-expander-collapsed-height a-row a-expander-container a-expander-partial-collapse-container\" style=\"max-height:300px\"><div data-hook=\"review-collapsed\" aria-expanded=\"False\" class=\"a-expander-content reviewText review-text-content a-expander-partial-collapse-content\">             <span>Where to start? I`d say that this type of book: overhyped and poorly executed is the reason I listen to most audiobooks for free and resist buying hard copies. The first three pages have so many recommendations and glowing reviews but this is the world we live in.<br><br>This book reminds me of the type of restaurant where the waiter places a silver platter in front of you. When he removes the silver lid it`s a white plate with a single golden fish finger and a squirt of ketchup on the side. The price for this culinary masterpiece?<br><br>Why £10,000 of course! \"This fish finger is made from a fish that had poems sang to it from birth good sir.\" Yikes, you look around the room and everyone seems to be enjoying their single fish finger so who are you to complain.<br><br>The novel starts ok but just as it starts to get interesting it jumps to the future. It plods and becomes a chore to read so much so I would have been happy to give it away or throw it in the bin. You may have already read in other reviews the back and forth that doesn`t work. I would add conversations that don`t go anywhere.<br><br>As has been mentioned I could not care less who lived or if everyone died, I started to skip large chunks; whole chapters. I`d see a character that keeps getting mentioned and be like: skip, then skip. At first, it felt like cheating, but after a while, I liked it because this boring stogy book was getting smaller.<br><br>What a shame: I wait years to buy a highly recommended book and get this. Top-rated Post-apocalyptic fiction to me is The Road by Cormac McCarthy.<br><br>The waiter returns to my table I gawk at the final bill: \"£17,000 for a fish finger!\" I say.<br><br>The waiter smiles thinly. \"Sir £10,000 for the fish finger and £7,000 for the tomato sauce.\"<br><br>Well, it`s highly recommended, so it must be worth it.</span>   </div><div class=\"a-expander-header a-expander-partial-collapse-header\"><div class=\"a-expander-content-fade\"></div><a href=\"javascript:void(0)\" data-csa-c-func-deps=\"aui-da-a-expander-toggle\" data-csa-c-type=\"widget\" data-csa-interaction-events=\"click\" data-hook=\"expand-collapse-read-more-less\" aria-label=\"Toggle full review text\" aria-expanded=\"False\" role=\"button\" data-action=\"a-expander-toggle\" class=\"a-declarative\" data-a-expander-toggle=\"{&quot;allowLinkDefault&quot;:True, &quot;expand_prompt&quot;:&quot;Read more&quot;, &quot;collapse_prompt&quot;:&quot;Read less&quot;}\"><i class=\"a-icon a-icon-extender-expand\"></i><span class=\"a-expander-prompt\">Read more</span></a></div></div>",
+            "rating":1,
+            "date":{
+               "raw":"Reviewed in the United Kingdom 🇬🇧 on June 8, 2021",
+               "utc":"2021-06-08T00:00:00.000Z"
+            },
+            "profile":{
+               "name":"Brandon Bloc"
+            },
+            "vine_program":False,
+            "verified_purchase":True,
+            "helpful_votes":8,
+            "review_country":"gb",
+            "is_global_review":True
+         }
+      ],
+      "buybox_winner":{
+         "offer_id":"yjcrRUQPsLM9didPJMPtcl2QYgrzZsRsaWeQyn3bk523M8U0mdsX1qU0V9eq6/Gyi5yzZCe/Cmmxf+6ADJGpG7BRCFMu5xwyoYV6oGx/KKuvD72q5asNegtAMhK86U3nrauUxsMOzORQt5QY1pwxIcDOlxAfTcU8W7yMQsNSJAKv+1gbEopOw/68IBl+ZKT/",
+         "new_offers_count":1,
+         "new_offers_from":{
+            "value":21,
+            "currency":"USD",
+            "symbol":"$",
+            "raw":"21"
+         },
+         "used_offers_count":10,
+         "used_offers_from":{
+            "value":3.06,
+            "currency":"USD",
+            "symbol":"$",
+            "raw":"3.06"
+         },
+         "is_prime":False,
+         "is_amazon_fresh":False,
+         "condition":{
+            "is_new":False
+         },
+         "fulfillment":{
+            "type":"3p",
+            "standard_delivery":{
+               "date":"February 8 - 15",
+               "name":"FREE"
+            },
+            "fastest_delivery":{
+               "date":"February 6 - 9",
+               "name":"Or fastest delivery February 6 - 9. Details"
+            },
+            "is_sold_by_amazon":False,
+            "is_fulfilled_by_amazon":False,
+            "is_fulfilled_by_third_party":True,
+            "is_sold_by_third_party":True,
+            "third_party_seller":{
+               "name":"PRIME-BOOKS",
+               "link":"https://www.amazon.com/gp/help/seller/at-a-glance.html?ie=UTF8&seller=A1LIIVNAFQL1B",
+               "id":"A1LIIVNAFQL1B"
+            }
+         },
+         "price":{
+            "symbol":"$",
+            "value":7.06,
+            "currency":"USD",
+            "raw":"$7.06"
+         },
+         "shipping":{
+            "raw":"FREE"
+         }
+      },
+      "specifications":[
+         {
+            "name":"Publisher",
+            "value":"Harper Perennial (April 11, 2017)"
+         },
+         {
+            "name":"Language",
+            "value":"English"
+         },
+         {
+            "name":"Paperback",
+            "value":"352 pages"
+         },
+         {
+            "name":"ISBN-10",
+            "value":"1443434876"
+         },
+         {
+            "name":"ISBN-13",
+            "value":"978-1443434874"
+         },
+         {
+            "name":"Item Weight",
+            "value":"9.6 ounces"
+         },
+         {
+            "name":"Dimensions",
+            "value":"5.31 x 0.79 x 8 inches"
+         },
+         {
+            "name":"Best Sellers Rank",
+            "value":"See Top 100 in Books"
+         },
+         {
+            "name":"Print length",
+            "value":"352 pages"
+         },
+         {
+            "name":"Publication date",
+            "value":"April 11, 2017"
+         }
+      ],
+      "specifications_flat":"Publication date: April 11, 2017. Print length: 352 pages. Best Sellers Rank: See Top 100 in Books. Dimensions: 5.31 x 0.79 x 8 inches. Item Weight: 9.6 ounces. ISBN-13: 978-1443434874. ISBN-10: 1443434876. Paperback: 352 pages. Language: English. Publisher: Harper Perennial (April 11, 2017).",
+      "bestsellers_rank":[
+         {
+            "category":"Books",
+            "rank":7092992,
+            "link":"https://www.amazon.com/gp/bestsellers/books/ref=pd_zg_ts_books"
+         },
+         {
+            "category":"Genre Literature & Fiction",
+            "rank":916790,
+            "link":"https://www.amazon.com/gp/bestsellers/books/10134/ref=pd_zg_hrsr_books"
+         }
+      ],
+      "publication_date":"April 11, 2017",
+      "publisher":"Harper Perennial",
+      "isbn_10":"1443434876",
+      "isbn_13":"978-1443434874",
+      "language":"English",
+      "weight":"9.6 ounces",
+      "bestsellers_rank_flat":"Category: Books | Rank: 7092992, Category: Genre Literature & Fiction | Rank: 916790"
+   },
+   "also_bought":[
+      {
+         "title":"Sea of Tranquility: A novel",
+         "asin":"0593321448",
+         "link":"https://www.amazon.com/Sea-Tranquility-Emily-John-Mandel/dp/0593321448/ref=d_pd_sbs_vft_none_sccl_2_1/132-6921866-7000112?pd_rd_w=v3BSg&content-id=amzn1.sym.38bbd1de-73a5-4ef9-9954-df27c3112829&pf_rd_p=38bbd1de-73a5-4ef9-9954-df27c3112829&pf_rd_r=GJ439QYFE7XRP50JT594&pd_rd_wg=PKIoR&pd_rd_r=4d141228-5454-4321-931b-8fbf65e335aa&pd_rd_i=0593321448&psc=1",
+         "image":"https://images-na.ssl-images-amazon.com/images/I/B14B6ntSoUS._AC_UL160_SR160,160_.jpg",
+         "rating":4.3,
+         "ratings_total":17121,
+         "price":{
+            "symbol":"$",
+            "value":18.15,
+            "currency":"USD",
+            "raw":"$18.15"
+         }
+      },
+      {
+         "title":"The Glass Hotel: A novel",
+         "asin":"052556294X",
+         "link":"https://www.amazon.com/Glass-Hotel-Emily-John-Mandel/dp/052556294X/ref=d_pd_sbs_vft_none_sccl_2_2/132-6921866-7000112?pd_rd_w=v3BSg&content-id=amzn1.sym.38bbd1de-73a5-4ef9-9954-df27c3112829&pf_rd_p=38bbd1de-73a5-4ef9-9954-df27c3112829&pf_rd_r=GJ439QYFE7XRP50JT594&pd_rd_wg=PKIoR&pd_rd_r=4d141228-5454-4321-931b-8fbf65e335aa&pd_rd_i=052556294X&psc=1",
+         "image":"https://images-na.ssl-images-amazon.com/images/I/81w+ojlqreL._AC_UL160_SR160,160_.jpg",
+         "rating":4.1,
+         "ratings_total":12978,
+         "price":{
+            "symbol":"$",
+            "value":12.79,
+            "currency":"USD",
+            "raw":"$12.79"
+         }
+      },
+      {
+         "title":"The Bedford Reader",
+         "asin":"1319195601",
+         "link":"https://www.amazon.com/Bedford-Reader-X-J-Kennedy/dp/1319195601/ref=d_pd_sbs_vft_none_sccl_2_3/132-6921866-7000112?pd_rd_w=v3BSg&content-id=amzn1.sym.38bbd1de-73a5-4ef9-9954-df27c3112829&pf_rd_p=38bbd1de-73a5-4ef9-9954-df27c3112829&pf_rd_r=GJ439QYFE7XRP50JT594&pd_rd_wg=PKIoR&pd_rd_r=4d141228-5454-4321-931b-8fbf65e335aa&pd_rd_i=1319195601&psc=1",
+         "image":"https://images-na.ssl-images-amazon.com/images/I/81QqSatk2uL._AC_UL160_SR160,160_.jpg",
+         "rating":4.5,
+         "ratings_total":208,
+         "price":{
+            "symbol":"$",
+            "value":83.99,
+            "currency":"USD",
+            "raw":"$83.99"
+         }
+      },
+      {
+         "title":"Trivia: Station Eleven: A Novel By Emily St. John Mandel (Trivia-On-Books)",
+         "asin":"1539013138",
+         "link":"https://www.amazon.com/Trivia-Station-Eleven-Trivia-Books/dp/1539013138/ref=d_pd_sbs_vft_none_sccl_2_4/132-6921866-7000112?pd_rd_w=v3BSg&content-id=amzn1.sym.38bbd1de-73a5-4ef9-9954-df27c3112829&pf_rd_p=38bbd1de-73a5-4ef9-9954-df27c3112829&pf_rd_r=GJ439QYFE7XRP50JT594&pd_rd_wg=PKIoR&pd_rd_r=4d141228-5454-4321-931b-8fbf65e335aa&pd_rd_i=1539013138&psc=1",
+         "image":"https://images-na.ssl-images-amazon.com/images/I/41rbytIFsYL._AC_UL160_SR160,160_.jpg",
+         "rating":3.6,
+         "ratings_total":15,
+         "price":{
+            "symbol":"$",
+            "value":11.95,
+            "currency":"USD",
+            "raw":"$11.95"
+         }
+      },
+      {
+         "title":"STATION ELEVEN",
+         "asin":"2896942645",
+         "link":"https://www.amazon.com/STATION-ELEVEN/dp/2896942645/ref=d_pd_sbs_vft_none_sccl_2_5/132-6921866-7000112?pd_rd_w=v3BSg&content-id=amzn1.sym.38bbd1de-73a5-4ef9-9954-df27c3112829&pf_rd_p=38bbd1de-73a5-4ef9-9954-df27c3112829&pf_rd_r=GJ439QYFE7XRP50JT594&pd_rd_wg=PKIoR&pd_rd_r=4d141228-5454-4321-931b-8fbf65e335aa&pd_rd_i=2896942645&psc=1",
+         "image":"https://images-na.ssl-images-amazon.com/images/I/814ojnvz0lL._AC_UL160_SR160,160_.jpg",
+         "rating":4.3,
+         "ratings_total":156,
+         "price":{
+            "symbol":"$",
+            "value":49.11,
+            "currency":"USD",
+            "raw":"$49.11"
+         }
+      },
+      {
+         "title":"Last Night in Montreal",
+         "asin":"1101911956",
+         "link":"https://www.amazon.com/Last-Night-Montreal-Emily-Mandel/dp/1101911956/ref=d_pd_sbs_vft_none_sccl_2_6/132-6921866-7000112?pd_rd_w=v3BSg&content-id=amzn1.sym.38bbd1de-73a5-4ef9-9954-df27c3112829&pf_rd_p=38bbd1de-73a5-4ef9-9954-df27c3112829&pf_rd_r=GJ439QYFE7XRP50JT594&pd_rd_wg=PKIoR&pd_rd_r=4d141228-5454-4321-931b-8fbf65e335aa&pd_rd_i=1101911956&psc=1",
+         "image":"https://images-na.ssl-images-amazon.com/images/I/81kyKM6cXOL._AC_UL160_SR160,160_.jpg",
+         "rating":4.2,
+         "ratings_total":1132,
+         "price":{
+            "symbol":"$",
+            "value":14.99,
+            "currency":"USD",
+            "raw":"$14.99"
+         }
+      }
+   ]
+}

@@ -5,7 +5,7 @@ from rest_framework import (
     mixins,
     permissions,
 )
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, ParseError
 from rest_framework.schemas.openapi import AutoSchema
 
 from shortage.apps.catalog.amazon.models import AmazonProduct, AmazonProductAdapter
@@ -63,9 +63,14 @@ class PrivateProductByAmazonUrlViewSet(PrivateProductByAsinViewSet):
         if not url:
             raise NotFound()
 
-        rainforest = RainforestWrapper()
+        amazon_url = None
 
-        amazon_url = base64.urlsafe_b64decode(str.encode(url)).decode()
+        try:
+            amazon_url = base64.urlsafe_b64decode(str.encode(url)).decode()
+        except:
+            raise ParseError()
+
+        rainforest = RainforestWrapper()
         asin = rainforest.get_asin_from_url(amazon_url)
 
         if not asin:
