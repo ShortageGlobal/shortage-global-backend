@@ -1,5 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
+
+from .amazon.views import PrivateProductByAsinViewSet, PrivateProductByAmazonUrlViewSet
 from .views import (
     PromotedOrganizationsViewSet,
     PromotedExternalOrganizationsViewSet,
@@ -118,8 +120,18 @@ router.register(
     basename="sitemap",
 )
 
+router.register(
+    r"private/products/asin",
+    PrivateProductByAsinViewSet,
+    basename="products_by_asin",
+)
+router.register(
+    r"private/products/url",
+    PrivateProductByAmazonUrlViewSet,
+    basename="products_by_url",
+)
+
 # Wire up our API using automatic URL routing.
-# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path("", include(router.urls)),
 ]
