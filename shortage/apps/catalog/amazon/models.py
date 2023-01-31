@@ -67,11 +67,11 @@ class AmazonProductAdapter:
 
         return AmazonProduct.objects.create(
             **{
-                "asin": product_data["asin"],
-                "title": product_data["title"],
-                "link": product_data["link"],
-                "description": product_data["description"],
-                "image_url": product_data["main_image"]["link"],
+                "asin": product_data.get("asin"),
+                "title": product_data.get("title"),
+                "link": product_data.get("link"),
+                "description": product_data.get("description"),
+                "image_url": product_data.get("main_image").get("link"),
                 "price": price,
             }
         )
