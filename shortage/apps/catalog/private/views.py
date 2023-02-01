@@ -63,7 +63,11 @@ class PrivateOrganizationViewSet(
 
     def get_queryset(self):
         if "retrieve" == self.action or "list" == self.action:
-            return Organization.objects.active().filter(owner=self.request.user)
+            return (
+                Organization.objects.active()
+                .filter(owner=self.request.user)
+                .order_by("-created_at")
+            )
         else:
             # Prevent changes to organizations which you don't own and which are already verified
             return Organization.objects.filter(
