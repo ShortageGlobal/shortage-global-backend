@@ -1,16 +1,8 @@
 import json
-from datetime import date
 
 from auditlog.registry import auditlog
 from django.db import models
 from rest_framework.exceptions import NotFound
-
-
-class AmazonProductsManager(models.Manager):
-    def valid_cached_products(self):
-        return self.all().filter(
-            created_at=date.today(),
-        )
 
 
 class AmazonProduct(models.Model):
@@ -27,14 +19,11 @@ class AmazonProduct(models.Model):
 
     created_at = models.DateField(auto_now_add=True)
 
-    objects = AmazonProductsManager()
-
 
 class AmazonProductAdapter:
     rainforest_response = None
 
     def __init__(self, rainforest_response):
-
         if type(rainforest_response) is dict:
             self.rainforest_response = rainforest_response
         else:

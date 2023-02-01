@@ -2675,3 +2675,11 @@ RAINFOREST_SAMPLE_RESPONSE_3 = {
         },
     ],
 }
+
+RAINFOREST_SAMPLE_RESPONSE_4 = {
+    "request_info": {
+        "success": False,
+        "message": "The requested page could not be found on Amazon (Amazon returned an HTTP 404 error). Please check the values you are supplying in the 'url', 'gtin', 'asin', 'seller_id' or 'amazon_domain' request parameters. If specifying the 'url' parameter then the URL should be a valid URL on an Amazon domain. If specifying the 'asin' and 'amazon_domain' parameters then the 'asin' should be valid on the specified 'amazon_domain' (for example, an ASIN from amazon.com might not be valid on amazon.fr).",
+        "http_status_code": 404,
+    }
+}
