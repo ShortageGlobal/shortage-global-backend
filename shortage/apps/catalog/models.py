@@ -48,7 +48,7 @@ class Organization(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="organizations", on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=80, null=True, blank=True)
+    name = models.CharField(max_length=80)
     slug = models.SlugField(
         max_length=80, unique=True, validators=[validate_organization_slug_blacklist]
     )
