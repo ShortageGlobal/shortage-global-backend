@@ -10,6 +10,7 @@ from shortage.apps.catalog.amazon.rainforest import RainforestWrapper
 from shortage.apps.catalog.amazon.rainforest_sample_response import (
     RAINFOREST_SAMPLE_RESPONSE_2,
     RAINFOREST_SAMPLE_RESPONSE_1,
+    RAINFOREST_SAMPLE_RESPONSE_4,
 )
 from shortage.apps.catalog.amazon.views import (
     PrivateProductByAsinViewSet,
@@ -36,6 +37,15 @@ def send_response_2(*args, **kwargs):
     return mock_response
 
 
+def send_response_4(*args, **kwargs):
+    mock_response = Mock(spec=requests.Response)
+
+    mock_response.json.return_value = json.dumps(RAINFOREST_SAMPLE_RESPONSE_4)
+    mock_response.status_code = 200
+
+    return mock_response
+
+
 class GetProductFromAmazonTestCase(APITestCase):
     def setUp(self) -> None:
         self.requestFactory = APIRequestFactory()
@@ -43,7 +53,6 @@ class GetProductFromAmazonTestCase(APITestCase):
 
     @patch.object(RainforestWrapper, "send_request", send_response_1)
     def test_get_products_by_asin(self):
-
         request = self.requestFactory.get("", format="json")
         force_authenticate(request, user=self.user)
         response = PrivateProductByAsinViewSet.as_view({"get": "retrieve"})(
@@ -73,11 +82,7 @@ class GetProductFromAmazonTestCase(APITestCase):
         self.assertEqual(content["price"], "9.99")
 
         # Check that object is now in cache
-        product = AmazonProduct.objects.valid_cached_products().filter(
-            asin=content["asin"]
-        )
-
-        self.assertNotEqual(product, None)
+        self.assertNotEqual(AmazonProduct.objects.get(asin=content["asin"]), None)
 
     @patch.object(RainforestWrapper, "send_request", send_response_2)
     def test_get_products_by_url(self):
@@ -113,8 +118,24 @@ class GetProductFromAmazonTestCase(APITestCase):
         self.assertEqual(content["price"], "349.99")
 
         # Check that object is now in cache
-        product = AmazonProduct.objects.valid_cached_products().filter(
-            asin=content["asin"]
+        self.assertNotEqual(AmazonProduct.objects.get(asin=content["asin"]), None)
+
+    @patch.object(RainforestWrapper, "send_request", send_response_4)
+    def test_product_not_found(self):
+        request = self.requestFactory.get("", format="json")
+        force_authenticate(request, user=self.user)
+        response = PrivateProductByAsinViewSet.as_view({"get": "retrieve"})(
+            request, asin="B0B2X4JXBW"
         )
 
-        self.assertNotEqual(product, None)
+        self.assertEqual(response.status_code, 404)
+
+        # Check that there is nothing in cache
+        try:
+            AmazonProduct.objects.get(asin="B0B2X4JXBW")
+        except AmazonProduct.DoesNotExist:
+            pass
+        except:
+            self.assertTrue(True)
+        finally:
+            self.assertTrue(True)

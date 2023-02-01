@@ -1,16 +1,8 @@
 import json
-from datetime import date
 
 from auditlog.registry import auditlog
 from django.db import models
 from rest_framework.exceptions import NotFound
-
-
-class AmazonProductsManager(models.Manager):
-    def valid_cached_products(self):
-        return self.all().filter(
-            created_at=date.today(),
-        )
 
 
 class AmazonProduct(models.Model):
@@ -26,8 +18,6 @@ class AmazonProduct(models.Model):
     image_url = models.URLField(max_length=255, null=True, blank=True)
 
     created_at = models.DateField(auto_now_add=True)
-
-    objects = AmazonProductsManager()
 
 
 class AmazonProductAdapter:

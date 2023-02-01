@@ -1,4 +1,5 @@
 import base64
+from datetime import date
 
 from rest_framework import (
     viewsets,
@@ -29,11 +30,18 @@ class PrivateProductByAsinViewSet(mixins.RetrieveModelMixin, viewsets.GenericVie
             raise NotFound()
 
         product = None
-        cached_product = AmazonProduct.objects.valid_cached_products().filter(asin=asin)
 
-        if cached_product.exists():
-            product = cached_product.get()
-        else:
+        try:
+            product = AmazonProduct.objects.get(asin=asin)
+
+            # If cached value is out of date - clear cache
+            if product.created_at != date.today():
+                product.delete()
+                product = None
+        except:
+            pass
+
+        if not product:
             rainforest = RainforestWrapper()
 
             response = rainforest.send_request(asin=asin)
