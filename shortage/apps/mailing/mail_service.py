@@ -303,7 +303,6 @@ class PasswordResetEmail(MailingBackend):
 
 
 class OrganizationRegistrationRequestServiceEmail(MailingBackend):
-
     subject = "New organization registration request"
     html_template = "emails/organization_registration_request_staff/index.html"
     text_template = "emails/organization_registration_request_staff/index.txt"
@@ -326,7 +325,6 @@ class OrganizationRegistrationRequestServiceEmail(MailingBackend):
 
 
 class CorporateDonationRequestServiceEmail(MailingBackend):
-
     subject = "New corporate donation request"
     html_template = "emails/corporate_donation_staff/index.html"
     text_template = "emails/corporate_donation_staff/index.txt"

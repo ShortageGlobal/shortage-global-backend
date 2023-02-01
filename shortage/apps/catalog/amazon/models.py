@@ -24,7 +24,6 @@ class AmazonProductAdapter:
     rainforest_response = None
 
     def __init__(self, rainforest_response):
-
         if type(rainforest_response) is dict:
             self.rainforest_response = rainforest_response
         else:

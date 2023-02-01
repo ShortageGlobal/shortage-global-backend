@@ -84,7 +84,6 @@ class PrivateOrganizationViewSet(
 
 
 class PrivateProductsViewSet(viewsets.ModelViewSet):
-
     schema = AutoSchema(
         tags=["Private", "Products"],
     )

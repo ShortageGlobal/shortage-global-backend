@@ -112,7 +112,7 @@ class ActivationSerializer(serializers.Serializer):
             user.save()
 
             return user
-        except (User.DoesNotExist):
+        except User.DoesNotExist:
             raise NotFound("User not found.")
 
     def __decode_uid(self, data):
