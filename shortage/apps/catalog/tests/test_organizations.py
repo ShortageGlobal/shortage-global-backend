@@ -109,9 +109,7 @@ class PrivateOrganizationTestCase(APITestCase):
         response = PrivateOrganizationViewSet.as_view({"post": "create"})(request)
 
         self.assertEqual(response.status_code, 400, "Organization was created")
-        self.assertEqual(
-            response.data["slug"][0], "'next' cannot be used as an organization slug."
-        )
+        self.assertEqual(response.data["slug"][0], "This value cannot be used.")
 
     def test_image_upload(self):
         image = create_test_image(None, "test_image.png")

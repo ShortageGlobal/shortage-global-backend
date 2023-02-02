@@ -39,7 +39,7 @@ class OrganizationManager(models.Manager):
 def validate_organization_slug_blacklist(value):
     if value in settings.ORGANIZATION_SLUG_BLACKLIST:
         raise ValidationError(
-            "'%s' is invalid value." % value,
+            "This value cannot be used.",
             params={"value": value},
         )
 
