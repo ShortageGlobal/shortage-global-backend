@@ -1,0 +1,61 @@
+{% extends "emails/base.html" %}
+
+{% block body_content %}
+<h1 style="
+  font-size: 20px; 
+  margin: 0 0 20px 0; 
+  font-family: Arial, sans-serif; 
+  text-align: center;"
+>
+  We're super excited to have you on board!
+</h1>
+
+<p
+  style="
+    margin: 0 0 0 0;
+    font-size: 16px;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+  "
+>
+  Just wanted to take a moment to thank you for registering your organization with us. Now it's time to get started and fill in all the necessary information. This will help us get to know you better and provide the best support possible.
+</p>
+
+<p
+  style="
+    margin: 0 0 0 0;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+  "
+>
+  <a 
+    href="{{ organization_url }}"
+    style="
+      margin: 42px 0 42px 0;
+      padding: 16px 16px 16px 16px;
+      background-color:#00b657;
+      color:#ffffff;
+      display:inline-block;
+      font-family: Arial, sans-serif;
+      font-size:18px;
+      font-weight:bold;
+      text-align:center;
+      text-decoration:none;
+      -webkit-text-size-adjust:none;"
+    >
+      Manage "{{ organization.name}}"
+    </a>
+</p>
+
+<p
+  style="
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+  "
+>
+  Once that's done, our verification team will take a look and get in touch if they need any additional information from you.
+</p>
+{% endblock %}

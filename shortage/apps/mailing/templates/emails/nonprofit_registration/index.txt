@@ -1,0 +1,12 @@
+{% extends "emails/base.txt" %}
+
+{% block body_content %}
+We're super excited to have you on board!
+
+Just wanted to take a moment to thank you for registering your organization with us. Now it's time to get started and fill in all the necessary information. This will help us get to know you better and provide the best support possible.
+
+Manage "{{ organization.name}}": 
+{{organization_url}}
+
+Once that's done, our verification team will take a look and get in touch if they need any additional information from you.
+{% endblock %}

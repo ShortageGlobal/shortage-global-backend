@@ -62,7 +62,7 @@ class PrivateOrganizationViewSet(
         return PrivateOrganizationReadSerializer
 
     def get_queryset(self):
-        if "retrieve" == self.action or "list" == self.action:
+        if self.action == "retrieve" or self.action == "list":
             return (
                 Organization.objects.active()
                 .filter(owner=self.request.user)
@@ -70,16 +70,15 @@ class PrivateOrganizationViewSet(
             )
         else:
             # Prevent changes to organizations which you don't own and which are already verified
-            return Organization.objects.filter(
+            return Organization.objects.active().filter(
                 owner=self.request.user, is_verified=False
             )
 
     def create(self, request, *args, **kwargs):
         # Allow only one organization per user
-        if Organization.objects.filter(owner=self.request.user).exists():
+        if Organization.objects.active().filter(owner=self.request.user).exists():
             raise OneOrganizationPerUser()
 
-        # Todo: Send an email about organization's creation
         return super().create(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):

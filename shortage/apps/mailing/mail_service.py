@@ -193,7 +193,7 @@ class PackageRegistrationEmail(PackageBaseEmail):
     Email sent on package registration
     """
 
-    subject = "Donation is registered"
+    subject = "Donation is registered - Shortage"
     html_template = "emails/package_registration/index.html"
     text_template = "emails/package_registration/index.txt"
 
@@ -224,7 +224,7 @@ class PackageRegistationServiceEmail(PackageBaseEmail):
     Email sent to staff on package registration
     """
 
-    subject = "New package is registered"
+    subject = "New package is registered - Shortage"
     html_template = "emails/package_registration_staff/index.html"
     text_template = "emails/package_registration_staff/index.txt"
 
@@ -303,7 +303,7 @@ class PasswordResetEmail(MailingBackend):
 
 
 class OrganizationRegistrationRequestServiceEmail(MailingBackend):
-    subject = "New organization registration request"
+    subject = "New organization registration request - Shortage"
     html_template = "emails/organization_registration_request_staff/index.html"
     text_template = "emails/organization_registration_request_staff/index.txt"
 
@@ -325,7 +325,7 @@ class OrganizationRegistrationRequestServiceEmail(MailingBackend):
 
 
 class CorporateDonationRequestServiceEmail(MailingBackend):
-    subject = "New corporate donation request"
+    subject = "New corporate donation request - Shortage"
     html_template = "emails/corporate_donation_staff/index.html"
     text_template = "emails/corporate_donation_staff/index.txt"
 
@@ -343,4 +343,28 @@ class CorporateDonationRequestServiceEmail(MailingBackend):
 
         return {
             "corporate_donation_request_url": corporate_donation_request_url,
+        }
+
+
+class NonprofitRegistrationEmail(MailingBackend):
+    """
+    Email sent on nonprofit registration
+    """
+
+    subject = "Nonprofit is registered - Shortage"
+    html_template = "emails/nonprofit_registration/index.html"
+    text_template = "emails/nonprofit_registration/index.txt"
+
+    def __init__(self, organization):
+        self.organization = organization
+
+    def get_context(self):
+        organization_url = "%s/private/manage-nonprofit/%s/" % (
+            self.frontend_base_url,
+            self.organization.slug,
+        )
+
+        return {
+            "organization_url": organization_url,
+            "organization": self.organization,
         }
