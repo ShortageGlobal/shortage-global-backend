@@ -39,7 +39,7 @@ class OrganizationManager(models.Manager):
 def validate_organization_slug_blacklist(value):
     if value in settings.ORGANIZATION_SLUG_BLACKLIST:
         raise ValidationError(
-            "'%s' cannot be used as an organization slug." % value,
+            "This value cannot be used.",
             params={"value": value},
         )
 
@@ -50,12 +50,17 @@ class Organization(models.Model):
     )
     name = models.CharField(max_length=80)
     slug = models.SlugField(
-        max_length=80, unique=True, validators=[validate_organization_slug_blacklist]
+        max_length=80,
+        unique=True,
+        validators=[validate_organization_slug_blacklist],
+        error_messages={"unique": "This address has already been taken."},
     )
     description = HTMLField(null=True, blank=True)
     meta_description = models.CharField(max_length=200, null=True, blank=True)
     logo = ThumbnailerImageField(
         upload_to=get_organization_path,
+        null=True,
+        blank=True,
         storage=storage.MediaStorage(),
     )
     banner = ThumbnailerImageField(

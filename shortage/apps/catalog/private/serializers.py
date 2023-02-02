@@ -5,8 +5,6 @@ from shortage.helpers.serializers import AuthorizedUserOrNone
 
 class PrivateOrganizationWriteSerializer(serializers.ModelSerializer):
     owner = serializers.HiddenField(default=AuthorizedUserOrNone())
-    logo = serializers.ImageField(required=False)
-    banner = serializers.ImageField(required=False)
 
     class Meta:
         model = Organization
@@ -25,11 +23,16 @@ class PrivateOrganizationWriteSerializer(serializers.ModelSerializer):
             "promote",
             "deadline",
         ]
+        read_only_fields = [
+            "is_verified",
+            "is_draft",
+            "promote",
+        ]
 
 
 class PrivateOrganizationReadSerializer(PrivateOrganizationWriteSerializer):
-    logo = serializers.ImageField(required=False, source="medium_logo_photo")
-    banner = serializers.ImageField(required=False, source="medium_banner_photo")
+    logo = serializers.ImageField(source="medium_logo_photo")
+    banner = serializers.ImageField(source="medium_banner_photo")
 
     class Meta(PrivateOrganizationWriteSerializer.Meta):
         fields = PrivateOrganizationWriteSerializer.Meta.fields + [
