@@ -165,8 +165,6 @@ class Package(models.Model):
         ):
             return
 
-        print("Ping")
-
         receipt_storage = MediaStorage()
         path = receipt_storage.path(
             get_tax_deduction_receipt_path(self, "tax_return.pdf")
