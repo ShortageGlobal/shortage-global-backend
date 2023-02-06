@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from shortage.apps.mailing.mail_service import (
@@ -48,6 +47,9 @@ def package_status_change_handler(package):
             # notify the donor about his payment and registered package
             status_change_email = PackageRegistrationEmail(package=package)
     elif package.status == PackageStatus.DELIVERED:
+        # Generate receipt before sending an email in case we want to include the link there
+        package.generate_tax_receipt()
+
         status_change_email = PackageDeliveryEmail(package=package)
 
     if status_change_email:

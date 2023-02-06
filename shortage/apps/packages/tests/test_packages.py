@@ -1,3 +1,5 @@
+import os
+
 from django.core.exceptions import ValidationError
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.utils import json
@@ -8,7 +10,10 @@ from shortage.apps.packages.private.views import (
     PrivateOrganizationPackagesViewSet,
     PrivateAccountPackagesViewSet,
 )
-from shortage.apps.packages.views import PackageViewSet, PackageCreationViewSet
+from shortage.apps.packages.views import (
+    PackageViewSet,
+    PackageCreationViewSet,
+)
 from shortage.helpers.test_utilities import (
     create_test_user,
     create_test_organization,
@@ -92,6 +97,40 @@ class PackageTestCase(APITestCase):
         package.status = PackageStatus.DELIVERED
         package.tax_deduction_receipt = "/fake/path/to/receipt.pdf"
         package.clean()  # doesn't raise a validation error
+
+        # Organization must have a logo, otherwise PDF will fail to generate
+        create_test_image(None, "logo.png")
+        self.organization.logo = "logo.png"
+
+        # check that tax receipt is generated
+        package = create_test_package(
+            self.product, need_tax_deduction=True, organization=self.organization
+        )
+        package.status = PackageStatus.DELIVERED
+        package.save()
+
+        request = self.requestFactory.post(
+            "api/organization/{}/packages".format(self.organization.slug),
+        )
+        force_authenticate(request, user=self.user)
+        response = PackageViewSet.as_view({"post": "retrieve"})(
+            request, org_slug=self.organization.slug, pk=package.uuid
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        content = json.loads(response.render().content)
+
+        self.assertNotEqual(content["tax_deduction_receipt"], None)
+
+        # Each time the PDF is generated it is not a perfect bitwise copy
+        # We can only compare sizes to make sure at least it's relatively the same-ish
+        master_size = os.path.getsize(
+            os.path.join(os.path.dirname(__file__), "tax_receipt_master.pdf")
+        )
+        new_receipt_size = package.tax_deduction_receipt.size
+
+        self.assertEqual(master_size, new_receipt_size)
 
     def test_organization_mismatch(self):
         try:

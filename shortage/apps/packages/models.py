@@ -1,3 +1,4 @@
+import os
 import uuid
 from django.db import models
 from django.conf import settings
@@ -7,8 +8,10 @@ from django.core.validators import (
     FileExtensionValidator,
 )
 from django.core.exceptions import ValidationError
+from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from auditlog.registry import auditlog
+import pdfkit
 from phonenumber_field.modelfields import PhoneNumberField
 from django_countries.fields import CountryField
 from shortage.apps import storage
@@ -18,6 +21,7 @@ from shortage.apps.file_paths import (
     get_corporate_donation_path,
     get_tax_deduction_receipt_path,
 )
+from shortage.apps.storage import MediaStorage
 from shortage.helpers import get_full_name
 from easy_thumbnails.fields import ThumbnailerImageField
 from shortage.helpers.thumbnails import get_thumbnail_for_image
@@ -152,6 +156,46 @@ class Package(models.Model):
                     )
                 }
             )
+
+    def generate_tax_receipt(self):
+        if (
+            not self.need_tax_deduction
+            or self.status != PackageStatus.DELIVERED
+            or self.tax_deduction_receipt
+        ):
+            return
+
+        print("Ping")
+
+        receipt_storage = MediaStorage()
+        path = receipt_storage.path(
+            get_tax_deduction_receipt_path(self, "tax_return.pdf")
+        )
+
+        if not os.path.exists(os.path.dirname(path)):
+            os.makedirs(os.path.dirname(path))
+
+        rendered_template = render_to_string(
+            "tax_return_report.html",
+            {"organization": self.organization, "package": self},
+        )
+
+        options = {
+            "enable-local-file-access": True,
+            "page-size": "Letter",
+            "encoding": "UTF-8",
+        }
+
+        # Generate the PDF with the receipt
+        pdfkit.from_string(rendered_template, path, options=options)
+
+        # Assign the temp file to the model field
+        self.tax_deduction_receipt.save(path, open(path, "rb"))
+        # Todo: Model saving itself is ugly but we have no controller which can do it instead
+        self.save()
+
+        # Delete the temp file
+        receipt_storage.delete(path)
 
     def payment_canceled(self):
         self.status = PackageStatus.PAYMENT_CANCELED

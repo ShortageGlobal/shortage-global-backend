@@ -1,0 +1,110 @@
+{% load math %}
+
+<html>
+   <head>
+      <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+      <style type="text/css">@import url('https://themes.googleusercontent.com/fonts/css?kit=dpiI8CyVsrzWsJLBFKehGpLhv3qFjX7dUn1mYxfCXhI');ul.lst-kix_nqdn6n6yddxo-3{list-style-type:none}ul.lst-kix_nqdn6n6yddxo-2{list-style-type:none}ul.lst-kix_nqdn6n6yddxo-5{list-style-type:none}ul.lst-kix_nqdn6n6yddxo-4{list-style-type:none}.lst-kix_nqdn6n6yddxo-1>li:before{content:"\0025cb  "}ul.lst-kix_nqdn6n6yddxo-7{list-style-type:none}ul.lst-kix_nqdn6n6yddxo-6{list-style-type:none}.lst-kix_nqdn6n6yddxo-2>li:before{content:"\0025a0  "}ul.lst-kix_nqdn6n6yddxo-8{list-style-type:none}.lst-kix_nqdn6n6yddxo-3>li:before{content:"\0025cf  "}.lst-kix_nqdn6n6yddxo-4>li:before{content:"\0025cb  "}.lst-kix_nqdn6n6yddxo-7>li:before{content:"\0025cb  "}.lst-kix_nqdn6n6yddxo-5>li:before{content:"\0025a0  "}.lst-kix_nqdn6n6yddxo-6>li:before{content:"\0025cf  "}.lst-kix_nqdn6n6yddxo-0>li:before{content:"  "}ul.lst-kix_nqdn6n6yddxo-1{list-style-type:none}.lst-kix_nqdn6n6yddxo-8>li:before{content:"\0025a0  "}ul.lst-kix_nqdn6n6yddxo-0{list-style-type:none}ol{margin:0;padding:0}table td,table th{padding:0}.c24{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:1pt;border-right-width:1pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:1pt;border-top-style:solid;border-left-style:solid;border-bottom-width:1pt;width:56.2pt;border-top-color:#000000;border-bottom-style:solid}.c29{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:1pt;border-right-width:1pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:1pt;border-top-style:solid;border-left-style:solid;border-bottom-width:1pt;width:30pt;border-top-color:#000000;border-bottom-style:solid}.c19{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:1pt;border-right-width:1pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:1pt;border-top-style:solid;border-left-style:solid;border-bottom-width:1pt;width:47.2pt;border-top-color:#000000;border-bottom-style:solid}.c10{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:1pt;border-right-width:1pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:1pt;border-top-style:solid;border-left-style:solid;border-bottom-width:1pt;width:25.5pt;border-top-color:#000000;border-bottom-style:solid}.c13{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:1pt;border-right-width:1pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:1pt;border-top-style:solid;border-left-style:solid;border-bottom-width:1pt;width:78pt;border-top-color:#000000;border-bottom-style:solid}.c30{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:1pt;border-right-width:1pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:1pt;border-top-style:solid;border-left-style:solid;border-bottom-width:1pt;width:84.8pt;border-top-color:#000000;border-bottom-style:solid}.c5{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:1pt;border-right-width:1pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:1pt;border-top-style:solid;border-left-style:solid;border-bottom-width:1pt;width:81pt;border-top-color:#000000;border-bottom-style:solid}.c0{background-color:#ffffff;color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:10pt;font-family:"Arial";font-style:normal}.c9{background-color:#ffffff;color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:14pt;font-family:"Roboto";font-style:normal}.c14{color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:9pt;font-family:"Arial";font-style:normal}.c28{color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:"Arial";font-style:normal}.c1{padding-top:0pt;padding-bottom:0pt;line-height:1.15;orphans:2;widows:2;text-align:center;height:11pt}.c27{color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:10pt;font-family:"Arial";font-style:normal}.c17{color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:12.5pt;font-family:"Arial";font-style:normal}.c37{color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:9pt;font-family:"Arial";font-style:normal}.c39{background-color:#ffffff;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:17pt;font-family:"Roboto";font-style:normal}.c2{padding-top:0pt;padding-bottom:0pt;line-height:1.15;orphans:2;widows:2;text-align:left;height:11pt}.c21{color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:7pt;font-family:"Arial";font-style:normal}.c3{padding-top:0pt;padding-bottom:0pt;line-height:1.15;orphans:2;widows:2;text-align:left}.c7{padding-top:0pt;padding-bottom:0pt;line-height:1.15;orphans:2;widows:2;text-align:right}.c22{padding-top:0pt;padding-bottom:0pt;line-height:1.0;orphans:2;widows:2;text-align:justify}.c26{padding-top:0pt;padding-bottom:8pt;line-height:1.0791666666666666;orphans:2;widows:2;text-align:left}.c20{color:#1c1e21;font-weight:400;text-decoration:none;vertical-align:baseline;font-family:"Arial";font-style:normal}.c12{color:#333333;font-weight:400;text-decoration:none;vertical-align:baseline;font-family:"Roboto";font-style:normal}.c4{padding-top:0pt;padding-bottom:0pt;line-height:1.15;orphans:2;widows:2;text-align:center}.c6{background-color:#ffffff;padding-top:0pt;padding-bottom:0pt;line-height:1.2;text-align:left}.c8{padding-top:0pt;padding-bottom:0pt;line-height:1.0;text-align:left}.c31{border-spacing:0;border-collapse:collapse;margin-right:auto}.c23{background-color:#ffffff;max-width:468pt;padding:9pt 72pt 13.5pt 72pt}.c15{background-color:#ffffff;font-size:9pt}.c11{background-color:#ffffff;font-size:10pt}.c32{color:inherit;text-decoration:inherit}.c38{background-color:#ffffff;font-size:7pt}.c33{orphans:2;widows:2}.c35{background-color:#ffff00}.c16{color:#212529}.c25{height:0pt}.c18{height:11pt}.c34{color:#1c1e21}.c36{margin-left:19.5pt}.title{padding-top:0pt;color:#000000;font-size:26pt;padding-bottom:3pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}.subtitle{padding-top:0pt;color:#666666;font-size:15pt;padding-bottom:16pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}li{color:#000000;font-size:11pt;font-family:"Arial"}p{margin:0;color:#000000;font-size:11pt;font-family:"Arial"}h1{padding-top:20pt;color:#000000;font-size:20pt;padding-bottom:6pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h2{padding-top:18pt;color:#000000;font-size:16pt;padding-bottom:6pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h3{padding-top:16pt;color:#434343;font-size:14pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h4{padding-top:14pt;color:#666666;font-size:12pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h5{padding-top:12pt;color:#666666;font-size:11pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h6{padding-top:12pt;color:#666666;font-size:11pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;font-style:italic;orphans:2;widows:2;text-align:left}</style>
+   </head>
+   <body class="c23 doc-content">
+      <p class="c7"><img alt="" src="/project/media/{{organization.logo}}" style="width: 230px; height: 113px;" title=""></span></p>
+      <p class="c2"><span class="c0"></span></p>
+      <p class="c3"><span class="c0">{{organization.name}}</span></p>
+      <p class="c3"><span class="c0">2406 Bush Street</span></p>
+      <p class="c3"><span class="c0">San Francisco, CA 94115</span></p>
+      <p class="c3"><span class="c0">{{organization.owner.email}}</span></p>
+      <p class="c3"><span class="c11">Tax ID {{organization.ein}}</span><span class="c15"><br>_____________________________________________________________________________________________</span><span class="c20 c15"><br><br></span></p>
+      <p class="c4"><span class="c17">Official donation receipt</span></p>
+      <p class="c4"><span class="c37">For income tax purposes</span></p>
+      <p class="c26 c18"><span class="c9"></span></p>
+      <table class="c31">
+         <tr class="c25">
+            <td class="c10" colspan="1" rowspan="1">
+               <p class="c8"><span class="c0">#</span></p>
+            </td>
+            <td class="c19" colspan="1" rowspan="1">
+               <p class="c8"><span class="c0">Date</span></p>
+            </td>
+            <td class="c13" colspan="1" rowspan="1">
+               <p class="c8"><span class="c11">Email</span></p>
+            </td>
+            <td class="c5" colspan="1" rowspan="1">
+               <p class="c8"><span class="c11">Donor</span></p>
+            </td>
+            <td class="c30" colspan="1" rowspan="1">
+               <p class="c8"><span class="c11">Address</span></p>
+            </td>
+            <td class="c5" colspan="1" rowspan="1">
+               <p class="c8"><span class="c11">Description of items being donated</span></p>
+            </td>
+            <td class="c29" colspan="1" rowspan="1">
+               <p class="c8"><span class="c0">Q-ty</span></p>
+            </td>
+            <td class="c24" colspan="1" rowspan="1">
+               <p class="c8"><span class="c11">Price </span></p>
+            </td>
+         </tr>
+         {% for item in package.items.all %}
+         <tr class="c25">
+            <td class="c10" colspan="1" rowspan="1">
+               <p class="c8 c18"><span class="c11 c12"></span></p>
+            </td>
+            <td class="c19" colspan="1" rowspan="1">
+               <p class="c8"><span class="c11">{{package.created_at}}</span></p>
+            </td>
+            <td class="c13" colspan="1" rowspan="1">
+               <p class="c8">{{package.email}}</p>
+            </td>
+            <td class="c5" colspan="1" rowspan="1">
+               <p class="c8"><span class="c11">{{package.first_name}} {{package.last_name}}</span></p>
+            </td>
+            <td class="c30" colspan="1" rowspan="1">
+               <p class="c8"><span class="c0">{{package.address_line1}}</span></p>
+               <p class="c8"><span class="c0">{{package.address_line2}}</span></p>
+               <p class="c8"><span class="c0">{{package.city}}</span></p>
+               <p class="c8"><span class="c0">{{package.state_province_region}}</span></p>
+               <p class="c8"><span class="c0">{{package.zip}}</span></p>
+            </td>
+            <td class="c5" colspan="1" rowspan="1">
+               <h2 class="c6" id="h.j1o07ah0a0xm"><span class="c11">{{item.product.name}}</span></h2>
+               <p class="c8 c18"><span class="c0"></span></p>
+            </td>
+            <td class="c29" colspan="1" rowspan="1">
+               <p class="c8 c36"><span class="c0">{{item.quantity}}</span></p>
+            </td>
+            <td class="c24" colspan="1" rowspan="1">
+               <p class="c8 c33"><span class="c11 c16">{{item.product.price|multiply:item.quantity}}</span></p>
+            </td>
+         </tr>
+         {% endfor %}
+      </table>
+      <p class="c2"><span class="c11 c20"></span></p>
+      <p class="c2"><span class="c17"></span></p>
+      <p class="c3"><span class="c17">Authorized signature</span></p>
+      <p class="c2"><span class="c20 c11"></span></p>
+      <p class="c3"><span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 240.00px; height: 110.00px;"><img alt="" src="https://cdn.shopify.com/s/files/1/0761/9483/products/areca-21-productpage_1024x1024.png?v=1670335110" style="width: 240.00px; height: 110.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span></p>
+      <p class="c2"><span class="c20 c11"></span></p>
+      <p class="c3"><span class="c11">Elizabeth Funk</span></p>
+      <p class="c2"><span class="c20 c11"></span></p>
+      <p class="c22"><span class="c15">_____________________________________________________________________________________________</span><span class="c11 c34"><br></span></p>
+      <p class="c22"><span class="c14">Please print this receipt for tax purposes. As required by the IRS regulations, we provide the following information:</span></p>
+      <p class="c22"><span class="c14">DignityMoves is a 501(c)(3) not for profit organization. Our federal tax identification number is #87-1111468. As no</span></p>
+      <p class="c22"><span class="c14">goods or services have been provided in connection with this gift, the full amount is deductible to the fullest extent</span></p>
+      <p class="c22"><span class="c14">provided by law.</span></p>
+      <p class="c1"><span class="c21"></span></p>
+      <p class="c1"><span class="c21"></span></p>
+      <p class="c1"><span class="c21"></span></p>
+      <p class="c1"><span class="c21"></span></p>
+      <p class="c1"><span class="c21"></span></p>
+      <p class="c1"><span class="c21"></span></p>
+      <p class="c1"><span class="c21"></span></p>
+      <p class="c1"><span class="c21"></span></p>
+      <p class="c1"><span class="c21"></span></p>
+      <p class="c1"><span class="c21"></span></p>
+      <p class="c1"><span class="c21"></span></p>
+      <p class="c1"><span class="c21"></span></p>
+      <p class="c1"><span class="c21"></span></p>
+      <p class="c1"><span class="c21"></span></p>
+      <p class="c1"><span class="c21"></span></p>
+      <p class="c18 c26"><span class="c14 c35"></span></p>
+   </body>
+</html>
