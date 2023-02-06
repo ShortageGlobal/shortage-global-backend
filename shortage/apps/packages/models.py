@@ -165,14 +165,9 @@ class Package(models.Model):
         ):
             return
 
-        receipt_storage = MediaStorage()
-        path = receipt_storage.path(
-            get_tax_deduction_receipt_path(self, "tax_return.pdf")
-        )
+        temp_file_path = f"{self.uuid}_tax_returns.pdf"
 
-        if not os.path.exists(os.path.dirname(path)):
-            os.makedirs(os.path.dirname(path))
-
+        # Render the template
         rendered_template = render_to_string(
             "tax_return_report.html",
             {"organization": self.organization, "package": self},
@@ -185,15 +180,19 @@ class Package(models.Model):
         }
 
         # Generate the PDF with the receipt
-        pdfkit.from_string(rendered_template, path, options=options)
+        pdfkit.from_string(rendered_template, temp_file_path, options=options)
 
+        receipt_storage = MediaStorage()
+        path = receipt_storage.path(
+            get_tax_deduction_receipt_path(self, "tax_return.pdf")
+        )
         # Assign the temp file to the model field
-        self.tax_deduction_receipt.save(path, open(path, "rb"))
+        self.tax_deduction_receipt.save(path, open(temp_file_path, "rb"))
         # Todo: Model saving itself is ugly but we have no controller which can do it instead
         self.save()
 
         # Delete the temp file
-        receipt_storage.delete(path)
+        os.remove(temp_file_path)
 
     def payment_canceled(self):
         self.status = PackageStatus.PAYMENT_CANCELED
