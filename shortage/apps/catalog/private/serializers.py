@@ -22,6 +22,17 @@ class PrivateOrganizationWriteSerializer(serializers.ModelSerializer):
             "is_draft",
             "promote",
             "deadline",
+            "address_line1",
+            "address_line2",
+            "city",
+            "state_province_region",
+            "zip",
+            "country",
+            "representative_first_name",
+            "representative_last_name",
+            "representative_email",
+            "representative_phone_number",
+            "representative_signature",
         ]
         read_only_fields = [
             "is_verified",

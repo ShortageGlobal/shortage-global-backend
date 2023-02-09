@@ -113,6 +113,10 @@ class Organization(models.Model):
     def medium_banner_photo(self):
         return get_thumbnail_for_image(self.banner, "organization_banner_medium")
 
+    @property
+    def representative_signature_image(self):
+        return get_thumbnail_for_image(self.representative_signature, "signature")
+
 
 class ExternalOrganization(models.Model):
     name = models.CharField(max_length=80)

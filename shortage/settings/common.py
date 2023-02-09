@@ -174,6 +174,7 @@ THUMBNAIL_ALIASES = {
         "blog_post_medium": {"size": (355, 200), "crop": True},
         "blog_post_large": {"size": (1244, 700), "crop": True},
         "card_preview": {"size": (533, 400), "crop": True},
+        "signature": {"size": (533, 400), "crop": True},
     },
 }
 
