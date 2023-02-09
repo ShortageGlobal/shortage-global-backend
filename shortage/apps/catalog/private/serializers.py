@@ -4,6 +4,7 @@ from shortage.helpers.serializers import AuthorizedUserOrNone
 
 
 class PrivateOrganizationWriteSerializer(serializers.ModelSerializer):
+    logo = serializers.ImageField(required=True)
     owner = serializers.HiddenField(default=AuthorizedUserOrNone())
 
     class Meta:
