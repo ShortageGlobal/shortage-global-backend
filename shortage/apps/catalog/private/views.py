@@ -57,7 +57,7 @@ class PrivateOrganizationViewSet(
     lookup_field = "slug"
 
     def get_serializer_class(self):
-        if self.action == "create" or self.action == "update":
+        if self.action in ["create", "update", "partial_update"]:
             return PrivateOrganizationWriteSerializer
         return PrivateOrganizationReadSerializer
 

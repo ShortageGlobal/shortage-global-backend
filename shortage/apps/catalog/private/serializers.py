@@ -25,7 +25,7 @@ class PrivateOrganizationWriteSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             "is_verified",
-            "is_draft",
+            "is_draft",  # there is a special route for publishing an organization
             "promote",
         ]
 
