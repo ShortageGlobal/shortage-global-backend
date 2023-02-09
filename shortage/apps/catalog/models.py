@@ -70,6 +70,26 @@ class Organization(models.Model):
         storage=storage.MediaStorage(),
     )
     url = models.URLField(max_length=255, null=True, blank=True)
+
+    # Legal information
+    address_line1 = models.CharField(max_length=255, null=True, blank=True)
+    address_line2 = models.CharField(max_length=255, null=True, blank=True)
+    city = models.CharField(max_length=255, null=True, blank=True)
+    state_province_region = models.CharField(max_length=255, null=True, blank=True)
+    zip = models.CharField(max_length=100, null=True, blank=True)
+    country = CountryField(default="US")
+
+    representative_first_name = models.CharField(max_length=255, null=True, blank=True)
+    representative_last_name = models.CharField(max_length=255, null=True, blank=True)
+    representative_email = models.EmailField(max_length=100, null=True, blank=True)
+    representative_phone_number = PhoneNumberField(null=True, blank=True)
+    representative_signature = ThumbnailerImageField(
+        upload_to=get_organization_path,
+        null=True,
+        blank=True,
+        storage=storage.MediaStorage(),
+    )
+
     ein_number = models.CharField(max_length=255, null=True, blank=True)
     is_verified = models.BooleanField(default=False, db_index=True)
     is_draft = models.BooleanField(default=True, db_index=True)
