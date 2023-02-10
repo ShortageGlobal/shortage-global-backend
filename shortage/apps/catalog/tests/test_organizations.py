@@ -1,6 +1,8 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.utils import json
+
+from shortage.apps.catalog.models import Organization
 from shortage.apps.catalog.private.views import (
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
@@ -14,6 +16,7 @@ from shortage.helpers.test_utilities import (
 
 class PrivateOrganizationTestCase(APITestCase):
     def setUp(self) -> None:
+        self.maxDiff = None
         self.user = create_test_user()
         self.requestFactory = APIRequestFactory()
 
@@ -69,16 +72,33 @@ class PrivateOrganizationTestCase(APITestCase):
 
         json_response = json.loads(response.render().content)
 
-        # Verify that create response returns the same data as was sent
-        self.assertEqual(self.testData["name"], json_response["name"])
-        self.assertEqual(self.testData["slug"], json_response["slug"])
-        self.assertEqual(self.testData["description"], json_response["description"])
-        self.assertEqual(self.testData["url"], json_response["url"])
-        self.assertEqual(self.testData["ein_number"], json_response["ein_number"])
-        self.assertEqual(False, json_response["is_verified"])
-        self.assertEqual(True, json_response["is_draft"])
-        self.assertEqual(None, json_response["logo"])
-        self.assertEqual(None, json_response["banner"])
+        expected_response = {
+            "name": "TestName",
+            "slug": "testslug",
+            "description": "Some description",
+            "meta_description": None,
+            "logo": None,
+            "banner": None,
+            "url": "https://www.someurl.com",
+            "ein_number": "12345",
+            "is_verified": False,
+            "is_draft": True,
+            "promote": False,
+            "deadline": None,
+            "address_line1": None,
+            "address_line2": None,
+            "city": None,
+            "state_province_region": None,
+            "zip": None,
+            "country": "US",
+            "representative_first_name": None,
+            "representative_last_name": None,
+            "representative_email": None,
+            "representative_phone_number": None,
+            "representative_signature": None,
+        }
+
+        self.assertEqual(json_response, expected_response)
 
         # Verify that GET returns the same data as was POSTed
         request = self.requestFactory.get("/api/private/organizations/")
@@ -89,15 +109,37 @@ class PrivateOrganizationTestCase(APITestCase):
 
         json_response = json.loads(response.render().content)[0]
 
-        self.assertEqual(self.testData["name"], json_response["name"])
-        self.assertEqual(self.testData["slug"], json_response["slug"])
-        self.assertEqual(self.testData["description"], json_response["description"])
-        self.assertEqual(self.testData["url"], json_response["url"])
-        self.assertEqual(self.testData["ein_number"], json_response["ein_number"])
-        self.assertEqual(False, json_response["is_verified"])
-        self.assertEqual(True, json_response["is_draft"])
-        self.assertEqual(None, json_response["logo"])
-        self.assertEqual(None, json_response["banner"])
+        organization = Organization.objects.get(slug=self.testData["slug"])
+
+        expected_response = {
+            "name": "TestName",
+            "slug": "testslug",
+            "description": "Some description",
+            "meta_description": None,
+            "logo": None,
+            "banner": None,
+            "url": "https://www.someurl.com",
+            "ein_number": "12345",
+            "is_verified": False,
+            "is_draft": True,
+            "promote": False,
+            "deadline": None,
+            "address_line1": None,
+            "address_line2": None,
+            "city": None,
+            "state_province_region": None,
+            "zip": None,
+            "country": "US",
+            "representative_first_name": None,
+            "representative_last_name": None,
+            "representative_email": None,
+            "representative_phone_number": None,
+            "representative_signature": None,
+            "created_at": organization.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+            "updated_at": organization.updated_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+        }
+
+        self.assertEqual(json_response, expected_response)
 
     def test_organization_slug_blacklist(self):
         test_data = self.testData.copy()
