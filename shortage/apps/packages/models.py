@@ -1,5 +1,6 @@
 import os
 import uuid
+import pdfkit
 from django.db import models
 from django.conf import settings
 from django.core.validators import (
@@ -11,9 +12,9 @@ from django.core.exceptions import ValidationError
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from auditlog.registry import auditlog
-import pdfkit
 from phonenumber_field.modelfields import PhoneNumberField
 from django_countries.fields import CountryField
+from easy_thumbnails.fields import ThumbnailerImageField
 from shortage.apps import storage
 from shortage.apps.catalog.models import Product, Organization, OrganizationBlogPost
 from shortage.apps.file_paths import (
@@ -23,7 +24,6 @@ from shortage.apps.file_paths import (
 )
 from shortage.apps.storage import MediaStorage
 from shortage.helpers import get_full_name
-from easy_thumbnails.fields import ThumbnailerImageField
 from shortage.helpers.thumbnails import get_thumbnail_for_image
 
 
