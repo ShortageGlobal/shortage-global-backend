@@ -1,95 +1,183 @@
-{% load math %}
-
+<!DOCTYPE html>
 <html>
-   <head>
-      <meta content="text/html; charset=UTF-8" http-equiv="content-type">
-      <style type="text/css">@import url('https://themes.googleusercontent.com/fonts/css?kit=dpiI8CyVsrzWsJLBFKehGpLhv3qFjX7dUn1mYxfCXhI');ul.lst-kix_nqdn6n6yddxo-3{list-style-type:none}ul.lst-kix_nqdn6n6yddxo-2{list-style-type:none}ul.lst-kix_nqdn6n6yddxo-5{list-style-type:none}ul.lst-kix_nqdn6n6yddxo-4{list-style-type:none}.lst-kix_nqdn6n6yddxo-1>li:before{content:"\0025cb  "}ul.lst-kix_nqdn6n6yddxo-7{list-style-type:none}ul.lst-kix_nqdn6n6yddxo-6{list-style-type:none}.lst-kix_nqdn6n6yddxo-2>li:before{content:"\0025a0  "}ul.lst-kix_nqdn6n6yddxo-8{list-style-type:none}.lst-kix_nqdn6n6yddxo-3>li:before{content:"\0025cf  "}.lst-kix_nqdn6n6yddxo-4>li:before{content:"\0025cb  "}.lst-kix_nqdn6n6yddxo-7>li:before{content:"\0025cb  "}.lst-kix_nqdn6n6yddxo-5>li:before{content:"\0025a0  "}.lst-kix_nqdn6n6yddxo-6>li:before{content:"\0025cf  "}.lst-kix_nqdn6n6yddxo-0>li:before{content:"  "}ul.lst-kix_nqdn6n6yddxo-1{list-style-type:none}.lst-kix_nqdn6n6yddxo-8>li:before{content:"\0025a0  "}ul.lst-kix_nqdn6n6yddxo-0{list-style-type:none}ol{margin:0;padding:0}table td,table th{padding:0}.c24{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:1pt;border-right-width:1pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:1pt;border-top-style:solid;border-left-style:solid;border-bottom-width:1pt;width:56.2pt;border-top-color:#000000;border-bottom-style:solid}.c29{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:1pt;border-right-width:1pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:1pt;border-top-style:solid;border-left-style:solid;border-bottom-width:1pt;width:30pt;border-top-color:#000000;border-bottom-style:solid}.c19{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:1pt;border-right-width:1pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:1pt;border-top-style:solid;border-left-style:solid;border-bottom-width:1pt;width:47.2pt;border-top-color:#000000;border-bottom-style:solid}.c10{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:1pt;border-right-width:1pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:1pt;border-top-style:solid;border-left-style:solid;border-bottom-width:1pt;width:25.5pt;border-top-color:#000000;border-bottom-style:solid}.c13{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:1pt;border-right-width:1pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:1pt;border-top-style:solid;border-left-style:solid;border-bottom-width:1pt;width:78pt;border-top-color:#000000;border-bottom-style:solid}.c30{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:1pt;border-right-width:1pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:1pt;border-top-style:solid;border-left-style:solid;border-bottom-width:1pt;width:84.8pt;border-top-color:#000000;border-bottom-style:solid}.c5{border-right-style:solid;padding:5pt 5pt 5pt 5pt;border-bottom-color:#000000;border-top-width:1pt;border-right-width:1pt;border-left-color:#000000;vertical-align:top;border-right-color:#000000;border-left-width:1pt;border-top-style:solid;border-left-style:solid;border-bottom-width:1pt;width:81pt;border-top-color:#000000;border-bottom-style:solid}.c0{background-color:#ffffff;color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:10pt;font-family:"Arial";font-style:normal}.c9{background-color:#ffffff;color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:14pt;font-family:"Roboto";font-style:normal}.c14{color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:9pt;font-family:"Arial";font-style:normal}.c28{color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:"Arial";font-style:normal}.c1{padding-top:0pt;padding-bottom:0pt;line-height:1.15;orphans:2;widows:2;text-align:center;height:11pt}.c27{color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:10pt;font-family:"Arial";font-style:normal}.c17{color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:12.5pt;font-family:"Arial";font-style:normal}.c37{color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:9pt;font-family:"Arial";font-style:normal}.c39{background-color:#ffffff;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:17pt;font-family:"Roboto";font-style:normal}.c2{padding-top:0pt;padding-bottom:0pt;line-height:1.15;orphans:2;widows:2;text-align:left;height:11pt}.c21{color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:7pt;font-family:"Arial";font-style:normal}.c3{padding-top:0pt;padding-bottom:0pt;line-height:1.15;orphans:2;widows:2;text-align:left}.c7{padding-top:0pt;padding-bottom:0pt;line-height:1.15;orphans:2;widows:2;text-align:right}.c22{padding-top:0pt;padding-bottom:0pt;line-height:1.0;orphans:2;widows:2;text-align:justify}.c26{padding-top:0pt;padding-bottom:8pt;line-height:1.0791666666666666;orphans:2;widows:2;text-align:left}.c20{color:#1c1e21;font-weight:400;text-decoration:none;vertical-align:baseline;font-family:"Arial";font-style:normal}.c12{color:#333333;font-weight:400;text-decoration:none;vertical-align:baseline;font-family:"Roboto";font-style:normal}.c4{padding-top:0pt;padding-bottom:0pt;line-height:1.15;orphans:2;widows:2;text-align:center}.c6{background-color:#ffffff;padding-top:0pt;padding-bottom:0pt;line-height:1.2;text-align:left}.c8{padding-top:0pt;padding-bottom:0pt;line-height:1.0;text-align:left}.c31{border-spacing:0;border-collapse:collapse;margin-right:auto}.c23{background-color:#ffffff;max-width:468pt;padding:9pt 72pt 13.5pt 72pt}.c15{background-color:#ffffff;font-size:9pt}.c11{background-color:#ffffff;font-size:10pt}.c32{color:inherit;text-decoration:inherit}.c38{background-color:#ffffff;font-size:7pt}.c33{orphans:2;widows:2}.c35{background-color:#ffff00}.c16{color:#212529}.c25{height:0pt}.c18{height:11pt}.c34{color:#1c1e21}.c36{margin-left:19.5pt}.title{padding-top:0pt;color:#000000;font-size:26pt;padding-bottom:3pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}.subtitle{padding-top:0pt;color:#666666;font-size:15pt;padding-bottom:16pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}li{color:#000000;font-size:11pt;font-family:"Arial"}p{margin:0;color:#000000;font-size:11pt;font-family:"Arial"}h1{padding-top:20pt;color:#000000;font-size:20pt;padding-bottom:6pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h2{padding-top:18pt;color:#000000;font-size:16pt;padding-bottom:6pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h3{padding-top:16pt;color:#434343;font-size:14pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h4{padding-top:14pt;color:#666666;font-size:12pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h5{padding-top:12pt;color:#666666;font-size:11pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;orphans:2;widows:2;text-align:left}h6{padding-top:12pt;color:#666666;font-size:11pt;padding-bottom:4pt;font-family:"Arial";line-height:1.15;page-break-after:avoid;font-style:italic;orphans:2;widows:2;text-align:left}</style>
-   </head>
-   <body class="c23 doc-content">
-      <p class="c7"><img alt="" src="/project/media/{{organization.logo}}" style="width: 230px; height: 113px;" title=""></span></p>
-      <p class="c2"><span class="c0"></span></p>
-      <p class="c3"><span class="c0">{{organization.name}}</span></p>
-      <p class="c3"><span class="c0">{{organization.address_line1}}</span></p>
-      <p class="c3"><span class="c0">{{organization.address_line2}}</span></p>
-      <p class="c3"><span class="c0">{{organization.city}}, {{organization.state_province_region}} {{organization.zip}}</span></p>
-      <p class="c3"><span class="c0">{{organization.representative_email}}</span></p>
-      <p class="c3"><span class="c11">Tax ID {{organization.ein}}</span><span class="c15"><br>_____________________________________________________________________________________________</span><span class="c20 c15"><br><br></span></p>
-      <p class="c4"><span class="c17">Official donation receipt</span></p>
-      <p class="c4"><span class="c37">For income tax purposes</span></p>
-      <p class="c26 c18"><span class="c9"></span></p>
-      <table class="c31">
-         <tr class="c25">
-            <td class="c10" colspan="1" rowspan="1">
-               <p class="c8"><span class="c0">#</span></p>
-            </td>
-            <td class="c19" colspan="1" rowspan="1">
-               <p class="c8"><span class="c0">Date</span></p>
-            </td>
-            <td class="c13" colspan="1" rowspan="1">
-               <p class="c8"><span class="c11">Email</span></p>
-            </td>
-            <td class="c5" colspan="1" rowspan="1">
-               <p class="c8"><span class="c11">Donor</span></p>
-            </td>
-            <td class="c30" colspan="1" rowspan="1">
-               <p class="c8"><span class="c11">Address</span></p>
-            </td>
-            <td class="c5" colspan="1" rowspan="1">
-               <p class="c8"><span class="c11">Description of items being donated</span></p>
-            </td>
-            <td class="c29" colspan="1" rowspan="1">
-               <p class="c8"><span class="c0">Q-ty</span></p>
-            </td>
-            <td class="c24" colspan="1" rowspan="1">
-               <p class="c8"><span class="c11">Price </span></p>
-            </td>
-         </tr>
-         {% for item in package.items.all %}
-         <tr class="c25">
-            <td class="c10" colspan="1" rowspan="1">
-               <p class="c8 c18"><span class="c11 c12"></span></p>
-            </td>
-            <td class="c19" colspan="1" rowspan="1">
-               <p class="c8"><span class="c11">{{package.created_at}}</span></p>
-            </td>
-            <td class="c13" colspan="1" rowspan="1">
-               <p class="c8">{{package.email}}</p>
-            </td>
-            <td class="c5" colspan="1" rowspan="1">
-               <p class="c8"><span class="c11">{{package.first_name}} {{package.last_name}}</span></p>
-            </td>
-            <td class="c30" colspan="1" rowspan="1">
-               <p class="c8"><span class="c0">{{package.address_line1}}</span></p>
-               <p class="c8"><span class="c0">{{package.address_line2}}</span></p>
-               <p class="c8"><span class="c0">{{package.city}}</span></p>
-               <p class="c8"><span class="c0">{{package.state_province_region}}</span></p>
-               <p class="c8"><span class="c0">{{package.zip}}</span></p>
-            </td>
-            <td class="c5" colspan="1" rowspan="1">
-               <h2 class="c6" id="h.j1o07ah0a0xm"><span class="c11">{{item.product.name}}</span></h2>
-               <p class="c8 c18"><span class="c0"></span></p>
-            </td>
-            <td class="c29" colspan="1" rowspan="1">
-               <p class="c8 c36"><span class="c0">{{item.quantity}}</span></p>
-            </td>
-            <td class="c24" colspan="1" rowspan="1">
-               <p class="c8 c33"><span class="c11 c16">{{item.product.price|multiply:item.quantity}}</span></p>
-            </td>
-         </tr>
-         {% endfor %}
-      </table>
-      <p class="c2"><span class="c11 c20"></span></p>
-      <p class="c2"><span class="c17"></span></p>
-      <p class="c3"><span class="c17">Authorized signature</span></p>
-      <p class="c2"><span class="c20 c11"></span></p>
-      <p class="c3"><span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 240.00px; height: 110.00px;"><img alt="" src="{{organization.representative_signature}}" style="width: 240.00px; height: 110.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span></p>
-      <p class="c2"><span class="c20 c11"></span></p>
-      <p class="c3"><span class="c11">{{organization.representative_first_name}} {{organization.representative_last_name}}</span></p>
-      <p class="c2"><span class="c20 c11"></span></p>
-      <p class="c22"><span class="c15">_____________________________________________________________________________________________</span><span class="c11 c34"><br></span></p>
-      <p class="c22"><span class="c14">Please print this receipt for tax purposes. As required by the IRS regulations, we provide the following information:</span></p>
-      <p class="c22"><span class="c14">DignityMoves is a 501(c)(3) not for profit organization. Our federal tax identification number is #87-1111468. As no</span></p>
-      <p class="c22"><span class="c14">goods or services have been provided in connection with this gift, the full amount is deductible to the fullest extent</span></p>
-      <p class="c22"><span class="c14">provided by law.</span></p>
-   </body>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+
+    <style type="text/css">
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+      }
+
+      body {
+        padding: 3rem;
+      }
+
+      .center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 2rem;
+        margin-bottom: 4rem;
+        border-bottom: 1px solid black;
+      }
+
+      .header > * + * {
+        margin-left: 5rem;
+      }
+
+      .title {
+        font-weight: 700;
+        font-size: 1.5rem;
+        text-align: center;
+      }
+
+      .subtitle {
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-align: center;
+      }
+
+      table.items-table {
+        margin: 3rem 0;
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+      table.items-table td,
+      table.items-table th {
+        border: 1px solid #aaaaaa;
+        padding: 0.5rem;
+      }
+      table.items-table thead {
+        border-bottom: 2px solid black;
+      }
+      table.items-table thead th {
+        font-weight: bold;
+      }
+
+      .signature-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+
+      .signature-img {
+        margin: 2rem 0;
+      }
+
+      .representative-name {
+        font-size: 1.1rem;
+      }
+
+      .disclaimer {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid black;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div class="header">
+      <div class="center">
+        <div>
+          <div>{{ organization.name|default:"" }}</div>
+          <div>{{ organization.address_line1|default:"" }}</div>
+          <div>{{ organization.address_line2|default:"" }}</div>
+          <div>{{organization.city|default:""}}, {{organization.state_province_region|default:""}} {{organization.zip|default:""}}</div>
+          <div>{{ organization.representative_email|default:"" }}</div>
+          <div>{{ organization.representative_phone_number|default:"" }}</div>
+          <div>Tax ID {{organization.ein_number|default:""}}</div>
+        </div>
+      </div>
+
+      <div class="logo center">
+        <img
+          alt=""
+          width="250px"
+          src="{{organization.medium_logo_photo}}" 
+        />
+      </div>
+    </div>
+
+    <!-- TITLE -->
+    <div class="center">
+      <div class="title">
+        <div class="title">Official donation receipt</div>
+        <div class="subtitle">For income tax purposes</div>
+      </div>
+    </div>
+
+    <!-- ITEMS -->
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Date</th>
+          <th>Email</th>
+          <th>Donor</th>
+          <th>Address</th>
+          <th>Description of items being donated</th>
+          <th>Q-ty</th>
+          <th>Price (total)</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for item in package.items.all %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{package.created_at|date:"DATE_FORMAT"}}</td>
+          <td>{{package.email}}</td>
+          <td>{{package.first_name}} {{package.last_name}}</td>
+          <td>
+            <div>{{package.address_line1}}</div>
+            <div>{{package.address_line2}}</div>
+            <div>{{package.city}}</div>
+            <div>{{package.state_province_region}}</div>
+            <div>{{package.zip}}</div>
+          </td>
+          <td>{{item.product.name}}</td>
+          <td>{{item.quantity}}</td>
+          <td>${{item.total_price}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- SIGNATURE -->
+    <div class="signature-title">Authorized signature</div>
+    <img
+      class="signature-img"
+      alt=""
+      width="250px"
+      src="{{ organization.representative_signature_image }}"
+    />
+    <div class="representative-name">
+        {{organization.representative_first_name}} {{organization.representative_last_name}}
+    </div>
+
+    <!-- DISCLAIMER -->
+    <div class="disclaimer">
+      Please print this receipt for tax purposes. As required by the IRS
+      regulations, we provide the following information: <b>{{organization.name}}</b> is a
+      501(c)(3) not for profit organization. Our federal tax identification
+      number is {{organization.ein_number}}. As no goods or services have been provided in
+      connection with this gift, the full amount is deductible to the fullest
+      extent provided by law.
+    </div>
+  </body>
 </html>

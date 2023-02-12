@@ -157,8 +157,8 @@ class Package(models.Model):
                 }
             )
 
-    def generate_tax_receipt(self):
-        if (
+    def generate_tax_receipt(self, force=False):
+        if not force and (
             not self.need_tax_deduction
             or self.status != PackageStatus.DELIVERED
             or self.tax_deduction_receipt
@@ -256,6 +256,9 @@ class PackageItem(models.Model):
 
     def __str__(self):
         return self.product.name
+
+    def total_price(self):
+        return self.quantity * self.product.price
 
 
 class PackageStatusLogEntry(models.Model):
