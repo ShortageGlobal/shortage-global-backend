@@ -25,7 +25,7 @@ from shortage.apps.file_paths import (
 from shortage.apps.storage import MediaStorage
 from shortage.helpers import get_full_name
 from shortage.helpers.thumbnails import get_thumbnail_for_image
-
+from weasyprint import HTML
 
 class PackageStatus(models.TextChoices):
     REGISTERED = settings.PACKAGE_STATUS["REGISTERED"], "Registered"
@@ -155,26 +155,29 @@ class Package(models.Model):
             {"organization": self.organization, "package": self},
         )
 
-        options = {
-            "enable-local-file-access": None,
-            "page-size": "Letter",
-            "encoding": "UTF-8",
-        }
+        pdf_html = HTML(string=rendered_template)
+        pdf_html.write_pdf(temp_file_path)
 
-        # Generate the PDF with the receipt
-        try:
-            pdfkit.from_string(
-                rendered_template, temp_file_path, options=options, verbose=True
-            )
-        except:
-            pass
+        # options = {
+        #     "enable-local-file-access": None,
+        #     "page-size": "Letter",
+        #     "encoding": "UTF-8",
+        # }
+        #
+        # # Generate the PDF with the receipt
+        # try:
+        #     pdfkit.from_string(
+        #         rendered_template, temp_file_path, options=options, verbose=True
+        #     )
+        # except:
+        #     pass
 
-        receipt_storage = MediaStorage()
-        path = receipt_storage.path(
-            get_tax_deduction_receipt_path(self, "tax_return.pdf")
-        )
+        # receipt_storage = MediaStorage()
+        # path = receipt_storage.path(
+        #     get_tax_deduction_receipt_path(self, "tax_return.pdf")
+        # )
         # Assign the temp file to the model field
-        self.tax_deduction_receipt.save(path, open(temp_file_path, "rb"))
+        self.tax_deduction_receipt.save("tax_return.pdf", open(temp_file_path, "rb"))
         # Todo: Model saving itself is ugly but we have no controller which can do it instead
         self.save()
 
