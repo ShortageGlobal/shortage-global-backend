@@ -155,22 +155,19 @@ class Package(models.Model):
             {"organization": self.organization, "package": self},
         )
 
-        pdf_html = HTML(string=rendered_template)
-        pdf_html.write_pdf(temp_file_path)
+        # pdf_html = HTML(string=rendered_template)
+        # pdf_html.write_pdf(temp_file_path)
 
-        # options = {
-        #     "enable-local-file-access": None,
-        #     "page-size": "Letter",
-        #     "encoding": "UTF-8",
-        # }
-        #
-        # # Generate the PDF with the receipt
-        # try:
-        #     pdfkit.from_string(
-        #         rendered_template, temp_file_path, options=options, verbose=True
-        #     )
-        # except:
-        #     pass
+        options = {
+            "enable-local-file-access": None,
+            "page-size": "Letter",
+            "encoding": "UTF-8",
+        }
+
+        # Generate the PDF with the receipt
+        pdfkit.from_string(
+            rendered_template, temp_file_path, options=options, verbose=True
+        )
 
         # receipt_storage = MediaStorage()
         # path = receipt_storage.path(
