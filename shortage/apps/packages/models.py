@@ -156,13 +156,18 @@ class Package(models.Model):
         )
 
         options = {
-            "enable-local-file-access": True,
+            "enable-local-file-access": None,
             "page-size": "Letter",
             "encoding": "UTF-8",
         }
 
         # Generate the PDF with the receipt
-        pdfkit.from_string(rendered_template, temp_file_path, options=options)
+        try:
+            pdfkit.from_string(
+                rendered_template, temp_file_path, options=options, verbose=True
+            )
+        except:
+            pass
 
         receipt_storage = MediaStorage()
         path = receipt_storage.path(
