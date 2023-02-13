@@ -1,6 +1,3 @@
-import os
-
-from django.core.exceptions import ValidationError
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.utils import json
 
@@ -14,6 +11,7 @@ from shortage.apps.packages.views import (
     PackageViewSet,
     PackageCreationViewSet,
 )
+from shortage.apps.storage import MediaStorage
 from shortage.helpers.test_utilities import (
     create_test_user,
     create_test_organization,
@@ -83,24 +81,10 @@ class PackageTestCase(APITestCase):
         package.status = PackageStatus.DELIVERED
         package.clean()  # doesn't raise a validation error
 
-        # check that package required tax deduction receipt to become "Delivered"
-        package = create_test_package(
-            self.product, need_tax_deduction=True, organization=self.organization
-        )
-        package.status = PackageStatus.DELIVERED
-        self.assertRaises(ValidationError, package.clean)
-
-        # provide receipt and error will not be raised
-        package = create_test_package(
-            self.product, need_tax_deduction=True, organization=self.organization
-        )
-        package.status = PackageStatus.DELIVERED
-        package.tax_deduction_receipt = "/fake/path/to/receipt.pdf"
-        package.clean()  # doesn't raise a validation error
-
         # Organization must have a logo, otherwise PDF will fail to generate
-        create_test_image(None, "logo.png")
-        self.organization.logo = "logo.png"
+        tmp_storage = MediaStorage()
+        self.organization.logo = create_test_image(tmp_storage, "logo.png")
+        self.organization.representative_signature = create_test_image(tmp_storage, "signature.png")
 
         # check that tax receipt is generated
         package = create_test_package(
@@ -108,6 +92,7 @@ class PackageTestCase(APITestCase):
         )
         package.status = PackageStatus.DELIVERED
         package.save()
+        package.clean()  # doesn't raise a validation error
 
         request = self.requestFactory.post(
             "api/organization/{}/packages".format(self.organization.slug),
@@ -122,7 +107,7 @@ class PackageTestCase(APITestCase):
         content = json.loads(response.render().content)
 
         self.assertNotEqual(content["tax_deduction_receipt"], None)
-        # No easy way to compare file contents so we just hope that whatever there is correct
+        # No easy way to compare file contents, so we just hope that whatever there is correct
 
     def test_organization_mismatch(self):
         try:

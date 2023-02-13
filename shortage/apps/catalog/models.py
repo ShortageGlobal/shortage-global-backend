@@ -14,6 +14,7 @@ from shortage.apps.file_paths import (
     get_external_organization_path,
     get_product_path,
 )
+from shortage.apps.storage import MediaStorage
 from shortage.helpers import get_full_name
 from shortage.helpers.thumbnails import get_thumbnail_for_image
 
@@ -109,6 +110,10 @@ class Organization(models.Model):
     def medium_logo_photo(self):
         return get_thumbnail_for_image(self.logo, "organization_logo_medium")
 
+    def medium_logo_photo_url(self):
+        media_storage = MediaStorage()
+        return media_storage.url(self.medium_logo_photo)
+
     @property
     def medium_banner_photo(self):
         return get_thumbnail_for_image(self.banner, "organization_banner_medium")
@@ -116,6 +121,11 @@ class Organization(models.Model):
     @property
     def representative_signature_image(self):
         return get_thumbnail_for_image(self.representative_signature, "signature")
+
+    @property
+    def representative_signature_image_url(self):
+        media_storage = MediaStorage()
+        return media_storage.url(self.representative_signature_image)
 
 
 class ExternalOrganization(models.Model):
