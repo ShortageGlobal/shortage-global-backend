@@ -22,6 +22,7 @@ from .private.views import (
     PrivateProductsViewSet,
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
+    PrivateInstructionsViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -68,6 +69,11 @@ router.register(
     r"organizations/(?P<org_slug>[^/.]+)/instructions",
     InstructionsViewSet,
     basename="instructions",
+)
+router.register(
+    r"private/organizations/(?P<org_slug>[^/.]+)/instructions",
+    PrivateInstructionsViewSet,
+    basename="private_instructions",
 )
 
 # Categories
