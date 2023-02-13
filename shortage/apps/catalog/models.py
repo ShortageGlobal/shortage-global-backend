@@ -111,20 +111,12 @@ class Organization(models.Model):
         return get_thumbnail_for_image(self.logo, "organization_logo_medium")
 
     @property
-    def medium_logo_photo_url(self):
-        return self.medium_logo_photo.url
-
-    @property
     def medium_banner_photo(self):
         return get_thumbnail_for_image(self.banner, "organization_banner_medium")
 
     @property
     def representative_signature_image(self):
         return get_thumbnail_for_image(self.representative_signature, "signature")
-
-    @property
-    def representative_signature_image_url(self):
-        return self.representative_signature_image.url
 
 
 class ExternalOrganization(models.Model):

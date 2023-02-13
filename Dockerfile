@@ -4,5 +4,3 @@ WORKDIR /project
 COPY requirements.txt /project/
 RUN pip install -r requirements.txt
 COPY . /project/
-RUN apt-get update && apt-get install -y wkhtmltopdf
-ENV XDG_RUNTIME_DIR /tmp

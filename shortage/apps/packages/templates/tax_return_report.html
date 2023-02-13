@@ -73,8 +73,14 @@
         font-weight: 700;
       }
 
+      .logo-img
+      {
+        width: 250px
+      }
+
       .signature-img {
         margin: 2rem 0;
+        width: 250px
       }
 
       .representative-name {
@@ -106,8 +112,8 @@
 
       <div class="logo center">
         <img
+          class="logo-img"
           alt=""
-          width="250px"
           src="{{organization.medium_logo_photo.url}}"
         />
       </div>
@@ -163,7 +169,6 @@
     <img
       class="signature-img"
       alt=""
-      width="250px"
       src="{{organization.representative_signature_image.url}}"
     />
     <div class="representative-name">

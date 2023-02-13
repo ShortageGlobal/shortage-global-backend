@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase, APIRequestFactory, force_authentica
 from rest_framework.utils import json
 
 from shortage.apps import storage
-from shortage.apps.packages.models import PackageType, PackageStatus, Package
+from shortage.apps.packages.models import PackageType, PackageStatus
 from shortage.apps.packages.private.views import (
     PrivateOrganizationPackagesViewSet,
     PrivateAccountPackagesViewSet,

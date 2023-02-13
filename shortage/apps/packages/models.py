@@ -1,6 +1,5 @@
 import os
 import uuid
-import pdfkit
 from django.db import models
 from django.conf import settings
 from django.core.validators import (
@@ -22,7 +21,6 @@ from shortage.apps.file_paths import (
     get_corporate_donation_path,
     get_tax_deduction_receipt_path,
 )
-from shortage.apps.storage import MediaStorage
 from shortage.helpers import get_full_name
 from shortage.helpers.thumbnails import get_thumbnail_for_image
 from weasyprint import HTML
@@ -156,26 +154,9 @@ class Package(models.Model):
             {"organization": self.organization, "package": self},
         )
 
-        use_new_render = True
-        if use_new_render:
-            pdf_html = HTML(string=rendered_template)
-            pdf_html.write_pdf(temp_file_path)
-        else:
-            options = {
-                "enable-local-file-access": None,
-                "page-size": "Letter",
-                "encoding": "UTF-8",
-            }
+        pdf_html = HTML(string=rendered_template)
+        pdf_html.write_pdf(temp_file_path)
 
-            # Generate the PDF with the receipt
-            pdfkit.from_string(
-                rendered_template, temp_file_path, options=options, verbose=True
-            )
-
-        # receipt_storage = MediaStorage()
-        # path = receipt_storage.path(
-        #     get_tax_deduction_receipt_path(self, "tax_return.pdf")
-        # )
         # Assign the temp file to the model field
         self.tax_deduction_receipt.save("tax_return.pdf", open(temp_file_path, "rb"))
         # Todo: Model saving itself is ugly but we have no controller which can do it instead
