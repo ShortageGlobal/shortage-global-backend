@@ -110,9 +110,9 @@ class Organization(models.Model):
     def medium_logo_photo(self):
         return get_thumbnail_for_image(self.logo, "organization_logo_medium")
 
+    @property
     def medium_logo_photo_url(self):
-        media_storage = MediaStorage()
-        return media_storage.url(self.medium_logo_photo)
+        return self.medium_logo_photo.url
 
     @property
     def medium_banner_photo(self):
@@ -124,8 +124,7 @@ class Organization(models.Model):
 
     @property
     def representative_signature_image_url(self):
-        media_storage = MediaStorage()
-        return media_storage.url(self.representative_signature_image)
+        return self.representative_signature_image.url
 
 
 class ExternalOrganization(models.Model):
