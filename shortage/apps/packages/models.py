@@ -27,6 +27,7 @@ from shortage.helpers import get_full_name
 from shortage.helpers.thumbnails import get_thumbnail_for_image
 from weasyprint import HTML
 
+
 class PackageStatus(models.TextChoices):
     REGISTERED = settings.PACKAGE_STATUS["REGISTERED"], "Registered"
     PAYMENT_CANCELED = settings.PACKAGE_STATUS["PAYMENT_CANCELED"], "Payment Canceled"
@@ -155,19 +156,21 @@ class Package(models.Model):
             {"organization": self.organization, "package": self},
         )
 
-        # pdf_html = HTML(string=rendered_template)
-        # pdf_html.write_pdf(temp_file_path)
+        use_new_render = True
+        if use_new_render:
+            pdf_html = HTML(string=rendered_template)
+            pdf_html.write_pdf(temp_file_path)
+        else:
+            options = {
+                "enable-local-file-access": None,
+                "page-size": "Letter",
+                "encoding": "UTF-8",
+            }
 
-        options = {
-            "enable-local-file-access": None,
-            "page-size": "Letter",
-            "encoding": "UTF-8",
-        }
-
-        # Generate the PDF with the receipt
-        pdfkit.from_string(
-            rendered_template, temp_file_path, options=options, verbose=True
-        )
+            # Generate the PDF with the receipt
+            pdfkit.from_string(
+                rendered_template, temp_file_path, options=options, verbose=True
+            )
 
         # receipt_storage = MediaStorage()
         # path = receipt_storage.path(
