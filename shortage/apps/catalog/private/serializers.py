@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from shortage.apps.catalog.models import Organization, Product
+from shortage.apps.catalog.models import Organization, Product, Instruction
 from shortage.helpers.serializers import AuthorizedUserOrNone
 
 
@@ -63,3 +63,19 @@ class PrivateProductSerializer(serializers.ModelSerializer):
         validated_data["organization"] = organization
 
         return Product.objects.create(**validated_data)
+
+
+class PrivateInstructionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Instruction
+        fields = [
+            "id",
+            "name",
+            "description",
+        ]
+
+    def create(self, validated_data):
+        organization = self.context["view"].organization
+        validated_data["organization"] = organization
+
+        return Instruction.objects.create(**validated_data)

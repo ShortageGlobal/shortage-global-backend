@@ -33,7 +33,10 @@ class ExternalOrganizationAdmin(admin.ModelAdmin):
 
 
 class InstructionAdmin(admin.ModelAdmin):
-    pass
+    list_display = [
+        "name",
+        "organization",
+    ]
 
 
 class ProductAdmin(admin.ModelAdmin):

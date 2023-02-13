@@ -4,11 +4,12 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 from rest_framework import exceptions
-from shortage.apps.catalog.models import Product, Organization
+from shortage.apps.catalog.models import Product, Organization, Instruction
 from shortage.apps.catalog.private.serializers import (
     PrivateOrganizationReadSerializer,
     PrivateOrganizationWriteSerializer,
     PrivateProductSerializer,
+    PrivateInstructionSerializer,
 )
 from shortage.apps.catalog.exceptions import OneOrganizationPerUser
 from shortage.helpers.permissions import IsObjectOwner
@@ -100,7 +101,7 @@ class PrivateProductsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         organization = get_object_or_404(
-            Organization.objects.public(), slug=self.kwargs["org_slug"]
+            Organization.objects.active(), slug=self.kwargs["org_slug"]
         )
         queryset = Product.objects.filter(organization=organization)
 
@@ -113,7 +114,7 @@ class PrivateProductsViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         self.organization = get_object_or_404(
-            Organization.objects.public(), slug=self.kwargs["org_slug"]
+            Organization.objects.active(), slug=self.kwargs["org_slug"]
         )
 
         return super().create(request, *args, **kwargs)
@@ -141,3 +142,30 @@ class PrivateProductsSlugExistsViewSet(viewsets.ViewSet):
             return Response(status=status.HTTP_200_OK)
         else:
             raise exceptions.NotFound()
+
+
+class PrivateInstructionsViewSet(viewsets.ModelViewSet):
+    schema = AutoSchema(
+        tags=["Private", "Instructions"],
+    )
+
+    permission_classes = [permissions.IsAuthenticated, IsObjectOwner]
+    serializer_class = PrivateInstructionSerializer
+    paginator = None
+
+    def __init__(self, **kwargs):
+        self.organization = None
+        super().__init__(**kwargs)
+
+    def get_queryset(self):
+        organization = get_object_or_404(
+            Organization.objects.active(), slug=self.kwargs["org_slug"]
+        )
+        return Instruction.objects.filter(organization=organization)
+
+    def create(self, request, *args, **kwargs):
+        self.organization = get_object_or_404(
+            Organization.objects.active(), slug=self.kwargs["org_slug"]
+        )
+
+        return super().create(request, *args, **kwargs)
