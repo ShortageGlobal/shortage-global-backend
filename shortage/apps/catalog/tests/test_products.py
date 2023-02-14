@@ -84,7 +84,6 @@ class PrivateProductsTestCase(APITestCase):
     def test_list(self):
         # Create test product
         product1 = create_test_product(organization=self.organization)
-
         self.assertNotEqual(product1.id, None)
 
         request = self.requestFactory.get(self.get_request_route(), format="json")
@@ -116,24 +115,12 @@ class PrivateProductsTestCase(APITestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(content["count"], 2)
-        self.assertEqual(content["results"][0]["slug"], product1.slug)
-        self.assertEqual(content["results"][1]["slug"], product2.slug)
+        self.assertEqual(content["results"][0]["slug"], product2.slug)
+        self.assertEqual(content["results"][1]["slug"], product1.slug)
 
     def test_retrieve(self):
         # Create test product
-        test_data = {
-            "name": "Test Product",
-            "slug": "tprod",
-            "category": "VITAL_GOODS",
-            "price": 999,
-            "requested_amount": 20,
-            "top_priority": False,
-            "position": 1,
-            "organization_id": self.organization.id,
-        }
-        product = Product(**test_data)
-        product.save()
-
+        product = create_test_product(organization=self.organization)
         self.assertNotEqual(product.id, None)
 
         route = self.get_request_route() + "/" + product.slug
@@ -141,13 +128,14 @@ class PrivateProductsTestCase(APITestCase):
         request = self.requestFactory.get(route, format="json")
         force_authenticate(request, user=self.user)
         response = PrivateProductsViewSet.as_view({"get": "retrieve"})(
-            request, org_slug=self.organization.slug, slug=product.slug
+            request, org_slug=self.organization.slug, pk=product.pk
         )
 
         content = json.loads(response.render().content)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(content["slug"], product.slug)
+        self.assertEqual(content["id"], product.id)
 
     def test_update(self):
         # Create test product
@@ -172,7 +160,7 @@ class PrivateProductsTestCase(APITestCase):
         request = self.requestFactory.patch(route, data=test_data, format="json")
         force_authenticate(request, user=self.user)
         response = PrivateProductsViewSet.as_view({"patch": "update"})(
-            request, org_slug=self.organization.slug, slug=product.slug
+            request, org_slug=self.organization.slug, pk=product.pk
         )
 
         content = json.loads(response.render().content)
@@ -180,36 +168,49 @@ class PrivateProductsTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(content["name"], "new_name")
 
-    def test_delete(self):
+    def test_soft_delete(self):
         # Create test product
-        test_data = {
-            "name": "Test Product",
-            "slug": "tprod",
-            "category": "VITAL_GOODS",
-            "price": 999,
-            "requested_amount": 20,
-            "top_priority": False,
-            "position": 1,
-            "organization_id": self.organization.id,
-        }
-        product = Product(**test_data)
-        product.save()
+        product = create_test_product(organization=self.organization)
 
         self.assertNotEqual(product.id, None)
 
         route = self.get_request_route() + "/" + product.slug
 
-        test_data["name"] = "new_name"
-        request = self.requestFactory.delete(route, data=test_data, format="json")
+        request = self.requestFactory.delete(route, format="json")
         force_authenticate(request, user=self.user)
         response = PrivateProductsViewSet.as_view({"delete": "destroy"})(
-            request, org_slug=self.organization.slug, slug=product.slug
+            request, org_slug=self.organization.slug, pk=product.pk
         )
 
         self.assertEqual(response.status_code, 204)
 
         # Check that product wasn't actually deleted but soft-deleted instead
         self.assertEqual(Product.objects.all().count(), 1)
+        self.assertEqual(Product.objects.public().count(), 0)
+
+    def test_hard_delete(self):
+        # Make organization draft
+        self.organization.is_draft = True
+        self.organization.is_verified = False
+        self.organization.save()
+
+        # Create test product
+        product = create_test_product(organization=self.organization)
+
+        self.assertNotEqual(product.id, None)
+
+        route = self.get_request_route() + "/" + product.slug
+
+        request = self.requestFactory.delete(route, format="json")
+        force_authenticate(request, user=self.user)
+        response = PrivateProductsViewSet.as_view({"delete": "destroy"})(
+            request, org_slug=self.organization.slug, pk=product.pk
+        )
+
+        self.assertEqual(response.status_code, 204)
+
+        # Check that product wasn't actually deleted but soft-deleted instead
+        self.assertEqual(Product.objects.all().count(), 0)
         self.assertEqual(Product.objects.public().count(), 0)
 
 
