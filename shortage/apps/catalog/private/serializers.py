@@ -46,6 +46,7 @@ class PrivateProductWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
+            "id",
             "name",
             "slug",
             "category",
@@ -57,7 +58,7 @@ class PrivateProductWriteSerializer(serializers.ModelSerializer):
             "position",
             "created_at",
         ]
-        read_only_fields = ["created_at"]
+        read_only_fields = ["id", "created_at"]
 
     def create(self, validated_data):
         organization = self.context["view"].organization

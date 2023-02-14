@@ -104,7 +104,7 @@ class PrivateProductsViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, IsObjectOwner]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["name"]
-    ordering = ["-top_priority", "position", "-created_at"]
+    ordering = ["-created_at"]
 
     def __init__(self, **kwargs):
         self.organization = None
@@ -116,10 +116,10 @@ class PrivateProductsViewSet(viewsets.ModelViewSet):
         return PrivateProductReadSerializer
 
     def get_queryset(self):
-        organization = get_object_or_404(
+        self.organization = get_object_or_404(
             Organization.objects.active(), slug=self.kwargs["org_slug"]
         )
-        queryset = Product.objects.filter(organization=organization)
+        queryset = Product.objects.public().filter(organization=self.organization)
 
         # filter by category
         category = self.request.query_params.get("category")
@@ -136,7 +136,11 @@ class PrivateProductsViewSet(viewsets.ModelViewSet):
         return super().create(request, *args, **kwargs)
 
     def perform_destroy(self, instance):
-        # Do a soft delete
+        if self.organization.is_draft:
+            # If organization hasn't been published, delete product entirely
+            return super().perform_destroy(instance)
+
+        # Do a soft delete if the organization has already been published
         instance.is_deleted = True
         instance.save()
 
