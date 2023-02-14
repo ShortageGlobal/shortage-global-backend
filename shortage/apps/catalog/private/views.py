@@ -1,5 +1,13 @@
 from django.conf import settings
-from rest_framework import viewsets, mixins, permissions, status, exceptions, status
+from rest_framework import (
+    viewsets,
+    mixins,
+    filters,
+    permissions,
+    status,
+    exceptions,
+    status,
+)
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
@@ -8,7 +16,8 @@ from shortage.apps.catalog.models import Product, Organization, Instruction
 from shortage.apps.catalog.private.serializers import (
     PrivateOrganizationReadSerializer,
     PrivateOrganizationWriteSerializer,
-    PrivateProductSerializer,
+    PrivateProductReadSerializer,
+    PrivateProductWriteSerializer,
     PrivateInstructionSerializer,
 )
 from shortage.apps.catalog.exceptions import OneOrganizationPerUser
@@ -93,11 +102,18 @@ class PrivateProductsViewSet(viewsets.ModelViewSet):
     )
 
     permission_classes = [permissions.IsAuthenticated, IsObjectOwner]
-    serializer_class = PrivateProductSerializer
-    lookup_field = "slug"
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["name"]
+    ordering = ["-top_priority", "position", "-created_at"]
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.organization = None
+        super().__init__(**kwargs)
+
+    def get_serializer_class(self):
+        if self.action in ["create", "update", "partial_update"]:
+            return PrivateProductWriteSerializer
+        return PrivateProductReadSerializer
 
     def get_queryset(self):
         organization = get_object_or_404(

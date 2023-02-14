@@ -42,9 +42,7 @@ class PrivateOrganizationReadSerializer(PrivateOrganizationWriteSerializer):
         read_only_fields = fields
 
 
-class PrivateProductSerializer(serializers.ModelSerializer):
-    photo = serializers.ImageField(source="large_photo", required=False)
-
+class PrivateProductWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
@@ -56,13 +54,24 @@ class PrivateProductSerializer(serializers.ModelSerializer):
             "requested_amount",
             "description",
             "top_priority",
+            "position",
+            "created_at",
         ]
+        read_only_fields = ["created_at"]
 
     def create(self, validated_data):
         organization = self.context["view"].organization
         validated_data["organization"] = organization
 
         return Product.objects.create(**validated_data)
+
+
+class PrivateProductReadSerializer(PrivateProductWriteSerializer):
+    photo = serializers.ImageField(source="large_photo", required=False)
+
+    class Meta(PrivateProductWriteSerializer.Meta):
+        fields = PrivateProductWriteSerializer.Meta.fields
+        read_only_fields = fields
 
 
 class PrivateInstructionSerializer(serializers.ModelSerializer):
