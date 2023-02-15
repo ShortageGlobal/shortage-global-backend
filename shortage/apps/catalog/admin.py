@@ -27,6 +27,13 @@ class OrganizationAdmin(admin.ModelAdmin):
                 "fields": (
                     "owner",
                     "name",
+                )
+            },
+        ),
+        (
+            "Status",
+            {
+                "fields": (
                     "is_verified",
                     "is_draft",
                     "is_deleted",
