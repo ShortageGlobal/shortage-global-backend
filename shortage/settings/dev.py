@@ -43,3 +43,5 @@ FRONTEND_BASE_URL = os.getenv("DJANGO_FRONTEND_BASE_URL", "http://localhost:3000
 EMAIL_HOST = os.getenv("DJANGO_EMAIL_HOST", "mailcatcher")
 EMAIL_PORT = os.getenv("DJANGO_EMAIL_PORT", "1025")
 SERVER_EMAIL = os.getenv("DJANGO_SERVER_EMAIL", "support@shortage.global")
+
+WEASYPRINT_BASE_URI = "http://localhost:8080"

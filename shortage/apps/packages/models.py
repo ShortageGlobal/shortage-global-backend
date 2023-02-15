@@ -154,13 +154,11 @@ class Package(models.Model):
             {"organization": self.organization, "package": self},
         )
 
-        pdf_html = HTML(string=rendered_template)
+        pdf_html = HTML(string=rendered_template, base_url=settings.WEASYPRINT_BASE_URI)
         pdf_html.write_pdf(temp_file_path)
 
         # Assign the temp file to the model field
         self.tax_deduction_receipt.save("tax_return.pdf", open(temp_file_path, "rb"))
-        # Todo: Model saving itself is ugly but we have no controller which can do it instead
-        self.save()
 
         # Delete the temp file
         os.remove(temp_file_path)
