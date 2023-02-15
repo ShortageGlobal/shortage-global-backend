@@ -158,7 +158,9 @@ class Package(models.Model):
         pdf_html.write_pdf(temp_file_path)
 
         # Assign the temp file to the model field
-        self.tax_deduction_receipt.save("tax_return.pdf", open(temp_file_path, "rb"))
+        self.tax_deduction_receipt.save(
+            "tax_return.pdf", open(temp_file_path, "rb"), save=False
+        )
 
         # Delete the temp file
         os.remove(temp_file_path)
