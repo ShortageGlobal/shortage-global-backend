@@ -84,9 +84,17 @@ class PackageTestCase(APITestCase):
         # Organization must have a logo, otherwise PDF will fail to generate
         tmp_storage = MediaStorage()
         self.organization.logo = create_test_image(tmp_storage, "logo.png")
+        self.organization.ein_number = "ein_number"
+        self.organization.address_line1 = "address_line1"
+        self.organization.city = "city"
+        self.organization.state_province_region = "state_province_region"
+        self.organization.zip = "zip"
+        self.organization.representative_first_name = "representative_first_name"
+        self.organization.representative_last_name = "representative_last_name"
         self.organization.representative_signature = create_test_image(
             tmp_storage, "signature.png"
         )
+        self.organization.save()
 
         # check that tax receipt is generated
         package = create_test_package(
