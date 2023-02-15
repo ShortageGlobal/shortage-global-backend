@@ -56,8 +56,7 @@ class Organization(models.Model):
         validators=[validate_organization_slug_blacklist],
         error_messages={"unique": "This address has already been taken."},
     )
-    description = HTMLField(null=True, blank=True)
-    meta_description = models.CharField(max_length=200, null=True, blank=True)
+    url = models.URLField(max_length=255, null=True, blank=True)
     logo = ThumbnailerImageField(
         upload_to=get_organization_path,
         null=True,
@@ -70,16 +69,17 @@ class Organization(models.Model):
         blank=True,
         storage=storage.MediaStorage(),
     )
-    url = models.URLField(max_length=255, null=True, blank=True)
+    description = HTMLField(null=True, blank=True)
+    meta_description = models.CharField(max_length=200, null=True, blank=True)
 
-    # Legal information
+    # tax deduction
+    ein_number = models.CharField(max_length=255, null=True, blank=True)
     address_line1 = models.CharField(max_length=255, null=True, blank=True)
     address_line2 = models.CharField(max_length=255, null=True, blank=True)
     city = models.CharField(max_length=255, null=True, blank=True)
     state_province_region = models.CharField(max_length=255, null=True, blank=True)
     zip = models.CharField(max_length=100, null=True, blank=True)
     country = CountryField(default="US")
-
     representative_first_name = models.CharField(max_length=255, null=True, blank=True)
     representative_last_name = models.CharField(max_length=255, null=True, blank=True)
     representative_email = models.EmailField(max_length=100, null=True, blank=True)
@@ -91,7 +91,6 @@ class Organization(models.Model):
         storage=storage.MediaStorage(),
     )
 
-    ein_number = models.CharField(max_length=255, null=True, blank=True)
     is_verified = models.BooleanField(default=False, db_index=True)
     is_draft = models.BooleanField(default=True, db_index=True)
     is_deleted = models.BooleanField(default=False, db_index=True)
@@ -105,6 +104,9 @@ class Organization(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return "%s/%s/" % (settings.FRONTEND_BASE_URL, self.slug)
 
     @property
     def medium_logo_photo(self):
@@ -229,6 +231,13 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return "%s/%s/products/%s/" % (
+            settings.FRONTEND_BASE_URL,
+            self.organization.slug,
+            self.slug,
+        )
 
     @property
     def large_photo(self):
