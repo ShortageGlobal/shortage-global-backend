@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+
+    <style type="text/css">
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+      }
+
+      .center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .no-wrap {
+        white-space: nowrap;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 2rem;
+        margin-bottom: 4rem;
+        border-bottom: 1px solid black;
+      }
+
+      .header > * + * {
+        margin-left: 5rem;
+      }
+
+      .logo {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+        text-align: right;
+      }
+
+      .logo-img {
+        width: 200px;
+        height: 100px;
+        background-repeat: no-repeat;
+        background-position: right center;
+        background-size: contain;
+      }
+
+      .title {
+        font-weight: 700;
+        font-size: 1.6rem;
+        text-align: center;
+      }
+
+      .subtitle {
+        font-weight: 700;
+        text-align: center;
+      }
+
+      table.items-table {
+        margin: 3rem 0;
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+      table.items-table td,
+      table.items-table th {
+        border: 1px solid #aaaaaa;
+        padding: 0.5rem;
+      }
+      table.items-table thead {
+        border-bottom: 2px solid black;
+      }
+      table.items-table thead th {
+        font-weight: bold;
+      }
+
+      .signature-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+      }
+
+      .signature-img {
+        margin: 1rem 0;
+        max-width: 250px;
+        max-height: 150px;
+        object-fit: contain;
+        object-position: left center;
+      }
+
+      .representative-name {
+        font-size: 1.2rem;
+      }
+
+      .disclaimer {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div class="header">
+      <div class="center">
+        <div>
+          <div>{{ organization.name|default:"" }}</div>
+          <div>{{ organization.address_line1|default:"" }}</div>
+          <div>{{ organization.address_line2|default:"" }}</div>
+          <div>
+            {{organization.city|default:""}},
+            {{organization.state_province_region|default:""}}
+            {{organization.zip|default:""}}
+          </div>
+          <div>{{ organization.representative_email|default:"" }}</div>
+          <div>{{ organization.representative_phone_number|default:"" }}</div>
+          <div>Tax ID {{organization.ein_number|default:""}}</div>
+        </div>
+      </div>
+
+      <div class="logo">
+        <div
+          class="logo-img"
+          style="background-image: url({{organization.medium_logo_photo.url}})"
+        ></div>
+      </div>
+    </div>
+
+    <!-- TITLE -->
+    <div class="center">
+      <div>
+        <div class="title">Official donation receipt</div>
+        <div class="subtitle">For income tax purposes</div>
+      </div>
+    </div>
+
+    <!-- ITEMS -->
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Date</th>
+          <th>Email</th>
+          <th>Donor</th>
+          <th>Address</th>
+          <th>Description of items being donated</th>
+          <th class="no-wrap">Q-ty</th>
+          <th>Price (total)</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for item in package.items.all %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{package.created_at|date:"DATE_FORMAT"}}</td>
+          <td>{{package.email}}</td>
+          <td>{{package.first_name}} {{package.last_name}}</td>
+          <td>
+            <div>{{package.address_line1}}</div>
+            <div>{{package.address_line2}}</div>
+            <div>{{package.city}}</div>
+            <div>{{package.state_province_region}}</div>
+            <div>{{package.zip}}</div>
+          </td>
+          <td>{{item.product.name}}</td>
+          <td>{{item.quantity}}</td>
+          <td>${{item.total_price}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- SIGNATURE -->
+    <div class="signature-title">Authorized signature</div>
+    <img
+      class="signature-img"
+      alt=""
+      src="{{organization.representative_signature_image.url}}"
+    />
+    <div class="representative-name">
+      {{organization.representative_first_name|default:""}}
+      {{organization.representative_last_name|default:""}}
+    </div>
+
+    <!-- DISCLAIMER -->
+    <div class="disclaimer">
+      Please print this receipt for tax purposes. As required by the IRS
+      regulations, we provide the following information:
+      <b>{{organization.name}}</b> is a 501(c)(3) not for profit organization.
+      Our federal tax identification number is {{organization.ein_number}}. As
+      no goods or services have been provided in connection with this gift, the
+      full amount is deductible to the fullest extent provided by law.
+    </div>
+  </body>
+</html>

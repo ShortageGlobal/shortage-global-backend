@@ -174,6 +174,7 @@ THUMBNAIL_ALIASES = {
         "blog_post_medium": {"size": (355, 200), "crop": True},
         "blog_post_large": {"size": (1244, 700), "crop": True},
         "card_preview": {"size": (533, 400), "crop": True},
+        "signature": {"size": (533, 250), "crop": False},
     },
 }
 
@@ -277,3 +278,5 @@ STRIPE_SECRET_KEY = os.getenv("DJANGO_STRIPE_SECRET_KEY", "")
 STRIPE_ENDPOINT_SECRET = os.getenv("DJANGO_STRIPE_ENDPOINT_SECRET", "")
 
 RAINFOREST_API_KEY = os.getenv("DJANGO_RAINFOREST_API_KEY", "")
+
+WEASYPRINT_BASE_URI = None

@@ -20,6 +20,77 @@ class OrganizationAdmin(admin.ModelAdmin):
         "created_at",
     ]
     search_fields = ["name"]
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "owner",
+                    "name",
+                )
+            },
+        ),
+        (
+            "Status",
+            {
+                "fields": (
+                    "is_verified",
+                    "is_draft",
+                    "is_deleted",
+                    "promote",
+                )
+            },
+        ),
+        (
+            "Nonprofit Page",
+            {
+                "classes": ("collapse",),
+                "fields": (
+                    "slug",
+                    "deadline",
+                    "url",
+                    "logo",
+                    "banner",
+                    "description",
+                    "meta_description",
+                ),
+            },
+        ),
+        (
+            "Tax Deduction",
+            {
+                "classes": ("collapse",),
+                "fields": (
+                    "ein_number",
+                    "address_line1",
+                    "address_line2",
+                    "city",
+                    "state_province_region",
+                    "zip",
+                    "country",
+                    "representative_first_name",
+                    "representative_last_name",
+                    "representative_email",
+                    "representative_phone_number",
+                    "representative_signature",
+                ),
+            },
+        ),
+        (
+            "Created at / Updated at",
+            {
+                "classes": ("collapse",),
+                "fields": (
+                    "created_at",
+                    "updated_at",
+                ),
+            },
+        ),
+    )
+    readonly_fields = [
+        "created_at",
+        "updated_at",
+    ]
 
 
 class ExternalOrganizationAdmin(admin.ModelAdmin):

@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from shortage.apps.mailing.mail_service import (
@@ -37,26 +36,37 @@ def package_status_change_handler(package):
     PackageStatusLogEntry.objects.create(package=package, status=package.status)
 
     status_change_email = None
+    service_status_change_email = None
 
     if package.status == PackageStatus.REGISTERED:
         # if package sent by donor - email him right away
         # if package funded by donor - email him on payment success
         if package.type == PackageType.SENT_BY_DONOR:
             status_change_email = PackageRegistrationEmail(package=package)
+            service_status_change_email = PackageRegistationServiceEmail(
+                package=package
+            )
     elif package.status == PackageStatus.PAYMENT_SUCCEEDED:
         if package.type == PackageType.FUNDED_BY_DONOR:
             # notify the donor about his payment and registered package
             status_change_email = PackageRegistrationEmail(package=package)
+            service_status_change_email = PackageRegistationServiceEmail(
+                package=package
+            )
     elif package.status == PackageStatus.DELIVERED:
+        # Generate receipt before sending an email in case we want to include the link there
+        package.generate_tax_receipt()
+
         status_change_email = PackageDeliveryEmail(package=package)
 
+    # send email to package owner
     if status_change_email:
         status_change_email.add_recipient(email=package.email, name=package.full_name)
         status_change_email.send()
 
-        # send service email to staff
-        service_email = PackageRegistationServiceEmail(package=package)
-        service_email.send()
+    # send service email to staff
+    if service_status_change_email:
+        service_status_change_email.send()
 
 
 @receiver(

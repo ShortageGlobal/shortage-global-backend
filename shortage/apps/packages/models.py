@@ -1,3 +1,4 @@
+import os
 import uuid
 from django.db import models
 from django.conf import settings
@@ -7,10 +8,13 @@ from django.core.validators import (
     FileExtensionValidator,
 )
 from django.core.exceptions import ValidationError
+from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from auditlog.registry import auditlog
 from phonenumber_field.modelfields import PhoneNumberField
 from django_countries.fields import CountryField
+from easy_thumbnails.fields import ThumbnailerImageField
+from weasyprint import HTML
 from shortage.apps import storage
 from shortage.apps.catalog.models import Product, Organization, OrganizationBlogPost
 from shortage.apps.file_paths import (
@@ -19,7 +23,6 @@ from shortage.apps.file_paths import (
     get_tax_deduction_receipt_path,
 )
 from shortage.helpers import get_full_name
-from easy_thumbnails.fields import ThumbnailerImageField
 from shortage.helpers.thumbnails import get_thumbnail_for_image
 
 
@@ -135,23 +138,59 @@ class Package(models.Model):
     def full_name(self):
         return get_full_name(first_name=self.first_name, last_name=self.last_name)
 
-    def clean(self):
-        """Validate Package. Note, this method is called in django admin only"""
+    def can_generate_tax_receipt(self):
+        """
+        Check if the package is able to generate a tax deduction receipt.
+        A related organization should have required legal information specified
+        """
+        return (
+            self.organization.ein_number is not None
+            and self.organization.address_line1 is not None
+            and self.organization.city is not None
+            and self.organization.state_province_region is not None
+            and self.organization.zip is not None
+            and self.organization.country is not None
+            and self.organization.representative_first_name is not None
+            and self.organization.representative_last_name is not None
+            and self.organization.representative_signature is not None
+        )
 
-        # make sure packages aren't transitioned to DELIVERED if they require tax deduction
-        # and the tax deduction receipt was not provided
-        if (
-            self.status == PackageStatus.DELIVERED
-            and self.need_tax_deduction
+    def should_generate_tax_receipt(self, force=False):
+        """
+        Check if the package requires a tax deduction receipt
+        """
+
+        return force or (
+            self.need_tax_deduction
             and not self.tax_deduction_receipt
-        ):
-            raise ValidationError(
-                {
-                    "tax_deduction_receipt": _(
-                        "This package must have a tax deduction receipt if status is 'Delivered'"
-                    )
-                }
-            )
+            and self.status == PackageStatus.DELIVERED
+        )
+
+    def generate_tax_receipt(self, force=False):
+        can_generate = self.can_generate_tax_receipt()
+        should_generate = self.should_generate_tax_receipt(force=force)
+
+        if not can_generate or not should_generate:
+            return
+
+        temp_file_path = f"{self.uuid}_tax_returns.pdf"
+
+        # Render the template
+        rendered_template = render_to_string(
+            "tax_return_report.html",
+            {"organization": self.organization, "package": self},
+        )
+
+        pdf_html = HTML(string=rendered_template, base_url=settings.WEASYPRINT_BASE_URI)
+        pdf_html.write_pdf(temp_file_path)
+
+        # Assign the temp file to the model field
+        self.tax_deduction_receipt.save(
+            "tax_return.pdf", open(temp_file_path, "rb"), save=False
+        )
+
+        # Delete the temp file
+        os.remove(temp_file_path)
 
     def payment_canceled(self):
         self.status = PackageStatus.PAYMENT_CANCELED
@@ -215,6 +254,9 @@ class PackageItem(models.Model):
 
     def __str__(self):
         return self.product.name
+
+    def total_price(self):
+        return self.quantity * self.product.price
 
 
 class PackageStatusLogEntry(models.Model):
