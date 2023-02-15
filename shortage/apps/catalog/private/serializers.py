@@ -68,7 +68,7 @@ class PrivateProductWriteSerializer(serializers.ModelSerializer):
 
 
 class PrivateProductReadSerializer(PrivateProductWriteSerializer):
-    photo = serializers.ImageField(source="large_photo", required=False)
+    photo = serializers.ImageField(source="medium_photo", required=False)
 
     class Meta(PrivateProductWriteSerializer.Meta):
         fields = PrivateProductWriteSerializer.Meta.fields
