@@ -13,7 +13,7 @@
         margin: 0;
         padding: 0;
         font-family: Arial, Helvetica, sans-serif;
-        font-size: 14px;
+        font-size: 12px;
       }
 
       .center {
@@ -38,15 +38,30 @@
         margin-left: 5rem;
       }
 
+      .logo {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center
+        text-align: right;
+      }
+
+      .logo-img {
+        width: 200px;
+        height: 100px;
+        background-repeat: no-repeat;
+        background-position: right center;
+        background-size: contain;
+      }
+
       .title {
         font-weight: 700;
-        font-size: 1.5rem;
+        font-size: 1.6rem;
         text-align: center;
       }
 
       .subtitle {
         font-weight: 700;
-        font-size: 0.9rem;
         text-align: center;
       }
 
@@ -69,15 +84,8 @@
       }
 
       .signature-title {
-        font-size: 1.25rem;
+        font-size: 1.1rem;
         font-weight: 700;
-      }
-
-      .logo-img {
-        max-width: 250px;
-        max-height: 125px;
-        object-fit: contain;
-        object-position: right center;
       }
 
       .signature-img {
@@ -89,14 +97,13 @@
       }
 
       .representative-name {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
       }
 
       .disclaimer {
         margin-top: 4rem;
         padding-top: 2rem;
         border-top: 1px solid black;
-        font-size: 0.9rem;
       }
     </style>
   </head>
@@ -119,18 +126,17 @@
         </div>
       </div>
 
-      <div class="logo center">
-        <img
+      <div class="logo">
+        <div
           class="logo-img"
-          alt=""
-          src="{{organization.medium_logo_photo.url}}"
-        />
+          style="background-image: url({{organization.medium_logo_photo.url}})"
+        ></div>
       </div>
     </div>
 
     <!-- TITLE -->
     <div class="center">
-      <div class="title">
+      <div>
         <div class="title">Official donation receipt</div>
         <div class="subtitle">For income tax purposes</div>
       </div>
