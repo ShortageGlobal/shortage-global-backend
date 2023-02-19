@@ -173,7 +173,7 @@ class PrivateOrganizationTestCase(APITestCase):
 
         self.assertEqual(response.status_code, 201, "Organization was not created")
 
-    def test_organization_publish(self):
+    def test_organization_checklist(self):
         organization = create_test_organization(owner=self.user)
 
         request = self.requestFactory.get("")
