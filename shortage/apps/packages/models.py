@@ -130,6 +130,13 @@ class Package(models.Model):
     def __str__(self):
         return self.uuid.__str__()
 
+    def get_absolute_url(self):
+        return "%s/%s/packages/%s/" % (
+            settings.FRONTEND_BASE_URL,
+            self.organization.slug,
+            self.uuid,
+        )
+
     @property
     def medium_photo(self):
         return get_thumbnail_for_image(self.photo, "package_medium")
@@ -152,7 +159,7 @@ class Package(models.Model):
             and self.organization.country is not None
             and self.organization.representative_first_name is not None
             and self.organization.representative_last_name is not None
-            and self.organization.representative_signature is not None
+            and bool(self.organization.representative_signature)
         )
 
     def should_generate_tax_receipt(self, force=False):
@@ -166,7 +173,7 @@ class Package(models.Model):
             and self.status == PackageStatus.DELIVERED
         )
 
-    def generate_tax_receipt(self, force=False):
+    def generate_tax_receipt(self, force=False, save=False):
         can_generate = self.can_generate_tax_receipt()
         should_generate = self.should_generate_tax_receipt(force=force)
 
@@ -186,7 +193,7 @@ class Package(models.Model):
 
         # Assign the temp file to the model field
         self.tax_deduction_receipt.save(
-            "tax_return.pdf", open(temp_file_path, "rb"), save=False
+            "tax_return.pdf", open(temp_file_path, "rb"), save=save
         )
 
         # Delete the temp file
