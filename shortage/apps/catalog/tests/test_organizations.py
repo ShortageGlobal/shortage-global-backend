@@ -6,6 +6,7 @@ from shortage.apps.catalog.models import Organization
 from shortage.apps.catalog.private.views import (
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
+    PrivateOrganizationChecklistViewSet,
 )
 from shortage.helpers.test_utilities import (
     create_test_user,
@@ -170,6 +171,37 @@ class PrivateOrganizationTestCase(APITestCase):
         response = PrivateOrganizationViewSet.as_view({"post": "create"})(request)
 
         self.assertEqual(response.status_code, 201, "Organization was not created")
+
+    def test_organization_publish(self):
+        organization = create_test_organization(owner=self.user)
+
+        request = self.requestFactory.get("")
+        force_authenticate(request, user=self.user)
+        response = PrivateOrganizationChecklistViewSet.as_view({"get": "retrieve"})(
+            request, slug=organization.slug
+        )
+
+        self.assertEqual(response.status_code, 428)
+
+        json_response = json.loads(response.render().content)
+        validation_errors = {
+            "logo": "empty",
+            "url": "invalid",
+            "banner": "empty",
+            "meta_description": "empty",
+            "address_line1": "empty",
+            "address_line2": "empty",
+            "city": "empty",
+            "state_province_region": "empty",
+            "zip": "empty",
+            "representative_first_name": "empty",
+            "representative_last_name": "empty",
+            "representative_email": "empty",
+            "representative_phone_number": "empty",
+            "representative_signature": "empty",
+        }
+
+        self.assertEqual(json_response, validation_errors)
 
 
 class PrivateOrganizationSlugCheckerTests(APITestCase):

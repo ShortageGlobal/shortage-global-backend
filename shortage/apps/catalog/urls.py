@@ -23,6 +23,7 @@ from .private.views import (
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
     PrivateInstructionsViewSet,
+    PrivateOrganizationChecklistViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -62,7 +63,11 @@ router.register(
     PrivateOrganizationViewSet,
     basename="private_organization",
 )
-
+router.register(
+    r"private/organizations/checklist",
+    PrivateOrganizationChecklistViewSet,
+    basename="private_organization_checklist",
+)
 
 # Instructions
 router.register(

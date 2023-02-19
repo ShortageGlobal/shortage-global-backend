@@ -26,7 +26,7 @@ def create_test_organization(**kwargs):
         "name": "TestName",
         "slug": "test_organization",
         "description": "Some description",
-        "url": "https://www.someurl.com",
+        "url": "https://www.579f9ed2-b0a7-11ed-afa1-0242ac120002.com",
         "ein_number": "12345",
         "is_verified": True,
         "is_draft": False,

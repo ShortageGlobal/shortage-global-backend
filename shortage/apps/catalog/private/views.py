@@ -1,3 +1,6 @@
+import re
+
+import requests
 from django.conf import settings
 from rest_framework import (
     viewsets,
@@ -5,8 +8,7 @@ from rest_framework import (
     filters,
     permissions,
     status,
-    exceptions,
-    status,
+    generics,
 )
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -189,3 +191,119 @@ class PrivateInstructionsViewSet(viewsets.ModelViewSet):
         )
 
         return super().create(request, *args, **kwargs)
+
+
+class PrivateOrganizationChecklistViewSet(
+    mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
+    """
+    Validates all fields of organization and returns the list of invalid or missing data
+    """
+
+    schema = AutoSchema(
+        tags=["Private", "Organization"],
+    )
+
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = "slug"
+
+    def retrieve(self, request, *args, **kwargs):
+        organization = get_object_or_404(
+            Organization.objects.active().filter(owner=request.user),
+            slug=kwargs[self.lookup_field],
+        )
+
+        validation_result = self.validate_organization(organization)
+
+        if bool(validation_result):
+            return Response(
+                status=status.HTTP_428_PRECONDITION_REQUIRED, data=validation_result
+            )
+
+        return Response(status.HTTP_200_OK)
+
+    def validate_organization(self, organization):
+        skip_validation = [
+            "id",
+            "is_verified",
+            "is_draft",
+            "is_deleted",
+            "promote",
+            "deadline",
+            "updated_at",
+            "created_at",
+            "owner",
+        ]
+        validation_errors = {}
+
+        # iterate through all the fields of the model
+        for field in organization._meta.get_fields():
+            if (
+                field.many_to_one
+                or field.one_to_many
+                or field.one_to_one
+                or field.many_to_many
+            ):
+                related_object = getattr(organization, field.name)
+
+                # Organization must have delivery instructions and products to be published
+                if (
+                    "instructions" == field.name or "products" == field.name
+                ) and not related_object:
+                    validation_errors[field.name] = "empty"
+
+            else:
+                if field.name in skip_validation:
+                    continue
+
+                value = getattr(organization, field.name)
+
+                # For most fields, validate if they are simply not empty
+                if not value:
+                    validation_errors[field.name] = "empty"
+                else:
+                    # Check if URL is actually valid, not that it's just there
+                    if "url" == field.name:
+                        if not self.validate_url(value):
+                            validation_errors[field.name] = "invalid"
+                    # Check that EIN is, at least, of valid format
+                    elif "ein" == field.name:
+                        if not self.validate_ein(value):
+                            validation_errors[field.name] = "invalid"
+                    # Check that ZIP is, at least, of valid format
+                    elif "zip" == field.name:
+                        if not (len(value) == 5 and value.isdigit()):
+                            validation_errors[field.name] = "invalid"
+
+        return validation_errors
+
+    def validate_url(self, url):
+        response = None
+        try:
+            response = requests.head(url)
+        except:
+            return False
+
+        if response.status_code >= 400:
+            return False
+
+        return True
+
+    def validate_ein(self, ein):
+        # Remove any non-digit characters
+        ein = re.sub(r"\D", "", ein)
+
+        # Check that the length is correct
+        if len(ein) != 9:
+            return False
+
+        # Check that the first two digits are between 01 and 99
+        if not (1 <= int(ein[0:2]) <= 99):
+            return False
+
+        # Calculate the check digit
+        check_sum = sum([int(ein[i]) * (i % 2 * 2 + 1) for i in range(8)])
+        check_digit = (10 - check_sum % 10) % 10
+
+        # Check that the check digit matches the last digit of the EIN
+        return check_digit == int(ein[8])
