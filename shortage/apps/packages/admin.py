@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.http import HttpResponseRedirect
+from django.utils.html import format_html
 from .models import (
     Package,
     PackageBlogPost,
@@ -8,7 +10,6 @@ from .models import (
     CartItem,
     CorporateDonation,
 )
-from django.utils.html import format_html
 
 
 class PackageBlogPostAdmin(admin.TabularInline):
@@ -16,6 +17,8 @@ class PackageBlogPostAdmin(admin.TabularInline):
 
 
 class PackageAdmin(admin.ModelAdmin):
+    change_form_template = "package_change_form.html"
+
     list_display = [
         "created_at",
         "organization",
@@ -146,6 +149,15 @@ class PackageAdmin(admin.ModelAdmin):
         return html
 
     photo_preview.short_description = "Photo preview"
+
+    def response_change(self, request, obj):
+        if "_generate-tax-deduction-receipt" in request.POST:
+            obj.generate_tax_receipt(force=True, save=True)
+            self.message_user(
+                request, "The tax deduction receipt was generated successfully."
+            )
+            return HttpResponseRedirect(".")
+        return super().response_change(request, obj)
 
 
 class PackageItemAdmin(admin.ModelAdmin):

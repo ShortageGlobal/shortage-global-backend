@@ -148,10 +148,9 @@
         <tr>
           <th>#</th>
           <th>Date</th>
-          <th>Email</th>
           <th>Donor</th>
           <th>Address</th>
-          <th>Description of items being donated</th>
+          <th>Donated Items</th>
           <th class="no-wrap">Q-ty</th>
           <th>Price (total)</th>
         </tr>
@@ -162,8 +161,11 @@
         <tr>
           <td>{{ forloop.counter }}</td>
           <td>{{package.created_at|date:"DATE_FORMAT"}}</td>
-          <td>{{package.email}}</td>
-          <td>{{package.first_name}} {{package.last_name}}</td>
+          <td>
+            {{package.first_name}} {{package.last_name}}
+            <br />
+            {{package.email}}
+          </td>
           <td>
             <div>{{package.address_line1}}</div>
             <div>{{package.address_line2}}</div>
