@@ -1,5 +1,4 @@
 import re
-
 import requests
 from django.conf import settings
 from rest_framework import (
@@ -267,7 +266,7 @@ class PrivateOrganizationChecklistViewSet(
                         if not self.validate_url(value):
                             validation_errors[field.name] = "invalid"
                     # Check that EIN is, at least, of valid format
-                    elif "ein" == field.name:
+                    elif "ein_number" == field.name:
                         if not self.validate_ein(value):
                             validation_errors[field.name] = "invalid"
                     # Check that ZIP is, at least, of valid format
@@ -289,9 +288,9 @@ class PrivateOrganizationChecklistViewSet(
 
         return True
 
-    def validate_ein(self, ein):
+    def validate_ein(self, ein_number):
         # Remove any non-digit characters
-        ein = re.sub(r"\D", "", ein)
+        ein = re.sub(r"\D", "", ein_number)
 
         # Check that the length is correct
         if len(ein) != 9:

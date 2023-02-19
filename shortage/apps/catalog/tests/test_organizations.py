@@ -8,6 +8,7 @@ from shortage.apps.catalog.private.views import (
     PrivateOrganizationSlugExistsViewSet,
     PrivateOrganizationChecklistViewSet,
 )
+from shortage.apps.storage import MediaStorage
 from shortage.helpers.test_utilities import (
     create_test_user,
     create_test_organization,
@@ -188,6 +189,7 @@ class PrivateOrganizationTestCase(APITestCase):
             "logo": "empty",
             "url": "invalid",
             "banner": "empty",
+            "ein_number": "invalid",
             "meta_description": "empty",
             "address_line1": "empty",
             "address_line2": "empty",
@@ -202,6 +204,48 @@ class PrivateOrganizationTestCase(APITestCase):
         }
 
         self.assertEqual(json_response, validation_errors)
+
+        tmp_storage = MediaStorage()
+        organization.logo = create_test_image(tmp_storage, "test_image.png")
+        organization.url = "https://shortage.global"
+        organization.banner = organization.logo
+        organization.meta_description = "not empty"
+        organization.address_line1 = "251 Little Falls Drive"
+        organization.address_line2 = "Wilmington, DE, US"
+        organization.city = "Wilmington"
+        organization.state_province_region = "DE"
+        organization.zip = "198080"
+        organization.representative_first_name = "John"
+        organization.representative_last_name = "Doe"
+        organization.representative_email = "john.doe@gmail.com"
+        organization.representative_phone_number = "+1 800 444 4444"
+        organization.representative_signature = organization.logo
+        organization.save()
+
+        response = PrivateOrganizationChecklistViewSet.as_view({"get": "retrieve"})(
+            request, slug=organization.slug
+        )
+
+        self.assertEqual(response.status_code, 428)
+
+        json_response = json.loads(response.render().content)
+
+        validation_errors = {
+            "ein_number": "invalid",
+            "zip": "invalid",
+        }
+
+        self.assertEqual(json_response, validation_errors)
+
+        organization.ein_number = "91-1144442"
+        organization.zip = "19808"
+        organization.save()
+
+        response = PrivateOrganizationChecklistViewSet.as_view({"get": "retrieve"})(
+            request, slug=organization.slug
+        )
+
+        self.assertEqual(response.status_code, 200)
 
 
 class PrivateOrganizationSlugCheckerTests(APITestCase):
