@@ -81,7 +81,7 @@ class CartItemCreationSerializer(serializers.ModelSerializer):
 
         # check product with the given slug and the given organization slug exists
         if (
-            not Product.objects.public()
+            not Product.objects.active()
             .filter(slug=product_slug, organization__slug=organization_slug)
             .exists()
         ):
@@ -100,7 +100,7 @@ class CartItemCreationSerializer(serializers.ModelSerializer):
 
         cart_item = CartItem.objects.create(
             cart_id=cart_pk,
-            product=Product.objects.public().get(
+            product=Product.objects.active().get(
                 slug=product_slug, organization__slug=organization_slug
             ),
             quantity=quantity,
@@ -175,7 +175,7 @@ class CartCreationSerializer(serializers.ModelSerializer):
             CartItem(
                 cart=cart,
                 quantity=validated_item_data["quantity"],
-                product=Product.objects.public().get(
+                product=Product.objects.active().get(
                     slug=validated_item_data["product_slug"],
                     organization__slug=validated_item_data["organization_slug"],
                 ),
