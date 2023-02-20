@@ -132,7 +132,7 @@ class ProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         organization = generics.get_object_or_404(
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
-        queryset = Product.objects.public().filter(organization=organization)
+        queryset = Product.objects.active().filter(organization=organization)
 
         # filter by category
         category = self.request.query_params.get("category")
@@ -226,7 +226,7 @@ class SitemapViewSet(viewsets.ViewSet):
     def all_product_slugs(self, request, *args, **kwargs):
         """Get slugs of public products of public organizations"""
         queryset = (
-            Product.objects.public()
+            Product.objects.active()
             .filter(
                 organization_id__in=models.Subquery(
                     Organization.objects.public().values("id")
