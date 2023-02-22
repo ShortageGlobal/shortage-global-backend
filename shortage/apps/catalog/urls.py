@@ -24,6 +24,7 @@ from .private.views import (
     PrivateOrganizationSlugExistsViewSet,
     PrivateInstructionsViewSet,
     PrivateOrganizationChecklistViewSet,
+    PrivateOrganizationBlogPostsViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -110,11 +111,16 @@ router.register(
     basename="private_exists_products",
 )
 
-# Products
+# Blog posts
 router.register(
     r"organizations/(?P<org_slug>[^/.]+)/blog_posts",
     OrganizationBlogPostsViewSet,
     basename="blog_posts",
+)
+router.register(
+    r"private/organizations/(?P<org_slug>[^/.]+)/blog_posts",
+    PrivateOrganizationBlogPostsViewSet,
+    basename="private_blog_posts",
 )
 
 # Request for nonprofits
@@ -124,13 +130,7 @@ router.register(
     basename="register_nonprofit",
 )
 
-# Sitemap routes
-router.register(
-    r"sitemap",
-    SitemapViewSet,
-    basename="sitemap",
-)
-
+# Amazon (rainforest integration)
 router.register(
     r"private/products/asin",
     PrivateProductByAsinViewSet,
@@ -140,6 +140,13 @@ router.register(
     r"private/products/url",
     PrivateProductByAmazonUrlViewSet,
     basename="products_by_url",
+)
+
+# Sitemap routes
+router.register(
+    r"sitemap",
+    SitemapViewSet,
+    basename="sitemap",
 )
 
 # Wire up our API using automatic URL routing.

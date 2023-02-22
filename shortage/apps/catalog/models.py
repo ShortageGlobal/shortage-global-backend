@@ -164,15 +164,15 @@ class ProductsManager(models.Manager):
         Return high demand public products for all promoted organizations.
         In the future, use a "promoted' flag or something.
         """
-        return self.public().filter(
+        return self.active().filter(
             organization_id__in=models.Subquery(
                 Organization.objects.promoted().values("id")
             ),
             top_priority=True,
         )
 
-    def public(self):
-        """Return all publicly available products"""
+    def active(self):
+        """Return all available products which have not been deleted"""
         return self.get_queryset().filter(is_deleted=False)
 
 

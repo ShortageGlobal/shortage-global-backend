@@ -13,13 +13,20 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 from rest_framework import exceptions
-from shortage.apps.catalog.models import Product, Organization, Instruction
+from shortage.apps.catalog.models import (
+    Product,
+    Organization,
+    Instruction,
+    OrganizationBlogPost,
+)
 from shortage.apps.catalog.private.serializers import (
     PrivateOrganizationReadSerializer,
     PrivateOrganizationWriteSerializer,
     PrivateProductReadSerializer,
     PrivateProductWriteSerializer,
     PrivateInstructionSerializer,
+    PrivateOrganizationBlogPostReadSerializer,
+    PrivateOrganizationBlogPostWriteSerializer,
 )
 from shortage.apps.catalog.exceptions import OneOrganizationPerUser
 from shortage.helpers.permissions import IsObjectOwner
@@ -120,7 +127,7 @@ class PrivateProductsViewSet(viewsets.ModelViewSet):
         self.organization = get_object_or_404(
             Organization.objects.active(), slug=self.kwargs["org_slug"]
         )
-        queryset = Product.objects.public().filter(organization=self.organization)
+        queryset = Product.objects.active().filter(organization=self.organization)
 
         # filter by category
         category = self.request.query_params.get("category")
@@ -190,6 +197,52 @@ class PrivateInstructionsViewSet(viewsets.ModelViewSet):
         )
 
         return super().create(request, *args, **kwargs)
+
+
+class PrivateOrganizationBlogPostsViewSet(viewsets.ModelViewSet):
+    schema = AutoSchema(
+        tags=["Private", "Blog"],
+    )
+
+    permission_classes = [permissions.IsAuthenticated, IsObjectOwner]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["title"]
+    ordering = ["-created_at"]
+
+    def __init__(self, **kwargs):
+        self.organization = None
+        super().__init__(**kwargs)
+
+    def get_serializer_class(self):
+        if self.action in ["create", "update", "partial_update"]:
+            return PrivateOrganizationBlogPostWriteSerializer
+        return PrivateOrganizationBlogPostReadSerializer
+
+    def get_queryset(self):
+        self.organization = get_object_or_404(
+            Organization.objects.active(), slug=self.kwargs["org_slug"]
+        )
+        queryset = OrganizationBlogPost.objects.active().filter(
+            organization=self.organization
+        )
+
+        return queryset
+
+    def create(self, request, *args, **kwargs):
+        self.organization = get_object_or_404(
+            Organization.objects.active(), slug=self.kwargs["org_slug"]
+        )
+
+        return super().create(request, *args, **kwargs)
+
+    def perform_destroy(self, instance):
+        if self.organization.is_draft:
+            # If organization hasn't been published, delete blog post entirely
+            return super().perform_destroy(instance)
+
+        # Do a soft delete if the organization has already been published
+        instance.is_deleted = True
+        instance.save()
 
 
 class PrivateOrganizationChecklistViewSet(

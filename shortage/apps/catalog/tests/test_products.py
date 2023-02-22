@@ -186,7 +186,7 @@ class PrivateProductsTestCase(APITestCase):
 
         # Check that product wasn't actually deleted but soft-deleted instead
         self.assertEqual(Product.objects.all().count(), 1)
-        self.assertEqual(Product.objects.public().count(), 0)
+        self.assertEqual(Product.objects.active().count(), 0)
 
     def test_hard_delete(self):
         # Make organization draft
@@ -211,7 +211,7 @@ class PrivateProductsTestCase(APITestCase):
 
         # Check that product wasn't actually deleted but soft-deleted instead
         self.assertEqual(Product.objects.all().count(), 0)
-        self.assertEqual(Product.objects.public().count(), 0)
+        self.assertEqual(Product.objects.active().count(), 0)
 
 
 class PrivateProductsSlugCheckerTests(APITestCase):
