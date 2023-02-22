@@ -178,7 +178,8 @@ class CategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             Organization.objects.public(), slug=self.kwargs["org_slug"]
         )
         return (
-            Product.objects.filter(organization=organization)
+            Product.objects.active()
+            .filter(organization=organization)
             .distinct("category")
             .values_list("category", flat=True)
         )
