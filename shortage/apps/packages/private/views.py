@@ -3,12 +3,15 @@ from rest_framework.schemas.openapi import AutoSchema
 from shortage.apps.catalog.models import Organization, OrganizationBlogPost
 from shortage.apps.catalog.serializers import OrganizationBlogPostPreviewSerializer
 from shortage.apps.packages.models import Package, PackageStatus, PackageType
-from shortage.apps.packages.private.package_serializers import PrivatePackageSerializer
+from shortage.apps.packages.private.package_serializers import (
+    PrivateOrganizationPackageSerializer,
+    PrivateAccountPackageSerializer,
+)
 from shortage.helpers.permissions import IsObjectOwner
 
 
 class PrivateOrganizationPackagesViewSet(
-    mixins.ListModelMixin, viewsets.GenericViewSet
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
 ):
     """List of packages donated to the given organization"""
 
@@ -17,13 +20,21 @@ class PrivateOrganizationPackagesViewSet(
     )
 
     permission_classes = [permissions.IsAuthenticated, IsObjectOwner]
-    serializer_class = PrivatePackageSerializer
+    serializer_class = PrivateOrganizationPackageSerializer
 
     def get_queryset(self):
         organization = generics.get_object_or_404(
-            Organization.objects.public(), slug=self.kwargs["org_slug"]
+            Organization.objects.active(), slug=self.kwargs["org_slug"]
         )
-        return Package.objects.filter(organization=organization).distinct()
+        return (
+            Package.objects.filter(organization=organization)
+            .exclude(type=PackageType.FUNDED_BY_DONOR, status=PackageStatus.REGISTERED)
+            .prefetch_related(
+                "items",
+                "items__product",
+                "blog_posts",
+            )
+        )
 
 
 class PrivateAccountPackagesViewSet(viewsets.ReadOnlyModelViewSet):
@@ -34,7 +45,7 @@ class PrivateAccountPackagesViewSet(viewsets.ReadOnlyModelViewSet):
     )
 
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = PrivatePackageSerializer
+    serializer_class = PrivateAccountPackageSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ["created_at"]
     ordering = ["-created_at"]
