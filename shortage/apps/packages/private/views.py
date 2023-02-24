@@ -20,6 +20,8 @@ class PrivateOrganizationPackagesViewSet(
     )
 
     permission_classes = [permissions.IsAuthenticated, IsObjectOwner]
+    filter_backends = [filters.OrderingFilter]
+    ordering = ["-created_at"]
     serializer_class = PrivateOrganizationPackageSerializer
 
     def get_queryset(self):
