@@ -199,6 +199,16 @@ class Package(models.Model):
         # Delete the temp file
         os.remove(temp_file_path)
 
+    def can_mark_as_delivered(self):
+        """
+        Check if an organization admin can mark a package as Delivered
+        """
+
+        return (
+            self.status == settings.PACKAGE_STATUS["CONFIRMED"]
+            or self.status == settings.PACKAGE_STATUS["ON_ITS_WAY"]
+        )
+
     def payment_canceled(self):
         self.status = PackageStatus.PAYMENT_CANCELED
 
