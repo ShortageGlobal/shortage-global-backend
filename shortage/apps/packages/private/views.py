@@ -27,9 +27,6 @@ class PrivateOrganizationPackagesViewSet(
     ordering = ["-created_at"]
     serializer_class = PrivateOrganizationPackageSerializer
 
-    def get_serializer(self, *args, **kwargs):
-        return super().get_serializer(*args, **kwargs)
-
     def get_queryset(self):
         organization = generics.get_object_or_404(
             Organization.objects.active(), slug=self.kwargs["org_slug"]
