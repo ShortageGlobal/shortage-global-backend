@@ -44,7 +44,7 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
     def get_object(self):
         organization = generics.get_object_or_404(
-            Organization.objects.public(), slug=self.kwargs["org_slug"]
+            Organization.objects.active(), slug=self.kwargs["org_slug"]
         )
         package = generics.get_object_or_404(
             Package.objects.all(),
@@ -63,7 +63,7 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             raise exceptions.NotAuthenticated()
 
         # if authenticated user attempts to access package that doesn't belong to them, raise 403
-        if user != package.owner:
+        if user != package.owner and user != organization.owner:
             raise exceptions.PermissionDenied(
                 detail="You do not have permission to see this package."
             )

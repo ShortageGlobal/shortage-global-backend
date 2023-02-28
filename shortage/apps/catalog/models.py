@@ -72,7 +72,7 @@ class Organization(models.Model):
     description = HTMLField(null=True, blank=True)
     meta_description = models.CharField(max_length=200, null=True, blank=True)
 
-    # legal information
+    # tax information
     ein_number = models.CharField(max_length=255, null=True, blank=True)
     address_line1 = models.CharField(max_length=255, null=True, blank=True)
     address_line2 = models.CharField(max_length=255, null=True, blank=True)
