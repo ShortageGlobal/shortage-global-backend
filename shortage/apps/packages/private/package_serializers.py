@@ -16,6 +16,7 @@ class PrivateOrganizationPackageItemProductSerializer(serializers.ModelSerialize
             "category",
             "photo",
             "price",
+            "requested_amount",
             "is_deleted",
             "top_priority",
         ]
@@ -58,6 +59,14 @@ class PrivateOrganizationPackageSerializer(serializers.ModelSerializer):
             "blog_posts",
             "created_at",
         ]
+
+
+class PrivateOrganizationPackageTaxDeductionReceiptSerializer(
+    serializers.ModelSerializer
+):
+    class Meta:
+        model = Package
+        fields = ["tax_deduction_receipt"]
 
 
 class PrivateAccountPackageItemProductSerializer(serializers.ModelSerializer):

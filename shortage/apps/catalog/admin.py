@@ -57,7 +57,7 @@ class OrganizationAdmin(admin.ModelAdmin):
             },
         ),
         (
-            "Legal Information",
+            "Tax Information",
             {
                 "classes": ("collapse",),
                 "fields": (
