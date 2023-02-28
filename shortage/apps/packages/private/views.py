@@ -79,18 +79,20 @@ class PrivateOrganizationPackagesViewSet(
         """Mark package as Delivered"""
         package = self.get_object()
 
-        if package.can_mark_as_delivered():
-            package.package_delivered()
-            package.save()
-            serializer = PrivateOrganizationPackageSerializer(
-                package, context=self.get_serializer_context()
+        if not package.can_mark_as_delivered():
+            return Response(
+                status=status.HTTP_428_PRECONDITION_REQUIRED,
+                data={
+                    "details": 'Package must be in "Confirmed" or "On its way" state.'
+                },
             )
-            return Response(serializer.data)
 
-        return Response(
-            status=status.HTTP_428_PRECONDITION_REQUIRED,
-            data={"details": 'Package must be in "Confirmed" or "On its way" state.'},
+        package.package_delivered()
+        package.save()
+        serializer = PrivateOrganizationPackageSerializer(
+            package, context=self.get_serializer_context()
         )
+        return Response(serializer.data)
 
 
 class PrivateAccountPackagesViewSet(viewsets.ReadOnlyModelViewSet):
