@@ -74,6 +74,24 @@ class PrivateOrganizationPackagesViewSet(
         )
         return Response(serializer.data)
 
+    @action(detail=True, methods=["POST"])
+    def mark_package_as_delivered(self, request, *args, **kwargs):
+        """Mark package as Delivered"""
+        package = self.get_object()
+
+        if package.can_mark_as_delivered():
+            package.package_delivered()
+            package.save()
+            serializer = PrivateOrganizationPackageSerializer(
+                package, context=self.get_serializer_context()
+            )
+            return Response(serializer.data)
+
+        return Response(
+            status=status.HTTP_428_PRECONDITION_REQUIRED,
+            data={"details": 'Package must be in "Confirmed" or "On its way" state.'},
+        )
+
 
 class PrivateAccountPackagesViewSet(viewsets.ReadOnlyModelViewSet):
     """List of packages donated by the current user"""
