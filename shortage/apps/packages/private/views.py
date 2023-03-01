@@ -4,10 +4,14 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from shortage.apps.catalog.models import Organization, OrganizationBlogPost
 from shortage.apps.catalog.serializers import OrganizationBlogPostPreviewSerializer
+from shortage.apps.catalog.private.serializers import (
+    PrivateOrganizationBlogPostReadSerializer,
+)
 from shortage.apps.packages.models import Package, PackageStatus, PackageType
 from shortage.apps.packages.private.package_serializers import (
     PrivateOrganizationPackageSerializer,
     PrivateOrganizationPackageTaxDeductionReceiptSerializer,
+    PrivateOrganizationPackageBlogPostsSerializer,
     PrivateAccountPackageSerializer,
 )
 from shortage.helpers.permissions import IsObjectOwner
@@ -91,6 +95,32 @@ class PrivateOrganizationPackagesViewSet(
         package.save()
         serializer = PrivateOrganizationPackageSerializer(
             package, context=self.get_serializer_context()
+        )
+        return Response(serializer.data)
+
+    @action(detail=True, methods=["POST"])
+    def set_blog_posts(self, request, *args, **kwargs):
+        """
+        Set blog posts associated with the donation.
+        Used for adding and removing relations.
+        """
+        package = self.get_object()
+        serializer = PrivateOrganizationPackageBlogPostsSerializer(
+            package,
+            data=request.data,
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    @action(detail=True)
+    def blog_posts(self, request, *args, **kwargs):
+        """Get blog posts attached to a donation"""
+        package = self.get_object()
+
+        queryset = package.blog_posts.filter(is_deleted=False).order_by("-created_at")
+        serializer = PrivateOrganizationBlogPostReadSerializer(
+            queryset, many=True, context=self.get_serializer_context()
         )
         return Response(serializer.data)
 
