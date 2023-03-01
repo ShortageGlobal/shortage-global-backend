@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from shortage.apps.catalog.models import Product
+from shortage.apps.catalog.models import Product, OrganizationBlogPost
 from shortage.apps.catalog.serializers import OrganizationPreviewSerializer
 from shortage.apps.packages.models import Package, PackageItem
 
@@ -59,6 +59,22 @@ class PrivateOrganizationPackageSerializer(serializers.ModelSerializer):
             "blog_posts",
             "created_at",
         ]
+
+
+class PrivateOrganizationPackageBlogPostsSerializer(serializers.ModelSerializer):
+    blog_posts = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=OrganizationBlogPost.objects.all()
+    )
+
+    class Meta:
+        model = Package
+        fields = [
+            "blog_posts",
+        ]
+
+    def validate(self, attrs):
+        # TODO: validate blog posts belong to the same organization
+        return super().validate(attrs)
 
 
 class PrivateOrganizationPackageTaxDeductionReceiptSerializer(
