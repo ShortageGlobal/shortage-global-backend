@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
+from stdnum.us import ein
 from tinymce.models import HTMLField
 from django_countries.fields import CountryField
 from auditlog.registry import auditlog
@@ -45,27 +46,9 @@ def validate_organization_slug_blacklist(value):
 
 
 def validate_ein(value):
-    # Remove any non-digit characters from the input
-    ein = "".join(filter(str.isdigit, value))
-
-    # EIN must be exactly 9 digits long
-    if len(ein) != 9:
+    if not ein.is_valid(value):
         raise ValidationError(
-            "Length should be 9 digits.",
-            params={"value": value},
-        )
-
-    # The first two digits must be in the range 01 through 99
-    if int(ein[0:2]) < 1 or int(ein[0:2]) > 99:
-        raise ValidationError(
-            "First two digits must be between 1 and 99.",
-            params={"value": value},
-        )
-
-    # The third digit must be in the range 0 through 9
-    if int(ein[2]) < 0 or int(ein[2]) > 9:
-        raise ValidationError(
-            "The third digit must be in the range 0 through 9.",
+            "EIN is invalid",
             params={"value": value},
         )
 
