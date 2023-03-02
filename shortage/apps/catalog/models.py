@@ -1,3 +1,5 @@
+import re
+
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
@@ -14,7 +16,6 @@ from shortage.apps.file_paths import (
     get_external_organization_path,
     get_product_path,
 )
-from shortage.apps.storage import MediaStorage
 from shortage.helpers import get_full_name
 from shortage.helpers.thumbnails import get_thumbnail_for_image
 
@@ -41,6 +42,36 @@ def validate_organization_slug_blacklist(value):
     if value in settings.ORGANIZATION_SLUG_BLACKLIST:
         raise ValidationError(
             "This value cannot be used.",
+            params={"value": value},
+        )
+
+
+def validate_ein(value):
+    # Remove any non-digit characters
+    ein = re.sub(r"\D", "", value)
+
+    # Check that the length is correct
+    if len(ein) != 9:
+        raise ValidationError(
+            "Length should be 9 digits.",
+            params={"value": value},
+        )
+
+    # Check that the first two digits are between 01 and 99
+    if not (1 <= int(ein[0:2]) <= 99):
+        raise ValidationError(
+            "First two digits must be between 1 and 99.",
+            params={"value": value},
+        )
+
+    # Calculate the check digit
+    check_sum = sum([int(ein[i]) * (i % 2 * 2 + 1) for i in range(8)])
+    check_digit = (10 - check_sum % 10) % 10
+
+    # Check that the check digit matches the last digit of the EIN
+    if check_digit != int(ein[8]):
+        raise ValidationError(
+            "Check digit doesn't match the last digit of EIN",
             params={"value": value},
         )
 
@@ -73,7 +104,7 @@ class Organization(models.Model):
     meta_description = models.CharField(max_length=200, null=True, blank=True)
 
     # legal information
-    ein_number = models.CharField(max_length=255, null=True, blank=True)
+    ein_number = models.CharField(max_length=255, null=True, blank=True, validators=[validate_ein])
     address_line1 = models.CharField(max_length=255, null=True, blank=True)
     address_line2 = models.CharField(max_length=255, null=True, blank=True)
     city = models.CharField(max_length=255, null=True, blank=True)
