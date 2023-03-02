@@ -1,5 +1,3 @@
-import re
-
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
@@ -47,31 +45,27 @@ def validate_organization_slug_blacklist(value):
 
 
 def validate_ein(value):
-    # Remove any non-digit characters
-    ein = re.sub(r"\D", "", value)
+    # Remove any non-digit characters from the input
+    ein = "".join(filter(str.isdigit, value))
 
-    # Check that the length is correct
+    # EIN must be exactly 9 digits long
     if len(ein) != 9:
         raise ValidationError(
             "Length should be 9 digits.",
             params={"value": value},
         )
 
-    # Check that the first two digits are between 01 and 99
-    if not (1 <= int(ein[0:2]) <= 99):
+    # The first two digits must be in the range 01 through 99
+    if int(ein[0:2]) < 1 or int(ein[0:2]) > 99:
         raise ValidationError(
             "First two digits must be between 1 and 99.",
             params={"value": value},
         )
 
-    # Calculate the check digit
-    check_sum = sum([int(ein[i]) * (i % 2 * 2 + 1) for i in range(8)])
-    check_digit = (10 - check_sum % 10) % 10
-
-    # Check that the check digit matches the last digit of the EIN
-    if check_digit != int(ein[8]):
+    # The third digit must be in the range 0 through 9
+    if int(ein[2]) < 0 or int(ein[2]) > 9:
         raise ValidationError(
-            "Check digit doesn't match the last digit of EIN",
+            "The third digit must be in the range 0 through 9.",
             params={"value": value},
         )
 

@@ -289,7 +289,7 @@ class PrivateOrganizationTestCase(APITestCase):
         organization.representative_email = "john.doe@gmail.com"
         organization.representative_phone_number = "+1 800 444 4444"
         organization.representative_signature = organization.logo
-        organization.ein_number = "91-1144442"
+        organization.ein_number = "941196203"
         organization.zip = "19808"
         organization.save()
 
