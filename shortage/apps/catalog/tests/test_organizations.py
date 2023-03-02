@@ -7,6 +7,7 @@ from shortage.apps.catalog.private.views import (
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
 )
+from shortage.apps.storage import MediaStorage
 from shortage.helpers.test_utilities import (
     create_test_user,
     create_test_organization,
@@ -25,7 +26,7 @@ class PrivateOrganizationTestCase(APITestCase):
             "slug": "testslug",
             "description": "Some description",
             "url": "https://www.someurl.com",
-            "ein_number": "12345",
+            "ein_number": "91-1144442",
         }
 
     def test_create_organization_permissions(self):
@@ -80,7 +81,7 @@ class PrivateOrganizationTestCase(APITestCase):
             "logo": None,
             "banner": None,
             "url": "https://www.someurl.com",
-            "ein_number": "12345",
+            "ein_number": "91-1144442",
             "is_verified": False,
             "is_draft": True,
             "promote": False,
@@ -119,7 +120,7 @@ class PrivateOrganizationTestCase(APITestCase):
             "logo": None,
             "banner": None,
             "url": "https://www.someurl.com",
-            "ein_number": "12345",
+            "ein_number": "91-1144442",
             "is_verified": False,
             "is_draft": True,
             "promote": False,
@@ -170,6 +171,111 @@ class PrivateOrganizationTestCase(APITestCase):
         response = PrivateOrganizationViewSet.as_view({"post": "create"})(request)
 
         self.assertEqual(response.status_code, 201, "Organization was not created")
+
+    def test_organization_checklist(self):
+        organization = create_test_organization(owner=self.user)
+
+        request = self.requestFactory.get("")
+        force_authenticate(request, user=self.user)
+        response = PrivateOrganizationViewSet.as_view({"get": "checklist"})(
+            request, slug=organization.slug
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        json_response = json.loads(response.render().content)
+
+        validation_errors = {
+            "checklist": {
+                "page": [
+                    {
+                        "code": "empty_logo",
+                        "message": "Logo is empty.",
+                        "severity": "WARNING",
+                    },
+                    {
+                        "code": "empty_banner",
+                        "message": "Banner is empty.",
+                        "severity": "WARNING",
+                    },
+                ],
+                "products": [
+                    {
+                        "code": "empty_products",
+                        "message": "There must be at least one item requested by your organization.",
+                        "severity": "ERROR",
+                    }
+                ],
+                "instructions": [
+                    {
+                        "code": "empty_instructions",
+                        "message": "Delivery instructions are not provided. Donors must know where to send goods.",
+                        "severity": "ERROR",
+                    }
+                ],
+                "tax_information": [
+                    {
+                        "code": "empty_tax_information",
+                        "message": "Tax information is not sufficient. Until you provide correct EIN number, address, etc. we won't be able to automatically generate tax deduction receipts for you. You are still able to upload tax receipts yourself.",
+                        "severity": "WARNING",
+                    }
+                ],
+            },
+            "can_publish": False,
+        }
+
+        self.assertEqual(json_response, validation_errors)
+
+        tmp_storage = MediaStorage()
+        organization.logo = create_test_image(tmp_storage, "test_image.png")
+        organization.url = "https://shortage.global"
+        organization.banner = organization.logo
+        organization.meta_description = "not empty"
+        organization.address_line1 = "251 Little Falls Drive"
+        organization.address_line2 = "Wilmington, DE, US"
+        organization.city = "Wilmington"
+        organization.state_province_region = "DE"
+        organization.zip = "198080"
+        organization.representative_first_name = "John"
+        organization.representative_last_name = "Doe"
+        organization.representative_email = "john.doe@gmail.com"
+        organization.representative_phone_number = "+1 800 444 4444"
+        organization.representative_signature = organization.logo
+        organization.ein_number = "941196203"
+        organization.zip = "19808"
+        organization.save()
+
+        response = PrivateOrganizationViewSet.as_view({"get": "checklist"})(
+            request, slug=organization.slug
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        json_response = json.loads(response.render().content)
+
+        validation_errors = {
+            "checklist": {
+                "page": [],
+                "products": [
+                    {
+                        "code": "empty_products",
+                        "message": "There must be at least one item requested by your organization.",
+                        "severity": "ERROR",
+                    }
+                ],
+                "instructions": [
+                    {
+                        "code": "empty_instructions",
+                        "message": "Delivery instructions are not provided. Donors must know where to send goods.",
+                        "severity": "ERROR",
+                    }
+                ],
+                "tax_information": [],
+            },
+            "can_publish": False,
+        }
+
+        self.assertEqual(json_response, validation_errors)
 
 
 class PrivateOrganizationSlugCheckerTests(APITestCase):

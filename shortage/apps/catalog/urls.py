@@ -64,7 +64,6 @@ router.register(
     basename="private_organization",
 )
 
-
 # Instructions
 router.register(
     r"organizations/(?P<org_slug>[^/.]+)/instructions",

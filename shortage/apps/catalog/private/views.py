@@ -5,9 +5,8 @@ from rest_framework import (
     filters,
     permissions,
     status,
-    exceptions,
-    status,
 )
+from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
@@ -29,6 +28,7 @@ from shortage.apps.catalog.private.serializers import (
 )
 from shortage.apps.catalog.exceptions import OneOrganizationPerUser
 from shortage.helpers.permissions import IsObjectOwner
+from shortage.helpers.organization_checklist import get_organization_checklist
 
 
 class PrivateOrganizationSlugExistsViewSet(viewsets.ViewSet):
@@ -79,7 +79,7 @@ class PrivateOrganizationViewSet(
         return PrivateOrganizationReadSerializer
 
     def get_queryset(self):
-        if self.action == "retrieve" or self.action == "list":
+        if self.action in ["list", "retrieve", "checklist"]:
             return (
                 Organization.objects.active()
                 .filter(owner=self.request.user)
@@ -101,6 +101,12 @@ class PrivateOrganizationViewSet(
     def update(self, request, *args, **kwargs):
         # Todo: Send an email about changes to the organization
         return super().update(request, *args, **kwargs)
+
+    @action(detail=True)
+    def checklist(self, request, *args, **kwargs):
+        organization = self.get_object()
+        checklist = get_organization_checklist(organization=organization)
+        return Response(status=status.HTTP_200_OK, data=checklist)
 
 
 class PrivateProductsViewSet(viewsets.ModelViewSet):

@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
+from stdnum.us import ein
 from tinymce.models import HTMLField
 from django_countries.fields import CountryField
 from auditlog.registry import auditlog
@@ -14,7 +15,6 @@ from shortage.apps.file_paths import (
     get_external_organization_path,
     get_product_path,
 )
-from shortage.apps.storage import MediaStorage
 from shortage.helpers import get_full_name
 from shortage.helpers.thumbnails import get_thumbnail_for_image
 
@@ -41,6 +41,14 @@ def validate_organization_slug_blacklist(value):
     if value in settings.ORGANIZATION_SLUG_BLACKLIST:
         raise ValidationError(
             "This value cannot be used.",
+            params={"value": value},
+        )
+
+
+def validate_ein(value):
+    if not ein.is_valid(value):
+        raise ValidationError(
+            "EIN is invalid",
             params={"value": value},
         )
 
@@ -73,7 +81,9 @@ class Organization(models.Model):
     meta_description = models.CharField(max_length=200, null=True, blank=True)
 
     # tax information
-    ein_number = models.CharField(max_length=255, null=True, blank=True)
+    ein_number = models.CharField(
+        max_length=255, null=True, blank=True, validators=[validate_ein]
+    )
     address_line1 = models.CharField(max_length=255, null=True, blank=True)
     address_line2 = models.CharField(max_length=255, null=True, blank=True)
     city = models.CharField(max_length=255, null=True, blank=True)
@@ -119,6 +129,23 @@ class Organization(models.Model):
     @property
     def representative_signature_image(self):
         return get_thumbnail_for_image(self.representative_signature, "signature")
+
+    def can_generate_tax_receipts(self):
+        """
+        Check if organization is able to generate tax deduction receipts.
+        Organization must have required tax information specified
+        """
+        return (
+            bool(self.ein_number)
+            and bool(self.address_line1)
+            and bool(self.city)
+            and bool(self.state_province_region)
+            and bool(self.zip)
+            and bool(self.country)
+            and bool(self.representative_first_name)
+            and bool(self.representative_last_name)
+            and bool(self.representative_signature)
+        )
 
 
 class ExternalOrganization(models.Model):
