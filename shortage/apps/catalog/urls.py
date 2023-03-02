@@ -23,7 +23,6 @@ from .private.views import (
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
     PrivateInstructionsViewSet,
-    PrivateOrganizationChecklistViewSet,
     PrivateOrganizationBlogPostsViewSet,
 )
 
@@ -63,11 +62,6 @@ router.register(
     r"private/organizations",
     PrivateOrganizationViewSet,
     basename="private_organization",
-)
-router.register(
-    r"private/organizations/(?P<org_slug>[^/.]+)/checklist",
-    PrivateOrganizationChecklistViewSet,
-    basename="private_organization_checklist",
 )
 
 # Instructions

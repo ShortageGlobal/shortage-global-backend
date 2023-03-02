@@ -8,6 +8,7 @@ from rest_framework import (
     permissions,
     status,
 )
+from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
@@ -80,7 +81,11 @@ class PrivateOrganizationViewSet(
         return PrivateOrganizationReadSerializer
 
     def get_queryset(self):
-        if self.action == "retrieve" or self.action == "list":
+        if (
+            self.action == "retrieve"
+            or self.action == "list"
+            or self.action == "checklist"
+        ):
             return (
                 Organization.objects.active()
                 .filter(owner=self.request.user)
@@ -102,6 +107,81 @@ class PrivateOrganizationViewSet(
     def update(self, request, *args, **kwargs):
         # Todo: Send an email about changes to the organization
         return super().update(request, *args, **kwargs)
+
+    @action(detail=True)
+    def checklist(self, request, *args, **kwargs):
+        organization = get_object_or_404(self.get_queryset())
+
+        validation_result = self.validate_organization(organization)
+
+        if bool(validation_result):
+            return Response(
+                status=status.HTTP_428_PRECONDITION_REQUIRED, data=validation_result
+            )
+
+        return Response(status.HTTP_200_OK)
+
+    def validate_organization(self, organization):
+        fields_to_validate = [
+            {"name": "name", "category": "main"},
+            {"name": "slug", "category": "main"},
+            {"name": "url", "category": "main", "validators": [validate_url]},
+            {"name": "logo", "category": "main"},
+            {"name": "banner", "category": "main"},
+            {"name": "description", "category": "main"},
+            {
+                "name": "instructions",
+                "category": "main",
+                "validators": [validate_queryset],
+            },
+            {"name": "products", "category": "main", "validators": [validate_queryset]},
+            {"name": "meta_description", "category": "main"},
+            {"name": "ein_number", "category": "tax", "validators": [validate_ein]},
+            {"name": "address_line1", "category": "tax"},
+            {"name": "address_line2", "category": "tax"},
+            {"name": "city", "category": "tax"},
+            {"name": "state_province_region", "category": "tax"},
+            {"name": "zip", "category": "tax", "validators": [validate_zip]},
+            {"name": "country", "category": "tax"},
+            {"name": "representative_first_name", "category": "tax"},
+            {"name": "representative_last_name", "category": "tax"},
+            {"name": "representative_email", "category": "tax"},
+            {"name": "representative_phone_number", "category": "tax"},
+            {"name": "representative_signature", "category": "tax"},
+        ]
+
+        checklist = {}
+
+        # iterate through all the fields of the model
+        for field in fields_to_validate:
+            value = getattr(organization, field["name"])
+            severity = "WARNING" if field["category"] == "tax" else "ERROR"
+
+            if not checklist.get(field["category"]):
+                checklist[field["category"]] = []
+
+            if not value:
+                checklist[field["category"]].append(
+                    {
+                        "field": field["name"],
+                        "message": "Value does not exist or is empty",
+                        "severity": severity,
+                    }
+                )
+            elif field.get("validators"):
+                for validator in field["validators"]:
+                    try:
+                        validator(value)
+                    except ValidationError as exception:
+                        checklist[field["category"]].append(
+                            {
+                                "field": field["name"],
+                                "message": exception.message,
+                                "severity": severity,
+                            }
+                        )
+
+        return checklist
 
 
 class PrivateProductsViewSet(viewsets.ModelViewSet):
@@ -243,102 +323,6 @@ class PrivateOrganizationBlogPostsViewSet(viewsets.ModelViewSet):
         # Do a soft delete if the organization has already been published
         instance.is_deleted = True
         instance.save()
-
-
-class PrivateOrganizationChecklistViewSet(
-    mixins.RetrieveModelMixin, viewsets.GenericViewSet
-):
-    """
-    Validates all fields of organization and returns the list of invalid or missing data
-    """
-
-    schema = AutoSchema(
-        tags=["Private", "Organization"],
-    )
-
-    permission_classes = [permissions.IsAuthenticated, IsObjectOwner]
-
-    def get_queryset(self):
-        return Organization.objects.active().filter(
-            owner=self.request.user, slug=self.kwargs["org_slug"]
-        )
-
-    def retrieve(self, request, *args, **kwargs):
-        organization = get_object_or_404(self.get_queryset())
-
-        validation_result = self.validate_organization(organization)
-
-        if bool(validation_result):
-            return Response(
-                status=status.HTTP_428_PRECONDITION_REQUIRED, data=validation_result
-            )
-
-        return Response(status.HTTP_200_OK)
-
-    def get_checklist_fields(self):
-        return [
-            {"name": "name", "category": "main"},
-            {"name": "slug", "category": "main"},
-            {"name": "url", "category": "main", "validators": [validate_url]},
-            {"name": "logo", "category": "main"},
-            {"name": "banner", "category": "main"},
-            {"name": "description", "category": "main"},
-            {
-                "name": "instructions",
-                "category": "main",
-                "validators": [validate_queryset],
-            },
-            {"name": "products", "category": "main", "validators": [validate_queryset]},
-            {"name": "meta_description", "category": "main"},
-            {"name": "ein_number", "category": "tax", "validators": [validate_ein]},
-            {"name": "address_line1", "category": "tax"},
-            {"name": "address_line2", "category": "tax"},
-            {"name": "city", "category": "tax"},
-            {"name": "state_province_region", "category": "tax"},
-            {"name": "zip", "category": "tax", "validators": [validate_zip]},
-            {"name": "country", "category": "tax"},
-            {"name": "representative_first_name", "category": "tax"},
-            {"name": "representative_last_name", "category": "tax"},
-            {"name": "representative_email", "category": "tax"},
-            {"name": "representative_phone_number", "category": "tax"},
-            {"name": "representative_signature", "category": "tax"},
-        ]
-
-    def validate_organization(self, organization):
-        checklist = {}
-
-        fields_to_validate = self.get_checklist_fields()
-
-        # iterate through all the fields of the model
-        for field in fields_to_validate:
-            value = getattr(organization, field["name"])
-            severity = "WARNING" if field["category"] == "tax" else "ERROR"
-
-            if not checklist.get(field["category"]):
-                checklist[field["category"]] = []
-
-            if not value:
-                checklist[field["category"]].append(
-                    {
-                        "field": field["name"],
-                        "message": "Value does not exist or is empty",
-                        "severity": severity,
-                    }
-                )
-            elif field.get("validators"):
-                for validator in field["validators"]:
-                    try:
-                        validator(value)
-                    except ValidationError as exception:
-                        checklist[field["category"]].append(
-                            {
-                                "field": field["name"],
-                                "message": exception.message,
-                                "severity": severity,
-                            }
-                        )
-
-        return checklist
 
 
 def validate_url(url):

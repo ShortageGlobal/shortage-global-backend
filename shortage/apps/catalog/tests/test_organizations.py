@@ -6,7 +6,6 @@ from shortage.apps.catalog.models import Organization
 from shortage.apps.catalog.private.views import (
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
-    PrivateOrganizationChecklistViewSet,
 )
 from shortage.apps.storage import MediaStorage
 from shortage.helpers.test_utilities import (
@@ -178,7 +177,7 @@ class PrivateOrganizationTestCase(APITestCase):
 
         request = self.requestFactory.get("")
         force_authenticate(request, user=self.user)
-        response = PrivateOrganizationChecklistViewSet.as_view({"get": "retrieve"})(
+        response = PrivateOrganizationViewSet.as_view({"get": "checklist"})(
             request, org_slug=organization.slug
         )
 
@@ -294,7 +293,7 @@ class PrivateOrganizationTestCase(APITestCase):
         organization.zip = "19808"
         organization.save()
 
-        response = PrivateOrganizationChecklistViewSet.as_view({"get": "retrieve"})(
+        response = PrivateOrganizationViewSet.as_view({"get": "checklist"})(
             request, org_slug=organization.slug
         )
 
