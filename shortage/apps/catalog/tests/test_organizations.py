@@ -219,34 +219,32 @@ class PrivateOrganizationTestCase(APITestCase):
                     "severity": "ERROR",
                 },
             ],
-            "legal": [
+            "tax": [
                 {
                     "field": "address_line1",
                     "message": "Value does not exist or is empty",
-                    "severity": "ERROR",
+                    "severity": "WARNING",
                 },
                 {
                     "field": "address_line2",
                     "message": "Value does not exist or is empty",
-                    "severity": "ERROR",
+                    "severity": "WARNING",
                 },
                 {
                     "field": "city",
                     "message": "Value does not exist or is empty",
-                    "severity": "ERROR",
+                    "severity": "WARNING",
                 },
                 {
                     "field": "state_province_region",
                     "message": "Value does not exist or is empty",
-                    "severity": "ERROR",
+                    "severity": "WARNING",
                 },
                 {
                     "field": "zip",
                     "message": "Value does not exist or is empty",
-                    "severity": "ERROR",
+                    "severity": "WARNING",
                 },
-            ],
-            "tax": [
                 {
                     "field": "representative_first_name",
                     "message": "Value does not exist or is empty",
@@ -317,7 +315,6 @@ class PrivateOrganizationTestCase(APITestCase):
                     "severity": "ERROR",
                 },
             ],
-            "legal": [],
             "tax": [],
         }
 
