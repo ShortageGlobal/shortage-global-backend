@@ -164,7 +164,7 @@ class Package(models.Model):
         )
 
     def generate_tax_receipt(self, force=False, save=False):
-        can_generate = self.organization.can_generate_tax_receipts()
+        can_generate = self.can_generate_tax_receipt()
         should_generate = self.should_generate_tax_receipt(force=force)
 
         if not can_generate or not should_generate:
