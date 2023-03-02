@@ -72,7 +72,7 @@ class PrivateOrganizationViewSet(
 
     permission_classes = [permissions.IsAuthenticated]
     paginator = None
-    lookup_field = "org_slug"
+    lookup_field = "slug"
 
     def get_serializer_class(self):
         if self.action in ["create", "update", "partial_update"]:
