@@ -110,7 +110,7 @@ class PrivateOrganizationViewSet(
 
     @action(detail=True)
     def checklist(self, request, *args, **kwargs):
-        organization = get_object_or_404(self.get_queryset())
+        organization = self.get_object()
 
         validation_result = self.validate_organization(organization)
 

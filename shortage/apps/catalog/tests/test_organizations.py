@@ -178,7 +178,7 @@ class PrivateOrganizationTestCase(APITestCase):
         request = self.requestFactory.get("")
         force_authenticate(request, user=self.user)
         response = PrivateOrganizationViewSet.as_view({"get": "checklist"})(
-            request, org_slug=organization.slug
+            request, slug=organization.slug
         )
 
         self.assertEqual(response.status_code, 428)
@@ -294,7 +294,7 @@ class PrivateOrganizationTestCase(APITestCase):
         organization.save()
 
         response = PrivateOrganizationViewSet.as_view({"get": "checklist"})(
-            request, org_slug=organization.slug
+            request, slug=organization.slug
         )
 
         self.assertEqual(response.status_code, 428)
