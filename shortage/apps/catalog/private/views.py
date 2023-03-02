@@ -1,13 +1,12 @@
-import re
 import requests
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from rest_framework import (
     viewsets,
     mixins,
     filters,
     permissions,
     status,
-    generics,
 )
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -18,6 +17,7 @@ from shortage.apps.catalog.models import (
     Organization,
     Instruction,
     OrganizationBlogPost,
+    validate_ein,
 )
 from shortage.apps.catalog.private.serializers import (
     PrivateOrganizationReadSerializer,
@@ -72,7 +72,7 @@ class PrivateOrganizationViewSet(
 
     permission_classes = [permissions.IsAuthenticated]
     paginator = None
-    lookup_field = "slug"
+    lookup_field = "org_slug"
 
     def get_serializer_class(self):
         if self.action in ["create", "update", "partial_update"]:
@@ -256,14 +256,15 @@ class PrivateOrganizationChecklistViewSet(
         tags=["Private", "Organization"],
     )
 
-    permission_classes = [permissions.IsAuthenticated]
-    lookup_field = "slug"
+    permission_classes = [permissions.IsAuthenticated, IsObjectOwner]
+
+    def get_queryset(self):
+        return Organization.objects.active().filter(
+            owner=self.request.user, slug=self.kwargs["org_slug"]
+        )
 
     def retrieve(self, request, *args, **kwargs):
-        organization = get_object_or_404(
-            Organization.objects.active().filter(owner=request.user),
-            slug=kwargs[self.lookup_field],
-        )
+        organization = get_object_or_404(self.get_queryset())
 
         validation_result = self.validate_organization(organization)
 
@@ -274,88 +275,88 @@ class PrivateOrganizationChecklistViewSet(
 
         return Response(status.HTTP_200_OK)
 
-    def validate_organization(self, organization):
-        skip_validation = [
-            "id",
-            "is_verified",
-            "is_draft",
-            "is_deleted",
-            "promote",
-            "deadline",
-            "updated_at",
-            "created_at",
-            "owner",
+    def get_checklist_fields(self):
+        return [
+            {"name": "name", "category": "main"},
+            {"name": "slug", "category": "main"},
+            {"name": "url", "category": "main", "validators": [validate_url]},
+            {"name": "logo", "category": "main"},
+            {"name": "banner", "category": "main"},
+            {"name": "description", "category": "main"},
+            {
+                "name": "instructions",
+                "category": "main",
+                "validators": [validate_queryset],
+            },
+            {"name": "products", "category": "main", "validators": [validate_queryset]},
+            {"name": "meta_description", "category": "main"},
+            {"name": "ein_number", "category": "legal", "validators": [validate_ein]},
+            {"name": "address_line1", "category": "legal"},
+            {"name": "address_line2", "category": "legal"},
+            {"name": "city", "category": "legal"},
+            {"name": "state_province_region", "category": "legal"},
+            {"name": "zip", "category": "legal", "validators": [validate_zip]},
+            {"name": "country", "category": "legal"},
+            {"name": "representative_first_name", "category": "tax"},
+            {"name": "representative_last_name", "category": "tax"},
+            {"name": "representative_email", "category": "tax"},
+            {"name": "representative_phone_number", "category": "tax"},
+            {"name": "representative_signature", "category": "tax"},
         ]
-        validation_errors = {}
+
+    def validate_organization(self, organization):
+        checklist = {}
+
+        fields_to_validate = self.get_checklist_fields()
 
         # iterate through all the fields of the model
-        for field in organization._meta.get_fields():
-            if (
-                field.many_to_one
-                or field.one_to_many
-                or field.one_to_one
-                or field.many_to_many
-            ):
-                related_object = getattr(organization, field.name)
+        for field in fields_to_validate:
+            value = getattr(organization, field["name"])
+            severity = "WARNING" if field["category"] == "tax" else "ERROR"
 
-                # Organization must have delivery instructions and products to be published
-                if (
-                    "instructions" == field.name or "products" == field.name
-                ) and not related_object:
-                    validation_errors[field.name] = "empty"
+            if not checklist.get(field["category"]):
+                checklist[field["category"]] = []
 
-            else:
-                if field.name in skip_validation:
-                    continue
+            if not value:
+                checklist[field["category"]].append(
+                    {
+                        "field": field["name"],
+                        "message": "Value does not exist or is empty",
+                        "severity": severity,
+                    }
+                )
+            elif field.get("validators"):
+                for validator in field["validators"]:
+                    try:
+                        validator(value)
+                    except ValidationError as exception:
+                        checklist[field["category"]].append(
+                            {
+                                "field": field["name"],
+                                "message": exception.message,
+                                "severity": severity,
+                            }
+                        )
 
-                value = getattr(organization, field.name)
+        return checklist
 
-                # For most fields, validate if they are simply not empty
-                if not value:
-                    validation_errors[field.name] = "empty"
-                else:
-                    # Check if URL is actually valid, not that it's just there
-                    if "url" == field.name:
-                        if not self.validate_url(value):
-                            validation_errors[field.name] = "invalid"
-                    # Check that EIN is, at least, of valid format
-                    elif "ein_number" == field.name:
-                        if not self.validate_ein(value):
-                            validation_errors[field.name] = "invalid"
-                    # Check that ZIP is, at least, of valid format
-                    elif "zip" == field.name:
-                        if not (len(value) == 5 and value.isdigit()):
-                            validation_errors[field.name] = "invalid"
 
-        return validation_errors
+def validate_url(url):
+    response = None
+    try:
+        response = requests.head(url)
+    except Exception as exc:
+        raise ValidationError("This is not a valid URL or this URL does not exist")
 
-    def validate_url(self, url):
-        response = None
-        try:
-            response = requests.head(url)
-        except:
-            return False
+    if response.status_code >= 400:
+        raise ValidationError("This is not a valid URL or this URL does not exist")
 
-        if response.status_code >= 400:
-            return False
 
-        return True
+def validate_queryset(queryset):
+    if 0 == queryset.count():
+        raise ValidationError("Query set is empty")
 
-    def validate_ein(self, ein_number):
-        # Remove any non-digit characters
-        ein = re.sub(r"\D", "", ein_number)
 
-        # Check that the length is correct
-        if len(ein) != 9:
-            return False
-
-        # Check that the first two digits are between 01 and 99
-        if not (1 <= int(ein[0:2]) <= 99):
-            return False
-
-        # Calculate the check digit
-        check_sum = sum([int(ein[i]) * (i % 2 * 2 + 1) for i in range(8)])
-        check_digit = (10 - check_sum % 10) % 10
-
-        # Check that the check digit matches the last digit of the EIN
-        return check_digit == int(ein[8])
+def validate_zip(zip):
+    if not (len(zip) == 5 and zip.isdigit()):
+        raise ValidationError("Zip code is not a valid US zip code")

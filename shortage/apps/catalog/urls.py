@@ -65,7 +65,7 @@ router.register(
     basename="private_organization",
 )
 router.register(
-    r"private/organizations/checklist",
+    r"private/organizations/(?P<org_slug>[^/.]+)/checklist",
     PrivateOrganizationChecklistViewSet,
     basename="private_organization_checklist",
 )

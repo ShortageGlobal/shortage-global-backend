@@ -27,7 +27,7 @@ def create_test_organization(**kwargs):
         "slug": "test_organization",
         "description": "Some description",
         "url": "https://www.579f9ed2-b0a7-11ed-afa1-0242ac120002.com",
-        "ein_number": "12345",
+        "ein_number": "91-1144442",
         "is_verified": True,
         "is_draft": False,
         **kwargs,

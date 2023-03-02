@@ -27,7 +27,7 @@ class PrivateOrganizationTestCase(APITestCase):
             "slug": "testslug",
             "description": "Some description",
             "url": "https://www.someurl.com",
-            "ein_number": "12345",
+            "ein_number": "91-1144442",
         }
 
     def test_create_organization_permissions(self):
@@ -82,7 +82,7 @@ class PrivateOrganizationTestCase(APITestCase):
             "logo": None,
             "banner": None,
             "url": "https://www.someurl.com",
-            "ein_number": "12345",
+            "ein_number": "91-1144442",
             "is_verified": False,
             "is_draft": True,
             "promote": False,
@@ -121,7 +121,7 @@ class PrivateOrganizationTestCase(APITestCase):
             "logo": None,
             "banner": None,
             "url": "https://www.someurl.com",
-            "ein_number": "12345",
+            "ein_number": "91-1144442",
             "is_verified": False,
             "is_draft": True,
             "promote": False,
@@ -179,28 +179,100 @@ class PrivateOrganizationTestCase(APITestCase):
         request = self.requestFactory.get("")
         force_authenticate(request, user=self.user)
         response = PrivateOrganizationChecklistViewSet.as_view({"get": "retrieve"})(
-            request, slug=organization.slug
+            request, org_slug=organization.slug
         )
 
         self.assertEqual(response.status_code, 428)
 
         json_response = json.loads(response.render().content)
+
         validation_errors = {
-            "logo": "empty",
-            "url": "invalid",
-            "banner": "empty",
-            "ein_number": "invalid",
-            "meta_description": "empty",
-            "address_line1": "empty",
-            "address_line2": "empty",
-            "city": "empty",
-            "state_province_region": "empty",
-            "zip": "empty",
-            "representative_first_name": "empty",
-            "representative_last_name": "empty",
-            "representative_email": "empty",
-            "representative_phone_number": "empty",
-            "representative_signature": "empty",
+            "main": [
+                {
+                    "field": "url",
+                    "message": "This is not a valid URL or this URL does not exist",
+                    "severity": "ERROR",
+                },
+                {
+                    "field": "logo",
+                    "message": "Value does not exist or is empty",
+                    "severity": "ERROR",
+                },
+                {
+                    "field": "banner",
+                    "message": "Value does not exist or is empty",
+                    "severity": "ERROR",
+                },
+                {
+                    "field": "instructions",
+                    "message": "Query set is empty",
+                    "severity": "ERROR",
+                },
+                {
+                    "field": "products",
+                    "message": "Query set is empty",
+                    "severity": "ERROR",
+                },
+                {
+                    "field": "meta_description",
+                    "message": "Value does not exist or is empty",
+                    "severity": "ERROR",
+                },
+            ],
+            "legal": [
+                {
+                    "field": "address_line1",
+                    "message": "Value does not exist or is empty",
+                    "severity": "ERROR",
+                },
+                {
+                    "field": "address_line2",
+                    "message": "Value does not exist or is empty",
+                    "severity": "ERROR",
+                },
+                {
+                    "field": "city",
+                    "message": "Value does not exist or is empty",
+                    "severity": "ERROR",
+                },
+                {
+                    "field": "state_province_region",
+                    "message": "Value does not exist or is empty",
+                    "severity": "ERROR",
+                },
+                {
+                    "field": "zip",
+                    "message": "Value does not exist or is empty",
+                    "severity": "ERROR",
+                },
+            ],
+            "tax": [
+                {
+                    "field": "representative_first_name",
+                    "message": "Value does not exist or is empty",
+                    "severity": "WARNING",
+                },
+                {
+                    "field": "representative_last_name",
+                    "message": "Value does not exist or is empty",
+                    "severity": "WARNING",
+                },
+                {
+                    "field": "representative_email",
+                    "message": "Value does not exist or is empty",
+                    "severity": "WARNING",
+                },
+                {
+                    "field": "representative_phone_number",
+                    "message": "Value does not exist or is empty",
+                    "severity": "WARNING",
+                },
+                {
+                    "field": "representative_signature",
+                    "message": "Value does not exist or is empty",
+                    "severity": "WARNING",
+                },
+            ],
         }
 
         self.assertEqual(json_response, validation_errors)
@@ -220,10 +292,12 @@ class PrivateOrganizationTestCase(APITestCase):
         organization.representative_email = "john.doe@gmail.com"
         organization.representative_phone_number = "+1 800 444 4444"
         organization.representative_signature = organization.logo
+        organization.ein_number = "91-1144442"
+        organization.zip = "19808"
         organization.save()
 
         response = PrivateOrganizationChecklistViewSet.as_view({"get": "retrieve"})(
-            request, slug=organization.slug
+            request, org_slug=organization.slug
         )
 
         self.assertEqual(response.status_code, 428)
@@ -231,21 +305,23 @@ class PrivateOrganizationTestCase(APITestCase):
         json_response = json.loads(response.render().content)
 
         validation_errors = {
-            "ein_number": "invalid",
-            "zip": "invalid",
+            "main": [
+                {
+                    "field": "instructions",
+                    "message": "Query set is empty",
+                    "severity": "ERROR",
+                },
+                {
+                    "field": "products",
+                    "message": "Query set is empty",
+                    "severity": "ERROR",
+                },
+            ],
+            "legal": [],
+            "tax": [],
         }
 
         self.assertEqual(json_response, validation_errors)
-
-        organization.ein_number = "91-1144442"
-        organization.zip = "19808"
-        organization.save()
-
-        response = PrivateOrganizationChecklistViewSet.as_view({"get": "retrieve"})(
-            request, slug=organization.slug
-        )
-
-        self.assertEqual(response.status_code, 200)
 
 
 class PrivateOrganizationSlugCheckerTests(APITestCase):

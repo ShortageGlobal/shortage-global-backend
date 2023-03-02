@@ -104,7 +104,9 @@ class Organization(models.Model):
     meta_description = models.CharField(max_length=200, null=True, blank=True)
 
     # legal information
-    ein_number = models.CharField(max_length=255, null=True, blank=True, validators=[validate_ein])
+    ein_number = models.CharField(
+        max_length=255, null=True, blank=True, validators=[validate_ein]
+    )
     address_line1 = models.CharField(max_length=255, null=True, blank=True)
     address_line2 = models.CharField(max_length=255, null=True, blank=True)
     city = models.CharField(max_length=255, null=True, blank=True)
