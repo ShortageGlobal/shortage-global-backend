@@ -103,7 +103,7 @@ class Organization(models.Model):
     description = HTMLField(null=True, blank=True)
     meta_description = models.CharField(max_length=200, null=True, blank=True)
 
-    # legal information
+    # tax information
     ein_number = models.CharField(
         max_length=255, null=True, blank=True, validators=[validate_ein]
     )
@@ -214,7 +214,7 @@ class ProductCategory(models.TextChoices):
     HEALTHCARE = settings.PRODUCT_CATEGORY["HEALTHCARE"], "Healthcare"
     EDUCATION = settings.PRODUCT_CATEGORY["EDUCATION"], "Education"
     BABY_CARE = settings.PRODUCT_CATEGORY["BABY_CARE"], "Baby Care"
-    SAVE_ANIMALS = settings.PRODUCT_CATEGORY["SAVE_ANIMALS"], "Save Animals"
+    ANIMAL_CARE = settings.PRODUCT_CATEGORY["ANIMAL_CARE"], "Animal Care"
     HOUSEHOLD_ITEMS = settings.PRODUCT_CATEGORY["HOUSEHOLD_ITEMS"], "Household Items"
     FOOD = settings.PRODUCT_CATEGORY["FOOD"], "Food"
     TOYS = settings.PRODUCT_CATEGORY["TOYS"], "Toys"

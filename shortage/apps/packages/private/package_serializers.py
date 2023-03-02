@@ -1,41 +1,42 @@
 from rest_framework import serializers
-from shortage.apps.catalog.models import Product
+from shortage.apps.catalog.models import Product, OrganizationBlogPost
 from shortage.apps.catalog.serializers import OrganizationPreviewSerializer
 from shortage.apps.packages.models import Package, PackageItem
 
 
-class PrivatePackageItemProductSerializer(serializers.ModelSerializer):
+class PrivateOrganizationPackageItemProductSerializer(serializers.ModelSerializer):
     photo = serializers.ImageField(source="medium_photo", read_only=True)
 
     class Meta:
         model = Product
         fields = [
+            "id",
             "name",
             "slug",
             "category",
             "photo",
             "price",
             "requested_amount",
+            "is_deleted",
+            "top_priority",
         ]
 
 
-class PrivatePackageItemSerializer(serializers.ModelSerializer):
-    product = PrivatePackageItemProductSerializer()
+class PrivateOrganizationPackageItemSerializer(serializers.ModelSerializer):
+    product = PrivateOrganizationPackageItemProductSerializer()
 
     class Meta:
         model = PackageItem
         fields = ["quantity", "product"]
 
 
-class PrivatePackageSerializer(serializers.ModelSerializer):
-    organization = OrganizationPreviewSerializer(read_only=True)
-    items = PrivatePackageItemSerializer(many=True)
+class PrivateOrganizationPackageSerializer(serializers.ModelSerializer):
+    items = PrivateOrganizationPackageItemSerializer(many=True)
 
     class Meta:
         model = Package
         fields = [
             "uuid",
-            "organization",
             "items",
             "need_tax_deduction",
             "first_name",
@@ -55,6 +56,57 @@ class PrivatePackageSerializer(serializers.ModelSerializer):
             "photo",
             "type",
             "tax_deduction_receipt",
+            "blog_posts",
             "created_at",
         ]
+
+
+class PrivateOrganizationPackageBlogPostsSerializer(serializers.ModelSerializer):
+    blog_posts = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=OrganizationBlogPost.objects.all()
+    )
+
+    class Meta:
+        model = Package
+        fields = [
+            "blog_posts",
+        ]
+
+    def validate(self, attrs):
+        # TODO: validate blog posts belong to the same organization
+        return super().validate(attrs)
+
+
+class PrivateOrganizationPackageTaxDeductionReceiptSerializer(
+    serializers.ModelSerializer
+):
+    class Meta:
+        model = Package
+        fields = ["tax_deduction_receipt"]
+
+
+class PrivateAccountPackageItemProductSerializer(serializers.ModelSerializer):
+    photo = serializers.ImageField(source="medium_photo", read_only=True)
+
+    class Meta:
+        model = Product
+        fields = [
+            "name",
+            "slug",
+            "category",
+            "photo",
+            "price",
+        ]
+
+
+class PrivateAccountPackageItemSerializer(PrivateOrganizationPackageItemSerializer):
+    product = PrivateAccountPackageItemProductSerializer()
+
+
+class PrivateAccountPackageSerializer(PrivateOrganizationPackageSerializer):
+    organization = OrganizationPreviewSerializer(read_only=True)
+    items = PrivateAccountPackageItemSerializer(many=True)
+
+    class Meta(PrivateOrganizationPackageSerializer.Meta):
+        fields = PrivateOrganizationPackageSerializer.Meta.fields + ["organization"]
         read_only_fields = fields
