@@ -82,11 +82,7 @@ class PrivateOrganizationViewSet(
         return PrivateOrganizationReadSerializer
 
     def get_queryset(self):
-        if (
-            self.action == "retrieve"
-            or self.action == "list"
-            or self.action == "checklist"
-        ):
+        if self.action in ["list", "retrieve", "checklist"]:
             return (
                 Organization.objects.active()
                 .filter(owner=self.request.user)
@@ -114,68 +110,6 @@ class PrivateOrganizationViewSet(
         organization = self.get_object()
         checklist = get_organization_checklist(organization=organization)
         return Response(status=status.HTTP_200_OK, data=checklist)
-
-    def validate_organization(self, organization):
-        fields_to_validate = [
-            {"name": "name", "category": "main"},
-            {"name": "slug", "category": "main"},
-            {"name": "url", "category": "main", "validators": [validate_url]},
-            {"name": "logo", "category": "main"},
-            {"name": "banner", "category": "main"},
-            {"name": "description", "category": "main"},
-            {
-                "name": "instructions",
-                "category": "main",
-                "validators": [validate_queryset],
-            },
-            {"name": "products", "category": "main", "validators": [validate_queryset]},
-            {"name": "meta_description", "category": "main"},
-            {"name": "ein_number", "category": "tax", "validators": [validate_ein]},
-            {"name": "address_line1", "category": "tax"},
-            {"name": "address_line2", "category": "tax"},
-            {"name": "city", "category": "tax"},
-            {"name": "state_province_region", "category": "tax"},
-            {"name": "zip", "category": "tax", "validators": [validate_zip]},
-            {"name": "country", "category": "tax"},
-            {"name": "representative_first_name", "category": "tax"},
-            {"name": "representative_last_name", "category": "tax"},
-            {"name": "representative_email", "category": "tax"},
-            {"name": "representative_phone_number", "category": "tax"},
-            {"name": "representative_signature", "category": "tax"},
-        ]
-
-        checklist = {}
-
-        # iterate through all the fields of the model
-        for field in fields_to_validate:
-            value = getattr(organization, field["name"])
-            severity = "WARNING" if field["category"] == "tax" else "ERROR"
-
-            if not checklist.get(field["category"]):
-                checklist[field["category"]] = []
-
-            if not value:
-                checklist[field["category"]].append(
-                    {
-                        "field": field["name"],
-                        "message": "Value does not exist or is empty",
-                        "severity": severity,
-                    }
-                )
-            elif field.get("validators"):
-                for validator in field["validators"]:
-                    try:
-                        validator(value)
-                    except ValidationError as exception:
-                        checklist[field["category"]].append(
-                            {
-                                "field": field["name"],
-                                "message": exception.message,
-                                "severity": severity,
-                            }
-                        )
-
-        return checklist
 
 
 class PrivateProductsViewSet(viewsets.ModelViewSet):
