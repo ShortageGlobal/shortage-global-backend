@@ -130,6 +130,23 @@ class Organization(models.Model):
     def representative_signature_image(self):
         return get_thumbnail_for_image(self.representative_signature, "signature")
 
+    def can_generate_tax_receipts(self):
+        """
+        Check if organization is able to generate tax deduction receipts.
+        Organization must have required tax information specified
+        """
+        return (
+            bool(self.ein_number)
+            and bool(self.address_line1)
+            and bool(self.city)
+            and bool(self.state_province_region)
+            and bool(self.zip)
+            and bool(self.country)
+            and bool(self.representative_first_name)
+            and bool(self.representative_last_name)
+            and bool(self.representative_signature)
+        )
+
 
 class ExternalOrganization(models.Model):
     name = models.CharField(max_length=80)

@@ -150,17 +150,7 @@ class Package(models.Model):
         Check if the package is able to generate a tax deduction receipt.
         A related organization should have required tax information specified
         """
-        return (
-            bool(self.organization.ein_number)
-            and bool(self.organization.address_line1)
-            and bool(self.organization.city)
-            and bool(self.organization.state_province_region)
-            and bool(self.organization.zip)
-            and bool(self.organization.country)
-            and bool(self.organization.representative_first_name)
-            and bool(self.organization.representative_last_name)
-            and bool(self.organization.representative_signature)
-        )
+        return self.organization.can_generate_tax_receipts()
 
     def should_generate_tax_receipt(self, force=False):
         """
@@ -174,7 +164,7 @@ class Package(models.Model):
         )
 
     def generate_tax_receipt(self, force=False, save=False):
-        can_generate = self.can_generate_tax_receipt()
+        can_generate = self.organization.can_generate_tax_receipts()
         should_generate = self.should_generate_tax_receipt(force=force)
 
         if not can_generate or not should_generate:

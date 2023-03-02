@@ -181,95 +181,47 @@ class PrivateOrganizationTestCase(APITestCase):
             request, slug=organization.slug
         )
 
-        self.assertEqual(response.status_code, 428)
+        self.assertEqual(response.status_code, 200)
 
         json_response = json.loads(response.render().content)
 
         validation_errors = {
-            "main": [
-                {
-                    "field": "url",
-                    "message": "This is not a valid URL or this URL does not exist",
-                    "severity": "ERROR",
-                },
-                {
-                    "field": "logo",
-                    "message": "Value does not exist or is empty",
-                    "severity": "ERROR",
-                },
-                {
-                    "field": "banner",
-                    "message": "Value does not exist or is empty",
-                    "severity": "ERROR",
-                },
-                {
-                    "field": "instructions",
-                    "message": "Query set is empty",
-                    "severity": "ERROR",
-                },
-                {
-                    "field": "products",
-                    "message": "Query set is empty",
-                    "severity": "ERROR",
-                },
-                {
-                    "field": "meta_description",
-                    "message": "Value does not exist or is empty",
-                    "severity": "ERROR",
-                },
-            ],
-            "tax": [
-                {
-                    "field": "address_line1",
-                    "message": "Value does not exist or is empty",
-                    "severity": "WARNING",
-                },
-                {
-                    "field": "address_line2",
-                    "message": "Value does not exist or is empty",
-                    "severity": "WARNING",
-                },
-                {
-                    "field": "city",
-                    "message": "Value does not exist or is empty",
-                    "severity": "WARNING",
-                },
-                {
-                    "field": "state_province_region",
-                    "message": "Value does not exist or is empty",
-                    "severity": "WARNING",
-                },
-                {
-                    "field": "zip",
-                    "message": "Value does not exist or is empty",
-                    "severity": "WARNING",
-                },
-                {
-                    "field": "representative_first_name",
-                    "message": "Value does not exist or is empty",
-                    "severity": "WARNING",
-                },
-                {
-                    "field": "representative_last_name",
-                    "message": "Value does not exist or is empty",
-                    "severity": "WARNING",
-                },
-                {
-                    "field": "representative_email",
-                    "message": "Value does not exist or is empty",
-                    "severity": "WARNING",
-                },
-                {
-                    "field": "representative_phone_number",
-                    "message": "Value does not exist or is empty",
-                    "severity": "WARNING",
-                },
-                {
-                    "field": "representative_signature",
-                    "message": "Value does not exist or is empty",
-                    "severity": "WARNING",
-                },
-            ],
+            "checklist": {
+                "page": [
+                    {
+                        "code": "empty_logo",
+                        "message": "Logo is empty.",
+                        "severity": "WARNING",
+                    },
+                    {
+                        "code": "empty_banner",
+                        "message": "Banner is empty.",
+                        "severity": "WARNING",
+                    },
+                ],
+                "products": [
+                    {
+                        "code": "empty_products",
+                        "message": "There must be at least one item requested by your organization.",
+                        "severity": "ERROR",
+                    }
+                ],
+                "instructions": [
+                    {
+                        "code": "empty_instructions",
+                        "message": "Delivery instructions are not provided. Donors must know where to send goods.",
+                        "severity": "ERROR",
+                    }
+                ],
+                "tax_information": [
+                    {
+                        "code": "empty_tax_information",
+                        "message": "Tax information is not sufficient. Until you provide correct EIN number, address, etc. we won't be able to automatically generate tax deduction receipts for you. You are still able to upload tax receipts yourself.",
+                        "severity": "WARNING",
+                    }
+                ],
+            },
+            "can_publish": False,
         }
 
         self.assertEqual(json_response, validation_errors)
@@ -297,24 +249,30 @@ class PrivateOrganizationTestCase(APITestCase):
             request, slug=organization.slug
         )
 
-        self.assertEqual(response.status_code, 428)
+        self.assertEqual(response.status_code, 200)
 
         json_response = json.loads(response.render().content)
 
         validation_errors = {
-            "main": [
-                {
-                    "field": "instructions",
-                    "message": "Query set is empty",
-                    "severity": "ERROR",
-                },
-                {
-                    "field": "products",
-                    "message": "Query set is empty",
-                    "severity": "ERROR",
-                },
-            ],
-            "tax": [],
+            "checklist": {
+                "page": [],
+                "products": [
+                    {
+                        "code": "empty_products",
+                        "message": "There must be at least one item requested by your organization.",
+                        "severity": "ERROR",
+                    }
+                ],
+                "instructions": [
+                    {
+                        "code": "empty_instructions",
+                        "message": "Delivery instructions are not provided. Donors must know where to send goods.",
+                        "severity": "ERROR",
+                    }
+                ],
+                "tax_information": [],
+            },
+            "can_publish": False,
         }
 
         self.assertEqual(json_response, validation_errors)

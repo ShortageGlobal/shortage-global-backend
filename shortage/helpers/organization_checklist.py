@@ -1,0 +1,115 @@
+from functools import reduce
+from rest_framework.exceptions import ValidationError
+
+
+class Remark:
+    SEVERITY_WARNING = "WARNING"
+    SEVERITY_ERROR = "ERROR"
+
+    @staticmethod
+    def make(code=None, message=None, severity=None):
+        return {
+            "code": code,
+            "message": message,
+            "severity": severity,
+        }
+
+
+def get_organization_checklist(organization=None):
+    """Check prerequisites for organization publication"""
+
+    if organization is None:
+        raise ValidationError("Organization is not provided")
+
+    # form a list of remarks grouped by categories
+    checklist = {
+        "page": get_nonprofit_page_remarks(organization),
+        "products": get_products_remarks(organization),
+        "instructions": get_instructions_remarks(organization),
+        "tax_information": get_tax_information_remarks(organization),
+    }
+
+    # can publish if there are no remarks with errors
+    can_publish = all(
+        remark["severity"] != Remark.SEVERITY_ERROR
+        for remark in reduce(lambda acc, val: acc + val, checklist.values())
+    )
+
+    return {
+        "checklist": checklist,
+        "can_publish": can_publish,
+    }
+
+
+def get_nonprofit_page_remarks(organization):
+    result = []
+    # no logo
+    if not bool(organization.logo):
+        result.append(
+            Remark.make(
+                code="empty_logo",
+                message="Logo is empty.",
+                severity=Remark.SEVERITY_WARNING,
+            )
+        )
+    # no banner
+    if not bool(organization.banner):
+        result.append(
+            Remark.make(
+                code="empty_banner",
+                message="Banner is empty.",
+                severity=Remark.SEVERITY_WARNING,
+            )
+        )
+    # no description
+    if not bool(organization.description):
+        result.append(
+            Remark.make(
+                code="empty_description",
+                message="Description is empty. Help donors better understand your mission and needs.",
+                severity=Remark.SEVERITY_WARNING,
+            )
+        )
+    return result
+
+
+def get_products_remarks(organization):
+    result = []
+    # no active products
+    if not organization.products.active():
+        result.append(
+            Remark.make(
+                code="empty_products",
+                message="There must be at least one item requested by your organization.",
+                severity=Remark.SEVERITY_ERROR,
+            )
+        )
+    return result
+
+
+def get_instructions_remarks(organization):
+    result = []
+    # no instructions
+    if not organization.instructions.all():
+        result.append(
+            Remark.make(
+                code="empty_instructions",
+                message="Delivery instructions are not provided. Donors must know where to send goods.",
+                severity=Remark.SEVERITY_ERROR,
+            )
+        )
+    return result
+
+
+def get_tax_information_remarks(organization):
+    result = []
+    # no automatic tax deduction receipt generation
+    if not organization.can_generate_tax_receipts():
+        result.append(
+            Remark.make(
+                code="empty_tax_information",
+                message="Tax information is not sufficient. Until you provide correct EIN number, address, etc. we won't be able to automatically generate tax deduction receipts for you. You are still able to upload tax receipts yourself.",
+                severity=Remark.SEVERITY_WARNING,
+            )
+        )
+    return result

@@ -31,6 +31,7 @@ from shortage.apps.catalog.private.serializers import (
 )
 from shortage.apps.catalog.exceptions import OneOrganizationPerUser
 from shortage.helpers.permissions import IsObjectOwner
+from shortage.helpers.organization_checklist import get_organization_checklist
 
 
 class PrivateOrganizationSlugExistsViewSet(viewsets.ViewSet):
@@ -111,15 +112,8 @@ class PrivateOrganizationViewSet(
     @action(detail=True)
     def checklist(self, request, *args, **kwargs):
         organization = self.get_object()
-
-        validation_result = self.validate_organization(organization)
-
-        if bool(validation_result):
-            return Response(
-                status=status.HTTP_428_PRECONDITION_REQUIRED, data=validation_result
-            )
-
-        return Response(status.HTTP_200_OK)
+        checklist = get_organization_checklist(organization=organization)
+        return Response(status=status.HTTP_200_OK, data=checklist)
 
     def validate_organization(self, organization):
         fields_to_validate = [
