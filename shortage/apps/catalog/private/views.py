@@ -1,6 +1,4 @@
-import requests
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from rest_framework import (
     viewsets,
     mixins,
@@ -18,7 +16,6 @@ from shortage.apps.catalog.models import (
     Organization,
     Instruction,
     OrganizationBlogPost,
-    validate_ein,
 )
 from shortage.apps.catalog.private.serializers import (
     PrivateOrganizationReadSerializer,
@@ -251,24 +248,3 @@ class PrivateOrganizationBlogPostsViewSet(viewsets.ModelViewSet):
         # Do a soft delete if the organization has already been published
         instance.is_deleted = True
         instance.save()
-
-
-def validate_url(url):
-    response = None
-    try:
-        response = requests.head(url)
-    except Exception as exc:
-        raise ValidationError("This is not a valid URL or this URL does not exist")
-
-    if response.status_code >= 400:
-        raise ValidationError("This is not a valid URL or this URL does not exist")
-
-
-def validate_queryset(queryset):
-    if 0 == queryset.count():
-        raise ValidationError("Query set is empty")
-
-
-def validate_zip(zip):
-    if not (len(zip) == 5 and zip.isdigit()):
-        raise ValidationError("Zip code is not a valid US zip code")
