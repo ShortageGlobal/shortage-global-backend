@@ -100,6 +100,18 @@ class Organization(models.Model):
         blank=True,
         storage=storage.MediaStorage(),
     )
+    tax_deduction_receipt_preamble = models.CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+        help_text="Text added to automatically generated tax deduction receipts before the table",
+    )
+    tax_deduction_receipt_footer = models.CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+        help_text="Text added to automatically generated tax deduction receipts at the end of the document",
+    )
 
     is_verified = models.BooleanField(default=False, db_index=True)
     is_draft = models.BooleanField(default=True, db_index=True)
@@ -177,7 +189,7 @@ class Instruction(models.Model):
         Organization, related_name="instructions", on_delete=models.CASCADE
     )
     name = models.CharField(max_length=255)
-    description = HTMLField(null=True, blank=True)
+    description = HTMLField()
     country = CountryField(default="US")
     created_at = models.DateTimeField(auto_now_add=True)
 

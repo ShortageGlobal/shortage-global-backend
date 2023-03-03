@@ -108,6 +108,42 @@ class PrivateOrganizationViewSet(
         checklist = get_organization_checklist(organization=organization)
         return Response(status=status.HTTP_200_OK, data=checklist)
 
+    @action(detail=True, methods=["POST"])
+    def publish(self, request, *args, **kwargs):
+        """Publish organization for verification"""
+        organization = self.get_object()
+        checklist = get_organization_checklist(organization=organization)
+
+        if not checklist["can_publish"]:
+            return Response(
+                status=status.HTTP_428_PRECONDITION_REQUIRED,
+                data={
+                    "details": "Organization doesn't satisfy publishing requirements."
+                },
+            )
+
+        organization.is_draft = False
+        organization.is_verified = False
+        organization.save()
+
+        serializer = PrivateOrganizationReadSerializer(
+            organization, context=self.get_serializer_context()
+        )
+        return Response(serializer.data)
+
+    @action(detail=True, methods=["POST"])
+    def unpublish(self, request, *args, **kwargs):
+        """Make the organization draft again"""
+        organization = self.get_object()
+        organization.is_draft = True
+        organization.is_verified = False
+        organization.save()
+
+        serializer = PrivateOrganizationReadSerializer(
+            organization, context=self.get_serializer_context()
+        )
+        return Response(serializer.data)
+
 
 class PrivateProductsViewSet(viewsets.ModelViewSet):
     schema = AutoSchema(
