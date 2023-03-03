@@ -100,7 +100,11 @@
         font-size: 1.2rem;
       }
 
-      .disclaimer {
+      .preamble {
+        margin-bottom: 4rem;
+      }
+
+      .footer {
         margin-top: 4rem;
         padding-top: 2rem;
         border-top: 1px solid black;
@@ -133,6 +137,13 @@
         ></div>
       </div>
     </div>
+
+    <!-- PREAMBLE -->
+    {% if organization.tax_deduction_receipt_preamble %}
+    <div class="preamble">
+      {{organization.tax_deduction_receipt_preamble}}
+    </div>
+    {% endif %}
 
     <!-- TITLE -->
     <div class="center">
@@ -193,14 +204,11 @@
       {{organization.representative_last_name|default:""}}
     </div>
 
-    <!-- DISCLAIMER -->
-    <div class="disclaimer">
-      Please print this receipt for tax purposes. As required by the IRS
-      regulations, we provide the following information:
-      <b>{{organization.name}}</b> is a 501(c)(3) not for profit organization.
-      Our federal tax identification number is {{organization.ein_number}}. As
-      no goods or services have been provided in connection with this gift, the
-      full amount is deductible to the fullest extent provided by law.
+    <!-- FOOTER -->
+    {% if organization.tax_deduction_receipt_footer %}
+    <div class="footer">
+      {{organization.tax_deduction_receipt_footer}}
     </div>
-  </body>
+    {% endif %}
+  </body> 
 </html>
