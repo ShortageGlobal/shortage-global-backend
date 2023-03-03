@@ -91,6 +91,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             "banner",
             "url",
             "deadline",
+            "is_draft",
         ]
 
 
