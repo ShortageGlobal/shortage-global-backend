@@ -188,31 +188,6 @@ class PrivateProductsTestCase(APITestCase):
         self.assertEqual(Product.objects.all().count(), 1)
         self.assertEqual(Product.objects.active().count(), 0)
 
-    def test_hard_delete(self):
-        # Make organization draft
-        self.organization.is_draft = True
-        self.organization.is_verified = False
-        self.organization.save()
-
-        # Create test product
-        product = create_test_product(organization=self.organization)
-
-        self.assertNotEqual(product.id, None)
-
-        route = self.get_request_route() + "/" + product.slug
-
-        request = self.requestFactory.delete(route, format="json")
-        force_authenticate(request, user=self.user)
-        response = PrivateProductsViewSet.as_view({"delete": "destroy"})(
-            request, org_slug=self.organization.slug, pk=product.pk
-        )
-
-        self.assertEqual(response.status_code, 204)
-
-        # Check that product wasn't actually deleted but soft-deleted instead
-        self.assertEqual(Product.objects.all().count(), 0)
-        self.assertEqual(Product.objects.active().count(), 0)
-
 
 class PrivateProductsSlugCheckerTests(APITestCase):
     def setUp(self) -> None:

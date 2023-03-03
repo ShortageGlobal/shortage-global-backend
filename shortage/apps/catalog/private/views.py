@@ -61,6 +61,7 @@ class PrivateOrganizationViewSet(
     mixins.RetrieveModelMixin,
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
     """Retrieve/create/update organization owned by a current user"""
@@ -98,9 +99,10 @@ class PrivateOrganizationViewSet(
 
         return super().create(request, *args, **kwargs)
 
-    def update(self, request, *args, **kwargs):
-        # Todo: Send an email about changes to the organization
-        return super().update(request, *args, **kwargs)
+    def perform_destroy(self, instance):
+        # Do a soft delete
+        instance.is_deleted = True
+        instance.save()
 
     @action(detail=True)
     def checklist(self, request, *args, **kwargs):
@@ -185,11 +187,7 @@ class PrivateProductsViewSet(viewsets.ModelViewSet):
         return super().create(request, *args, **kwargs)
 
     def perform_destroy(self, instance):
-        if self.organization.is_draft:
-            # If organization hasn't been published, delete product entirely
-            return super().perform_destroy(instance)
-
-        # Do a soft delete if the organization has already been published
+        # Do a soft delete
         instance.is_deleted = True
         instance.save()
 
@@ -277,10 +275,6 @@ class PrivateOrganizationBlogPostsViewSet(viewsets.ModelViewSet):
         return super().create(request, *args, **kwargs)
 
     def perform_destroy(self, instance):
-        if self.organization.is_draft:
-            # If organization hasn't been published, delete blog post entirely
-            return super().perform_destroy(instance)
-
-        # Do a soft delete if the organization has already been published
+        # Do a soft delete
         instance.is_deleted = True
         instance.save()
