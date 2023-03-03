@@ -18,6 +18,7 @@ class OrganizationPreviewSerializer(serializers.ModelSerializer):
             "name",
             "slug",
             "logo",
+            "is_draft",
         ]
 
 
@@ -91,6 +92,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             "banner",
             "url",
             "deadline",
+            "is_draft",
         ]
 
 
@@ -109,6 +111,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
+            "id",
             "name",
             "slug",
             "category",

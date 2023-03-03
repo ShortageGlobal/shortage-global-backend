@@ -20,25 +20,28 @@ from shortage.helpers.thumbnails import get_thumbnail_for_image
 
 
 class OrganizationManager(models.Manager):
-    def promoted(self):
-        """
-        Return handpicked list of organizations to show on the main page
-        """
-        return self.public().filter(promote=True)
-
-    def public(self):
-        """Return all publicly available organizations"""
-        return self.get_queryset().filter(
-            is_verified=True, is_draft=False, is_deleted=False
-        )
-
-    def editable(self):
-        """Return all organizations eligible for editing"""
-        return self.get_queryset().filter(is_draft=True, is_deleted=False)
-
     def active(self):
         """Return all available organizations which have not been deleted"""
         return self.get_queryset().filter(is_deleted=False)
+
+    def public(self):
+        """Return all publicly available organizations"""
+        return self.active().filter(is_draft=False, is_verified=True)
+
+    def public_or_owned(self, user=None):
+        """Return either public organization or owned by the current user"""
+        user = user if user.is_authenticated else None
+        public = self.public()
+        owned = self.active().filter(owner=user)
+        return public | owned
+
+    def editable(self):
+        """Return all organizations eligible for editing"""
+        return self.active().filter(is_draft=True, is_verified=False)
+
+    def promoted(self):
+        """Return handpicked list of organizations to show on the main page"""
+        return self.public().filter(promote=True)
 
 
 def validate_organization_slug_blacklist(value):

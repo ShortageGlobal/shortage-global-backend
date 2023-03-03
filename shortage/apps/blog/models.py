@@ -9,13 +9,20 @@ from shortage.helpers.thumbnails import get_thumbnail_for_image
 
 
 class BlogPostManager(models.Manager):
-    def public(self):
-        """Return publicly available blog posts"""
-        return self.get_queryset().filter(is_draft=False, is_deleted=False)
-
     def active(self):
         """Return blog posts which have not been deleted"""
         return self.get_queryset().filter(is_deleted=False)
+
+    def public(self):
+        """Return publicly available blog posts"""
+        return self.active().filter(is_draft=False)
+
+    def public_or_owned(self, user=None):
+        """Return either public blog posts or authored by the current user"""
+        user = user if user.is_authenticated else None
+        public = self.public()
+        owned = self.active().filter(author=user)
+        return public | owned
 
 
 class BlogPost(models.Model):

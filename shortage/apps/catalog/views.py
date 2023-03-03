@@ -102,9 +102,11 @@ class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         tags=["Organizations"],
     )
 
-    queryset = Organization.objects.public()
     serializer_class = OrganizationSerializer
     lookup_field = "slug"
+
+    def get_queryset(self):
+        return Organization.objects.public_or_owned(user=self.request.user)
 
 
 class InstructionsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -115,7 +117,8 @@ class InstructionsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     def get_queryset(self):
         organization = generics.get_object_or_404(
-            Organization.objects.public(), slug=self.kwargs["org_slug"]
+            Organization.objects.public_or_owned(user=self.request.user),
+            slug=self.kwargs["org_slug"],
         )
         return Instruction.objects.filter(organization=organization)
 
@@ -130,7 +133,8 @@ class ProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     def get_queryset(self):
         organization = generics.get_object_or_404(
-            Organization.objects.public(), slug=self.kwargs["org_slug"]
+            Organization.objects.public_or_owned(user=self.request.user),
+            slug=self.kwargs["org_slug"],
         )
         queryset = Product.objects.active().filter(organization=organization)
 
@@ -157,9 +161,10 @@ class OrganizationBlogPostsViewSet(
 
     def get_queryset(self):
         organization = generics.get_object_or_404(
-            Organization.objects.public(), slug=self.kwargs["org_slug"]
+            Organization.objects.public_or_owned(user=self.request.user),
+            slug=self.kwargs["org_slug"],
         )
-        queryset = organization.blog_posts.public()
+        queryset = organization.blog_posts.public_or_owned(user=self.request.user)
         return queryset
 
     def perform_destroy(self, instance):
@@ -175,7 +180,8 @@ class CategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     def get_queryset(self):
         organization = generics.get_object_or_404(
-            Organization.objects.public(), slug=self.kwargs["org_slug"]
+            Organization.objects.public_or_owned(user=self.request.user),
+            slug=self.kwargs["org_slug"],
         )
         return (
             Product.objects.active()
@@ -193,7 +199,8 @@ class ProductViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
     def get_queryset(self):
         organization = generics.get_object_or_404(
-            Organization.objects.public(), slug=self.kwargs["org_slug"]
+            Organization.objects.public_or_owned(user=self.request.user),
+            slug=self.kwargs["org_slug"],
         )
         return Product.objects.filter(organization=organization)
 

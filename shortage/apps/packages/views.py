@@ -110,7 +110,8 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         # check organization and store it into view,
         # so serializer could use it for validation
         self.organization = generics.get_object_or_404(
-            Organization.objects.public(), slug=self.kwargs["org_slug"]
+            Organization.objects.public_or_owned(user=self.request.user),
+            slug=self.kwargs["org_slug"],
         )
 
         return super().create(request, *args, **kwargs)
