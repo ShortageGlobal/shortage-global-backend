@@ -24,11 +24,13 @@ class BlogPostPreviewSerializer(serializers.ModelSerializer):
         # this will fail as BlogPost is abstract. Inherit from this class.
         model = BlogPost
         fields = [
+            "uuid",
             "title",
             "slug",
             "image",
             "created_at",
             "updated_at",
+            "is_draft",
         ]
         read_only_fields = fields
 
@@ -39,6 +41,7 @@ class BlogPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogPost
         fields = [
+            "uuid",
             "title",
             "slug",
             "image",
@@ -46,5 +49,6 @@ class BlogPostSerializer(serializers.ModelSerializer):
             "meta_description",
             "created_at",
             "updated_at",
+            "is_draft",
         ]
         read_only_fields = fields

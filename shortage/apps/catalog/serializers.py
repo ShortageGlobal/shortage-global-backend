@@ -18,6 +18,7 @@ class OrganizationPreviewSerializer(serializers.ModelSerializer):
             "name",
             "slug",
             "logo",
+            "is_draft",
         ]
 
 
