@@ -16,7 +16,9 @@ class PrivateProductsTestCase(APITestCase):
     def setUp(self) -> None:
         self.user = create_test_user()
         self.requestFactory = APIRequestFactory()
-        self.organization = create_test_organization(owner=self.user)
+        self.organization = create_test_organization(
+            owner=self.user, is_draft=True, is_verified=False
+        )
 
         self.assertNotEqual(self.organization.id, None, "Organization was not created")
 

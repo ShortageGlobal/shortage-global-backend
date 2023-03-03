@@ -32,6 +32,10 @@ class OrganizationManager(models.Manager):
             is_verified=True, is_draft=False, is_deleted=False
         )
 
+    def editable(self):
+        """Return all organizations eligible for editing"""
+        return self.get_queryset().filter(is_draft=True, is_deleted=False)
+
     def active(self):
         """Return all available organizations which have not been deleted"""
         return self.get_queryset().filter(is_deleted=False)

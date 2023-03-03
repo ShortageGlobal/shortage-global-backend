@@ -80,17 +80,15 @@ class PrivateOrganizationViewSet(
         return PrivateOrganizationReadSerializer
 
     def get_queryset(self):
-        if self.action in ["list", "retrieve", "checklist"]:
+        if self.action in ["list", "retrieve", "checklist", "publish", "unpublish"]:
             return (
                 Organization.objects.active()
                 .filter(owner=self.request.user)
                 .order_by("-created_at")
             )
         else:
-            # Prevent changes to organizations which you don't own and which are already verified
-            return Organization.objects.active().filter(
-                owner=self.request.user, is_verified=False
-            )
+            # Prevent changes to organizations which you don't own and which are published
+            return Organization.objects.editable().filter(owner=self.request.user)
 
     def create(self, request, *args, **kwargs):
         # Allow only one organization per user
@@ -170,6 +168,8 @@ class PrivateProductsViewSet(viewsets.ModelViewSet):
         self.organization = get_object_or_404(
             Organization.objects.active(), slug=self.kwargs["org_slug"]
         )
+        # TODO: prevent editing/deleting if organization is not in draft state
+        # (except for "requrested_amount" and "position")
         queryset = Product.objects.active().filter(organization=self.organization)
 
         # filter by category
@@ -181,7 +181,7 @@ class PrivateProductsViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         self.organization = get_object_or_404(
-            Organization.objects.active(), slug=self.kwargs["org_slug"]
+            Organization.objects.editable(), slug=self.kwargs["org_slug"]
         )
 
         return super().create(request, *args, **kwargs)
@@ -225,9 +225,12 @@ class PrivateInstructionsViewSet(viewsets.ModelViewSet):
         super().__init__(**kwargs)
 
     def get_queryset(self):
-        organization = get_object_or_404(
-            Organization.objects.active(), slug=self.kwargs["org_slug"]
+        org_queryset = (
+            Organization.objects.active()
+            if self.action in ["list", "retrieve"]
+            else Organization.objects.editable()
         )
+        organization = get_object_or_404(org_queryset, slug=self.kwargs["org_slug"])
         return Instruction.objects.filter(organization=organization)
 
     def create(self, request, *args, **kwargs):
