@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Vujahday+Script">
 
     <style type="text/css">
       * {
@@ -100,6 +101,12 @@
         font-size: 1.2rem;
       }
 
+      .representative-text-signature {
+        font-size: 3rem;
+        font-family: Vujahday Script;
+        margin: 20px 20px 20px 20px;
+      }
+
       .preamble {
         margin-bottom: 4rem;
       }
@@ -194,11 +201,18 @@
 
     <!-- SIGNATURE -->
     <div class="signature-title">Authorized signature</div>
-    <img
-      class="signature-img"
-      alt=""
-      src="{{organization.representative_signature_image.url}}"
-    />
+    {% if organization.representative_signature_image.url %}
+      <img
+        class="signature-img"
+        alt=""
+        src="{{organization.representative_signature_image.url}}"
+      />
+    {% else %}
+      <div class="representative-text-signature">
+        {{organization.representative_first_name|slice:"0:1"|capfirst}}.
+        {{organization.representative_last_name|default:""|capfirst}}
+      </div>
+    {% endif %}
     <div class="representative-name">
       {{organization.representative_first_name|default:""}}
       {{organization.representative_last_name|default:""}}

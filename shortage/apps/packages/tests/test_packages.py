@@ -91,9 +91,6 @@ class PackageTestCase(APITestCase):
         self.organization.zip = "zip"
         self.organization.representative_first_name = "representative_first_name"
         self.organization.representative_last_name = "representative_last_name"
-        self.organization.representative_signature = create_test_image(
-            tmp_storage, "signature.png"
-        )
         self.organization.save()
 
         # check that tax receipt is generated
