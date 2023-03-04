@@ -160,7 +160,6 @@ class Organization(models.Model):
             and bool(self.country)
             and bool(self.representative_first_name)
             and bool(self.representative_last_name)
-            and bool(self.representative_signature)
         )
 
 
