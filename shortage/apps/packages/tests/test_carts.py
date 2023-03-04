@@ -111,6 +111,7 @@ class CartItemsTestCase(APITestCase):
                     "slug": "test_organization",
                     "logo": None,
                     "is_draft": False,
+                    "is_verified": True,
                 },
             },
             response.data["items"][0]["product"],
@@ -133,6 +134,7 @@ class CartItemsTestCase(APITestCase):
                     "slug": "test_organization2",
                     "logo": None,
                     "is_draft": False,
+                    "is_verified": True,
                 },
             },
             response.data["items"][1]["product"],
@@ -172,6 +174,7 @@ class CartItemsTestCase(APITestCase):
                     "slug": "test_organization2",  # note that the first cart item was deleted
                     "logo": None,
                     "is_draft": False,
+                    "is_verified": True,
                 },
             },
             response.data["items"][0]["product"],
@@ -251,6 +254,7 @@ class CartItemsTestCase(APITestCase):
                     "slug": "test_organization2",  # note that the first cart item was deleted
                     "logo": None,
                     "is_draft": False,
+                    "is_verified": True,
                 },
             },
             response.data["items"][0]["product"],

@@ -19,6 +19,7 @@ class OrganizationPreviewSerializer(serializers.ModelSerializer):
             "slug",
             "logo",
             "is_draft",
+            "is_verified",
         ]
 
 
@@ -93,6 +94,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             "url",
             "deadline",
             "is_draft",
+            "is_verified",
         ]
 
 
