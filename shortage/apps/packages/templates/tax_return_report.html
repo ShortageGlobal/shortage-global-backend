@@ -27,6 +27,10 @@
         white-space: nowrap;
       }
 
+      .text-break {
+        word-break: break-word;
+      }
+
       .header {
         display: flex;
         justify-content: space-between;
@@ -68,9 +72,11 @@
 
       table.items-table {
         margin: 3rem 0;
-        width: 100%;
         border-collapse: collapse;
         text-align: left;
+        width: 100%; 
+        word-wrap: break-word;
+        table-layout: fixed;
       }
       table.items-table td,
       table.items-table th {
@@ -82,6 +88,28 @@
       }
       table.items-table thead th {
         font-weight: bold;
+      }
+
+      .index-cell {
+        width: 25px;
+      }
+      .date-cell {
+        width: 70px;
+      }
+      .donor-cell {
+        width: 135px;
+      }
+      .address-cell {
+        width: 135px;
+      }
+      .donated-items-cell {
+        {% comment %} width: 50px; {% endcomment %}
+      }
+      .qty-cell {
+        width: 50px;
+      }
+      .price-cell {
+        width: 80px;
       }
 
       .signature-title {
@@ -111,7 +139,7 @@
         margin-bottom: 4rem;
       }
 
-      .footer {
+      .legal-information {
         margin-top: 4rem;
         padding-top: 2rem;
         border-top: 1px solid black;
@@ -147,7 +175,7 @@
 
     <!-- PREAMBLE -->
     {% if organization.tax_deduction_receipt_preamble %}
-    <div class="preamble">
+    <div class="preamble text-break">
       {{organization.tax_deduction_receipt_preamble}}
     </div>
     {% endif %}
@@ -164,36 +192,36 @@
     <table class="items-table">
       <thead>
         <tr>
-          <th>#</th>
-          <th>Date</th>
-          <th>Donor</th>
-          <th>Address</th>
-          <th>Donated Items</th>
-          <th class="no-wrap">Q-ty</th>
-          <th>Price (total)</th>
+          <th class="index-cell">#</th>
+          <th class="date-cell">Date</th>
+          <th class="donor-cell">Donor</th>
+          <th class="address-cell">Address</th>
+          <th class="donated-items-cell">Donated Items</th>
+          <th class="qty-cell no-wrap">Q-ty</th>
+          <th class="price-cell">Price (total)</th>
         </tr>
       </thead>
 
       <tbody>
         {% for item in package.items.all %}
         <tr>
-          <td>{{ forloop.counter }}</td>
-          <td>{{package.created_at|date:"DATE_FORMAT"}}</td>
-          <td>
+          <td class="index-cell">{{ forloop.counter }}</td>
+          <td class="date-cell">{{package.created_at|date:"DATE_FORMAT"}}</td>
+          <td class="donor-cell">
             {{package.first_name}} {{package.last_name}}
             <br />
             {{package.email}}
           </td>
-          <td>
+          <td class="address-cell">
             <div>{{package.address_line1}}</div>
             <div>{{package.address_line2}}</div>
             <div>{{package.city}}</div>
             <div>{{package.state_province_region}}</div>
             <div>{{package.zip}}</div>
           </td>
-          <td>{{item.product.name}}</td>
-          <td>{{item.quantity}}</td>
-          <td>${{item.total_price}}</td>
+          <td class="donated-items-cell">{{item.product.name}}</td>
+          <td class="qty-cell no-wrap">{{item.quantity}}</td>
+          <td class="price-cell">${{item.total_price}}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -218,10 +246,10 @@
       {{organization.representative_last_name|default:""}}
     </div>
 
-    <!-- FOOTER -->
-    {% if organization.tax_deduction_receipt_footer %}
-    <div class="footer">
-      {{organization.tax_deduction_receipt_footer}}
+    <!-- legal information -->
+    {% if organization.tax_deduction_receipt_legal_information %}
+    <div class="legal-information text-break">
+      {{organization.tax_deduction_receipt_legal_information}}
     </div>
     {% endif %}
   </body> 

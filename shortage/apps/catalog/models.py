@@ -113,7 +113,7 @@ class Organization(models.Model):
         blank=True,
         help_text="Text added to automatically generated tax deduction receipts before the table",
     )
-    tax_deduction_receipt_footer = models.CharField(
+    tax_deduction_receipt_legal_information = models.CharField(
         max_length=500,
         null=True,
         blank=True,
