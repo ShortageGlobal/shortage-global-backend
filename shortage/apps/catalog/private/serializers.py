@@ -39,7 +39,7 @@ class PrivateOrganizationWriteSerializer(serializers.ModelSerializer):
             "representative_phone_number",
             "representative_signature",
             "tax_deduction_receipt_preamble",
-            "tax_deduction_receipt_footer",
+            "tax_deduction_receipt_legal_information",
         ]
         read_only_fields = [
             "is_verified",

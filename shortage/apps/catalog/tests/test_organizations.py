@@ -97,7 +97,7 @@ class PrivateOrganizationTestCase(APITestCase):
             "representative_email": None,
             "representative_phone_number": None,
             "representative_signature": None,
-            "tax_deduction_receipt_footer": None,
+            "tax_deduction_receipt_legal_information": None,
             "tax_deduction_receipt_preamble": None,
         }
 
@@ -138,8 +138,8 @@ class PrivateOrganizationTestCase(APITestCase):
             "representative_email": None,
             "representative_phone_number": None,
             "representative_signature": None,
-            "tax_deduction_receipt_footer": None,
             "tax_deduction_receipt_preamble": None,
+            "tax_deduction_receipt_legal_information": None,
             "created_at": organization.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
             "updated_at": organization.updated_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
         }
