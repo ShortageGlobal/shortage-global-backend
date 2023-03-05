@@ -375,7 +375,7 @@ class OrganizationVerificationRequestServiceEmail(MailingBackend):
     Email sent to staff when organization requires verification
     """
 
-    subject = "Nonprofit page needs verification - Shortage"
+    subject = "Nonprofit needs verification - Shortage"
     html_template = "emails/organization_verification_staff/index.html"
     text_template = "emails/organization_verification_staff/index.txt"
 
@@ -411,3 +411,27 @@ class OrganizationVerificationRequestServiceEmail(MailingBackend):
         )
         context["organization"] = self.organization
         return context
+
+
+class OrganizationVerificationRequestEmail(MailingBackend):
+    """
+    Email sent when organization started verification process
+    """
+
+    subject = "Your Shortage page is on verification "
+    html_template = "emails/nonprofit_verification_started/index.html"
+    text_template = "emails/nonprofit_verification_started/index.txt"
+
+    def __init__(self, organization):
+        self.organization = organization
+
+    def get_context(self):
+        organization_url = "%s/private/manage-nonprofit/%s/" % (
+            self.frontend_base_url,
+            self.organization.slug,
+        )
+
+        return {
+            "organization_url": organization_url,
+            "organization": self.organization,
+        }
