@@ -1,0 +1,176 @@
+{% extends "emails/base.html" %}
+
+{% block body_content %}
+<p 
+  style="
+    margin: 0 0 12px 0;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+  "
+>
+  <a href="{{ organization_admin_url }}" style="color: #00b657; text-decoration: underline; word-break: break-word;">
+    Organization
+  </a>
+</p>
+
+<p 
+  style="
+    margin: 0 0 12px 0;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+  "
+>
+  <a href="{{ products_admin_url }}" style="color: #00b657; text-decoration: underline; word-break: break-word;">
+    Products ({{ organization.products.active.count }})
+  </a>
+</p>
+
+<p 
+  style="
+    margin: 0 0 12px 0;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+  "
+>
+  <a href="{{ instructions_admin_url }}" style="color: #00b657; text-decoration: underline; word-break: break-word;">
+    Instructions
+  </a>
+</p>
+
+<p 
+  style="
+    margin: 0 0 12px 0;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+  "
+>
+  <a href="{{ impact_stories_admin_url }}" style="color: #00b657; text-decoration: underline; word-break: break-word;">
+    Impact Stories
+  </a>
+</p>
+
+<table
+  role="presentation"
+  style="
+    width: 540px;
+    border-collapse: collapse;
+    border: 1px solid #e5e5e5;
+    border-spacing: 0;
+    text-align: left;
+  "
+>
+  <tbody>
+    <tr>
+      <td 
+        style="
+          padding: 12px 12px 12px 12px;
+          border-collapse: collapse;
+          border: 1px solid #e5e5e5;
+          font-size: 16px;
+        "
+      >
+        Owner
+      </td>
+      <td
+        style="
+          padding: 12px 12px 12px 12px;
+          border-collapse: collapse;
+          border: 1px solid #e5e5e5;
+          font-size: 16px;
+        "
+      >
+        <a href="mailto:organization.owner.email" style="color: #00b657; text-decoration: underline; word-break: break-word;">
+          {{ organization.owner.email }}
+        </a>
+        <div style="word-break: break-word;">
+          {{ organization.owner.full_name }}
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td 
+        style="
+          padding: 12px 12px 12px 12px;
+          border-collapse: collapse;
+          border: 1px solid #e5e5e5;
+          font-size: 16px;
+        "
+      >
+        Name
+      </td>
+      <td
+        style="
+          padding: 12px 12px 12px 12px;
+          border-collapse: collapse;
+          border: 1px solid #e5e5e5;
+          font-size: 16px;
+        "
+      >
+        <span style="word-break: break-word;">
+          {{organization.name}}
+        </span>
+      </td>
+    </tr>
+
+    <tr>
+      <td 
+        style="
+          padding: 12px 12px 12px 12px;
+          border-collapse: collapse;
+          border: 1px solid #e5e5e5;
+          font-size: 16px;
+        "
+      >
+        Website
+      </td>
+      <td
+        style="
+          padding: 12px 12px 12px 12px;
+          border-collapse: collapse;
+          border: 1px solid #e5e5e5;
+          font-size: 16px;
+        "
+      >
+        {% if organization.url %}
+          <a href="{{ organization.url }}" style="color: #00b657; text-decoration: underline; word-break: break-word;">
+            {{ organization.url }}
+          </a>
+        {% else %}
+          None
+        {% endif %}
+      </td>
+    </tr>
+
+    <tr>
+      <td 
+        style="
+          padding: 12px 12px 12px 12px;
+          border-collapse: collapse;
+          border: 1px solid #e5e5e5;
+          font-size: 16px;
+        "
+      >
+        Can generate tax receipts?
+      </td>
+      <td
+        style="
+          padding: 12px 12px 12px 12px;
+          border-collapse: collapse;
+          border: 1px solid #e5e5e5;
+          font-size: 16px;
+        "
+      >
+        {{ organization.can_generate_tax_receipts | yesno }}
+      </td>
+    </tr>
+  </tbody>
+</table>
+{% endblock %}
+
+{% block body_contact_support %}{% endblock %}
+{% block body_signature %}{% endblock %}
