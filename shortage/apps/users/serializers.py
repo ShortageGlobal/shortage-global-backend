@@ -142,8 +142,8 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ["user", "phone_number"]
-        read_only_fields = []
+        fields = ["user", "phone_number", "nonprofit_admin"]
+        read_only_fields = ["nonprofit_admin"]
 
     @transaction.atomic
     def update(self, instance, validated_data):
