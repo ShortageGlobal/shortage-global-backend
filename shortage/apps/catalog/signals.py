@@ -1,10 +1,11 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from shortage.apps.catalog.models import Organization
 from shortage.apps.packages.models import CartItem
 from shortage.apps.mailing.mail_service import (
     OrganizationRegistrationRequestServiceEmail,
     NonprofitRegistrationEmail,
+    OrganizationIsVerifiedEmail,
 )
 from .models import Organization, OrganizationRegistrationRequest
 
@@ -44,9 +45,33 @@ def send_email_on_org_registration_request_creation(
 )
 def send_email_on_organization_creation(sender, instance, created, **kwargs):
     """
-    Send an email when an Organization is created to the owner
+    Send an email to the owner when an Organization is created
     """
     if created:
         email = NonprofitRegistrationEmail(organization=instance)
+        email.add_recipient(email=instance.owner.email, name=instance.owner.full_name)
+        email.send()
+
+
+@receiver(
+    pre_save,
+    sender=Organization,
+    dispatch_uid="organization_is_verified",
+)
+def organization_is_verified(sender, instance, **kwargs):
+    """
+    Send an email to the owner when organization is verified
+    """
+    old_organization = None
+    is_created = False
+
+    try:
+        old_organization = sender.objects.get(pk=instance.pk)
+    except Organization.DoesNotExist:
+        is_created = True
+        old_organization = instance
+
+    if instance.is_verified and (not old_organization.is_verified or is_created):
+        email = OrganizationIsVerifiedEmail(instance)
         email.add_recipient(email=instance.owner.email, name=instance.owner.full_name)
         email.send()
