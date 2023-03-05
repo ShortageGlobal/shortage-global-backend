@@ -66,6 +66,10 @@ class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     phone_number = PhoneNumberField(null=True, blank=True)
 
+    @property
+    def nonprofit_admin(self):
+        return self.user.organizations.active().exists()
+
 
 auditlog.register(ShortageUser)
 auditlog.register(Profile)
