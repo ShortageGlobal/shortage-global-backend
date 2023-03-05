@@ -54,7 +54,10 @@ def package_status_change_handler(package, is_created=None, old_package=None):
             donor_email = PackageRegistrationEmail(package=package)
             service_email = PackageRegistationServiceEmail(package=package)
     elif package.status in [PackageStatus.CONFIRMED, PackageStatus.ON_ITS_WAY]:
-        if not old_package in [PackageStatus.CONFIRMED, PackageStatus.ON_ITS_WAY]:
+        if not old_package.status in [
+            PackageStatus.CONFIRMED,
+            PackageStatus.ON_ITS_WAY,
+        ]:
             nonprofit_email = NonprofitHasNewDonationEmail(package)
     elif package.status == PackageStatus.DELIVERED:
         # Generate receipt before sending an email in case we want to include the link there
