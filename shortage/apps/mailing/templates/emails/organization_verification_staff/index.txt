@@ -1,0 +1,16 @@
+Organization:
+{{ organization_admin_url }}
+
+Products ({{ organization.products.active.count }}):
+{{ products_admin_url }}
+
+Instructions:
+{{ instructions_admin_url }}
+
+Impact Stories:
+{{ impact_stories_admin_url }}
+
+Owner: {{ organization.owner.email }} {{ organization.owner.full_name }}
+Name: {{organization.name}}
+Website: {% if organization.url %}{{ organization.url  }}{% else %}None{% endif %}
+Can generate tax receipts?: {{ organization.can_generate_tax_receipts | yesno }}

@@ -131,6 +131,14 @@ class Organization(models.Model):
 
     objects = OrganizationManager()
 
+    class Meta:
+        permissions = (
+            (
+                "can_receive_organization_verification_request_emails",
+                "Receive organization verification request emails",
+            ),
+        )
+
     def __str__(self):
         return self.name
 

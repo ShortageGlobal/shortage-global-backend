@@ -11,6 +11,9 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 from rest_framework import exceptions
+from shortage.apps.mailing.mail_service import (
+    OrganizationVerificationRequestServiceEmail,
+)
 from shortage.apps.catalog.models import (
     Product,
     Organization,
@@ -125,6 +128,9 @@ class PrivateOrganizationViewSet(
         organization.is_draft = False
         organization.is_verified = False
         organization.save()
+
+        # notify staff
+        OrganizationVerificationRequestServiceEmail(organization).send()
 
         serializer = PrivateOrganizationReadSerializer(
             organization, context=self.get_serializer_context()

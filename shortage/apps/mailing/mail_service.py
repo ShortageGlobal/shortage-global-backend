@@ -368,3 +368,46 @@ class NonprofitRegistrationEmail(MailingBackend):
             "organization_url": organization_url,
             "organization": self.organization,
         }
+
+
+class OrganizationVerificationRequestServiceEmail(MailingBackend):
+    """
+    Email sent to staff when organization requires verification
+    """
+
+    subject = "Nonprofit page needs verification - Shortage"
+    html_template = "emails/organization_verification_staff/index.html"
+    text_template = "emails/organization_verification_staff/index.txt"
+
+    service_email = True
+    permission_codename = "can_receive_organization_verification_request_emails"
+
+    def __init__(self, organization):
+        self.organization = organization
+
+    def get_context(self):
+        context = super().get_context()
+        context["organization_admin_url"] = "%s/catalog/organization/%s/change/" % (
+            self.admin_base_url,
+            self.organization.pk,
+        )
+        context[
+            "products_admin_url"
+        ] = "%s/catalog/product/?organization__id__exact=%s" % (
+            self.admin_base_url,
+            self.organization.pk,
+        )
+        context[
+            "instructions_admin_url"
+        ] = "%s/catalog/instruction/?organization__id__exact=%s" % (
+            self.admin_base_url,
+            self.organization.pk,
+        )
+        context[
+            "impact_stories_admin_url"
+        ] = "%s/catalog/organizationblogpost/?organization__id__exact=%s" % (
+            self.admin_base_url,
+            self.organization.pk,
+        )
+        context["organization"] = self.organization
+        return context
