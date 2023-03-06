@@ -48,7 +48,7 @@ def get_nonprofit_page_remarks(organization):
         result.append(
             Remark.make(
                 code="empty_requested_goods",
-                message=""Support with" field is empty.",
+                message='"Support with" field is empty.',
                 severity=Remark.SEVERITY_ERROR,
             )
         )
