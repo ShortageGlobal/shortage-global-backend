@@ -206,7 +206,16 @@ class Instruction(models.Model):
     )
     name = models.CharField(max_length=255)
     description = HTMLField()
+
+    address_line1 = models.CharField(max_length=255, null=True, blank=True)
+    address_line2 = models.CharField(max_length=255, null=True, blank=True)
+    city = models.CharField(max_length=255, null=True, blank=True)
+    state_province_region = models.CharField(max_length=255, null=True, blank=True)
+    zip = models.CharField(max_length=100, null=True, blank=True)
     country = CountryField(default="US")
+    phone_number = PhoneNumberField(null=True, blank=True)
+    comment = models.CharField(max_length=500, null=True, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

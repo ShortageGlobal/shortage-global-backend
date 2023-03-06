@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from shortage.apps.catalog.models import Organization, Product
+from shortage.apps.catalog.models import Organization, Product, Instruction
 from shortage.apps.packages.models import Package, PackageItem, PackageType
 from io import BytesIO
 from PIL import Image
@@ -58,6 +58,26 @@ def create_test_product(**kwargs):
     product = Product(**test_data)
     product.save()
     return product
+
+
+def create_test_instruction(**kwargs):
+    assert (
+        "organization" in kwargs
+    ), "'create_test_instruction' was called without 'organization'"
+
+    test_data = {
+        "organization": None,
+        "name": "Test Instruction",
+        "address_line1": "69 Some Street",
+        "city": "Springfield",
+        "state_province_region": "California",
+        "zip": "98765",
+        **kwargs,
+    }
+
+    instruction = Instruction(**test_data)
+    instruction.save()
+    return instruction
 
 
 def create_test_package(product, **kwargs):
