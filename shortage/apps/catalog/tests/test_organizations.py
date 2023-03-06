@@ -198,7 +198,7 @@ class PrivateOrganizationTestCase(APITestCase):
                 "page": [
                     {
                         "code": "empty_requested_goods",
-                        "message": "Requested Goods field is empty.",
+                        "message": '"Support with" field is empty.',
                         "severity": "ERROR",
                     },
                     {
