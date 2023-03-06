@@ -13,6 +13,7 @@ from shortage.helpers.test_utilities import (
     create_test_organization,
     create_test_image,
     create_test_instruction,
+    create_test_product,
 )
 
 
@@ -25,7 +26,8 @@ class PrivateOrganizationTestCase(APITestCase):
         self.testData = {
             "name": "TestName",
             "slug": "testslug",
-            "description": "Some description",
+            "requested_goods": "a variety of goods",
+            "mission_description": "We support community",
             "url": "https://www.someurl.com",
             "ein_number": "91-1144442",
         }
@@ -77,9 +79,8 @@ class PrivateOrganizationTestCase(APITestCase):
         expected_response = {
             "name": "TestName",
             "slug": "testslug",
-            "description": "Some description",
-            "requested_goods": None,
-            "mission_description": None,
+            "requested_goods": "a variety of goods",
+            "mission_description": "We support community",
             "meta_description": None,
             "logo": None,
             "banner": None,
@@ -120,9 +121,8 @@ class PrivateOrganizationTestCase(APITestCase):
         expected_response = {
             "name": "TestName",
             "slug": "testslug",
-            "description": "Some description",
-            "requested_goods": None,
-            "mission_description": None,
+            "requested_goods": "a variety of goods",
+            "mission_description": "We support community",
             "meta_description": None,
             "logo": None,
             "banner": None,
@@ -182,7 +182,7 @@ class PrivateOrganizationTestCase(APITestCase):
         self.assertEqual(response.status_code, 201, "Organization was not created")
 
     def test_organization_checklist(self):
-        organization = create_test_organization(owner=self.user)
+        organization = create_test_organization(owner=self.user, requested_goods=None)
 
         request = self.requestFactory.get("")
         force_authenticate(request, user=self.user)
@@ -260,7 +260,7 @@ class PrivateOrganizationTestCase(APITestCase):
         organization.zip = "19808"
         organization.save()
 
-        create_test_instruction(organization=organization, city="")
+        instruction = create_test_instruction(organization=organization, city="")
 
         response = PrivateOrganizationViewSet.as_view({"get": "checklist"})(
             request, slug=organization.slug
@@ -294,6 +294,30 @@ class PrivateOrganizationTestCase(APITestCase):
 
         self.assertEqual(json_response, validation_errors)
 
+        instruction.city = "New York"
+        instruction.save()
+        create_test_product(organization=organization)
+
+        response = PrivateOrganizationViewSet.as_view({"get": "checklist"})(
+            request, slug=organization.slug
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        json_response = json.loads(response.render().content)
+
+        validation_errors = {
+            "checklist": {
+                "page": [],
+                "products": [],
+                "instructions": [],
+                "tax_information": [],
+            },
+            "can_publish": True,
+        }
+
+        self.assertEqual(json_response, validation_errors)
+
 
 class PrivateOrganizationSlugCheckerTests(APITestCase):
     def setUp(self) -> None:
@@ -303,7 +327,7 @@ class PrivateOrganizationSlugCheckerTests(APITestCase):
         self.testData = {
             "name": "TestName",
             "slug": "testslug",
-            "description": "Some description",
+            "requested_goods": "very needed goods",
             "url": "https://www.someurl.com",
             "ein_number": "12345",
         }

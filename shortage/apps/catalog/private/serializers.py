@@ -17,7 +17,6 @@ class PrivateOrganizationWriteSerializer(serializers.ModelSerializer):
             "owner",
             "name",
             "slug",
-            "description",
             "requested_goods",
             "mission_description",
             "meta_description",
@@ -115,7 +114,6 @@ class PrivateInstructionSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
-            "description",
             "address_line1",
             "address_line2",
             "city",

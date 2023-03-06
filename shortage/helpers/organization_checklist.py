@@ -70,15 +70,6 @@ def get_nonprofit_page_remarks(organization):
                 severity=Remark.SEVERITY_WARNING,
             )
         )
-    # no description
-    if not bool(organization.description):
-        result.append(
-            Remark.make(
-                code="empty_description",
-                message="Description is empty. Help donors better understand your mission and needs.",
-                severity=Remark.SEVERITY_WARNING,
-            )
-        )
     return result
 
 
