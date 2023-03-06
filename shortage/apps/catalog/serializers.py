@@ -40,7 +40,6 @@ class InstructionSerializer(serializers.ModelSerializer):
         model = Instruction
         fields = [
             "name",
-            "description",
             "address_line1",
             "address_line2",
             "city",
@@ -94,7 +93,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
         fields = [
             "name",
             "slug",
-            "description",
             "requested_goods",
             "mission_description",
             "meta_description",
