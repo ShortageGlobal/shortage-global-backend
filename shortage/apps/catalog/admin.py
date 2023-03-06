@@ -51,7 +51,6 @@ class OrganizationAdmin(admin.ModelAdmin):
                     "url",
                     "logo",
                     "banner",
-                    "description",
                     "requested_goods",
                     "mission_description",
                     "meta_description",
