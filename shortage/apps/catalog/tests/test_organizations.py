@@ -197,6 +197,11 @@ class PrivateOrganizationTestCase(APITestCase):
             "checklist": {
                 "page": [
                     {
+                        "code": "empty_requested_goods",
+                        "message": "Requested Goods field is empty.",
+                        "severity": "ERROR",
+                    },
+                    {
                         "code": "empty_logo",
                         "message": "Logo is empty.",
                         "severity": "WARNING",
@@ -238,6 +243,7 @@ class PrivateOrganizationTestCase(APITestCase):
         organization.logo = create_test_image(tmp_storage, "test_image.png")
         organization.url = "https://shortage.global"
         organization.banner = organization.logo
+        organization.requested_goods = "vital goods for survival"
         organization.meta_description = "not empty"
         organization.address_line1 = "251 Little Falls Drive"
         organization.address_line2 = "Wilmington, DE, US"
@@ -269,7 +275,7 @@ class PrivateOrganizationTestCase(APITestCase):
                         "code": "empty_products",
                         "message": "There must be at least one item requested by your organization.",
                         "severity": "ERROR",
-                    }
+                    },
                 ],
                 "instructions": [
                     {

@@ -43,6 +43,15 @@ def get_organization_checklist(organization=None):
 
 def get_nonprofit_page_remarks(organization):
     result = []
+    # no requested goods field
+    if not bool(organization.requested_goods):
+        result.append(
+            Remark.make(
+                code="empty_requested_goods",
+                message="Requested Goods field is empty.",
+                severity=Remark.SEVERITY_ERROR,
+            )
+        )
     # no logo
     if not bool(organization.logo):
         result.append(
