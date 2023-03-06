@@ -85,6 +85,8 @@ class Organization(models.Model):
         storage=storage.MediaStorage(),
     )
     description = HTMLField(null=True, blank=True)
+    requested_goods = models.CharField(max_length=200, null=True, blank=True)
+    mission_description = models.CharField(max_length=1000, null=True, blank=True)
     meta_description = models.CharField(max_length=200, null=True, blank=True)
 
     # tax information
