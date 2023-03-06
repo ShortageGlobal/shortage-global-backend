@@ -52,6 +52,8 @@ class OrganizationAdmin(admin.ModelAdmin):
                     "logo",
                     "banner",
                     "description",
+                    "requested_goods",
+                    "mission_description",
                     "meta_description",
                 ),
             },

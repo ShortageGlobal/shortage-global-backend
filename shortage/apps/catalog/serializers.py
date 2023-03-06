@@ -88,6 +88,8 @@ class OrganizationSerializer(serializers.ModelSerializer):
             "name",
             "slug",
             "description",
+            "requested_goods",
+            "mission_description",
             "meta_description",
             "logo",
             "banner",
