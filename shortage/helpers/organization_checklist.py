@@ -97,13 +97,55 @@ def get_products_remarks(organization):
 
 
 def get_instructions_remarks(organization):
+    instructions = organization.instructions.all()
     result = []
+
     # no instructions
-    if not organization.instructions.all():
+    if not instructions:
         result.append(
             Remark.make(
-                code="empty_instructions",
+                code="no_instructions",
                 message="Delivery instructions are not provided. Donors must know where to send goods.",
+                severity=Remark.SEVERITY_ERROR,
+            )
+        )
+        return result
+
+    instruction = instructions[0]
+
+    # no address_line1
+    if not bool(instruction.address_line1):
+        result.append(
+            Remark.make(
+                code="empty_instruction_address",
+                message="Address Line 1 is empty.",
+                severity=Remark.SEVERITY_ERROR,
+            )
+        )
+    # no city
+    if not bool(instruction.city):
+        result.append(
+            Remark.make(
+                code="empty_instruction_city",
+                message="City is empty.",
+                severity=Remark.SEVERITY_ERROR,
+            )
+        )
+    # no state_province_region
+    if not bool(instruction.state_province_region):
+        result.append(
+            Remark.make(
+                code="empty_instruction_state_province_region",
+                message="State / Province.",
+                severity=Remark.SEVERITY_ERROR,
+            )
+        )
+    # no zip
+    if not bool(instruction.zip):
+        result.append(
+            Remark.make(
+                code="empty_instruction_zip",
+                message="ZIP is empty.",
                 severity=Remark.SEVERITY_ERROR,
             )
         )

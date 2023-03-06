@@ -12,6 +12,7 @@ from shortage.helpers.test_utilities import (
     create_test_user,
     create_test_organization,
     create_test_image,
+    create_test_instruction,
 )
 
 
@@ -221,7 +222,7 @@ class PrivateOrganizationTestCase(APITestCase):
                 ],
                 "instructions": [
                     {
-                        "code": "empty_instructions",
+                        "code": "no_instructions",
                         "message": "Delivery instructions are not provided. Donors must know where to send goods.",
                         "severity": "ERROR",
                     }
@@ -259,6 +260,8 @@ class PrivateOrganizationTestCase(APITestCase):
         organization.zip = "19808"
         organization.save()
 
+        create_test_instruction(organization=organization, city="")
+
         response = PrivateOrganizationViewSet.as_view({"get": "checklist"})(
             request, slug=organization.slug
         )
@@ -279,8 +282,8 @@ class PrivateOrganizationTestCase(APITestCase):
                 ],
                 "instructions": [
                     {
-                        "code": "empty_instructions",
-                        "message": "Delivery instructions are not provided. Donors must know where to send goods.",
+                        "code": "empty_instruction_city",
+                        "message": "City is empty.",
                         "severity": "ERROR",
                     }
                 ],
