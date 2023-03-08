@@ -92,7 +92,7 @@ class PrivateOrganizationViewSet(
             )
         elif self.action == "destroy":
             # allow deleting organization even if it was verified
-            return Organization.objects.active(owner=self.request.user)
+            return Organization.objects.active().filter(owner=self.request.user)
         else:
             # Prevent changes to organizations which you don't own and which are published
             return Organization.objects.editable().filter(owner=self.request.user)
