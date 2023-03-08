@@ -56,7 +56,7 @@ docker-compose exec django python manage.py shell
 ### Run tests
 
 ```
-docker compose exec django python manage.py test
+docker-compose exec django coverage run --source='.' manage.py test
 ```
 
 

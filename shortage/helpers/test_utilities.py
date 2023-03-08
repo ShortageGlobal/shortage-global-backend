@@ -1,9 +1,129 @@
 from django.contrib.auth import get_user_model
+from rest_framework.mixins import (
+    CreateModelMixin,
+    RetrieveModelMixin,
+    UpdateModelMixin,
+    DestroyModelMixin,
+    ListModelMixin,
+)
+from rest_framework.views import APIView
+
 from shortage.apps.catalog.models import Organization, Product
 from shortage.apps.packages.models import Package, PackageItem, PackageType
 from io import BytesIO
 from PIL import Image
 from django.core.files.base import ContentFile
+from rest_framework.test import APITestCase, force_authenticate, APIRequestFactory
+
+
+class ShortageAPITestCase(APITestCase):
+    maxDiff = None
+    client_class = APIRequestFactory
+
+    tested_view_class = None
+
+    @classmethod
+    def setUpClass(cls):
+        if not cls.tested_view_class:
+            raise ValueError("You must set up a tested_view_class")
+
+        if not issubclass(cls.tested_view_class, APIView):
+            raise ValueError("Your class must be a subclass of APIView")
+
+        # Check that test case covers permissions
+        if cls.tested_view_class.permission_classes and not hasattr(
+            cls, "test_permissions"
+        ):
+            raise ValueError(
+                f"Your view {cls.tested_view_class} contains custom permissions. You must define test_permissions method to test them"
+            )
+
+        # Check if CRUD tests are needed
+        crud = [
+            {"mixin": CreateModelMixin, "required_method_name": "create"},
+            {"mixin": RetrieveModelMixin, "required_method_name": "retrieve"},
+            {"mixin": UpdateModelMixin, "required_method_name": "update"},
+            {"mixin": UpdateModelMixin, "required_method_name": "partial_update"},
+            {"mixin": DestroyModelMixin, "required_method_name": "destroy"},
+            {"mixin": ListModelMixin, "required_method_name": "list"},
+        ]
+
+        for item in crud:
+            mixin = item["mixin"]
+            required_method = f"test_{item['required_method_name']}"
+
+            if issubclass(cls.tested_view_class, mixin) and not hasattr(
+                cls, required_method
+            ):
+                raise ValueError(
+                    f"Your view {cls.tested_view_class} contains has {mixin} and must define {required_method} to test it"
+                )
+
+        super().setUpClass()
+
+    def create(self, request_data=None, user=None, content_type="json", **kwargs):
+        return self.custom_action(
+            "post", "create", request_data, user, content_type, **kwargs
+        )
+
+    def retrieve(self, request_data=None, user=None, content_type="json", **kwargs):
+        return self.custom_action(
+            "get", "retrieve", request_data, user, content_type, **kwargs
+        )
+
+    def list(self, request_data=None, user=None, content_type="json", **kwargs):
+        return self.custom_action(
+            "get", "list", request_data, user, content_type, **kwargs
+        )
+
+    def update(self, request_data=None, user=None, content_type="json", **kwargs):
+        return self.custom_action(
+            "patch", "update", request_data, user, content_type, **kwargs
+        )
+
+    def partial_update(
+        self, request_data=None, user=None, content_type="json", **kwargs
+    ):
+        return self.custom_action(
+            "patch", "partial_update", request_data, user, content_type, **kwargs
+        )
+
+    def destroy(self, request_data=None, user=None, content_type="json", **kwargs):
+        return self.custom_action(
+            "delete", "destroy", request_data, user, content_type, **kwargs
+        )
+
+    def custom_action(
+        self,
+        action,
+        method,
+        request_data=None,
+        user=None,
+        content_type="json",
+        **kwargs,
+    ):
+        request = self.__create_request(action, request_data, content_type, user)
+
+        return self.tested_view_class.as_view({action: method})(request, **kwargs)
+
+    def __create_request(self, method, data=None, content_type=None, user=None):
+        request = None
+
+        if "post" == method:
+            request = self.client.post("", data=data, format=content_type)
+        elif "get" == method:
+            request = self.client.get("", data=data, format=content_type)
+        elif "put" == method:
+            request = self.client.put("", data=data, format=content_type)
+        elif "patch" == method:
+            request = self.client.patch("", data=data, format=content_type)
+        elif "delete" == method:
+            request = self.client.delete("", data=data, format=content_type)
+
+        if user:
+            force_authenticate(request, user=user, token=None)
+
+        return request
 
 
 def create_test_user(**kwargs):

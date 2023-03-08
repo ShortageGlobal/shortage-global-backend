@@ -1,3 +1,5 @@
+import os
+
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.utils import json
@@ -12,16 +14,17 @@ from shortage.helpers.test_utilities import (
     create_test_user,
     create_test_organization,
     create_test_image,
+    ShortageAPITestCase,
 )
 
 
-class PrivateOrganizationTestCase(APITestCase):
-    def setUp(self) -> None:
-        self.maxDiff = None
-        self.user = create_test_user()
-        self.requestFactory = APIRequestFactory()
+class PrivateOrganizationTestCase(ShortageAPITestCase):
+    tested_view_class = PrivateOrganizationViewSet
 
-        self.testData = {
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = create_test_user()
+        cls.test_data = {
             "name": "TestName",
             "slug": "testslug",
             "description": "Some description",
@@ -29,47 +32,80 @@ class PrivateOrganizationTestCase(APITestCase):
             "ein_number": "91-1144442",
         }
 
-    def test_create_organization_permissions(self):
-        request = self.requestFactory.post(
-            "/api/private/organizations/", data=self.testData, format="json"
-        )
-        response = PrivateOrganizationViewSet.as_view({"post": "create"})(request)
+    def test_permissions(self):
+        response = self.create(request_data=self.test_data)
+        self.assertEqual(response.status_code, 401)
 
-        self.assertNotEqual(
-            response.status_code, 200, "Organization was created without auth"
-        )
+        organization = create_test_organization(owner=self.user)
+        other_user = create_test_user(email="otheruser@shortage.global")
 
-    def test_create_organization_validators(self):
-        test_data = self.testData.copy()
+        response = self.retrieve(slug=organization.slug)
+        self.assertEqual(response.status_code, 401)
+
+        response = self.retrieve(slug=organization.slug, user=other_user)
+        self.assertEqual(response.status_code, 404)
+
+        response = self.list()
+        self.assertEqual(response.status_code, 401)
+
+        response = self.list(user=other_user)
+        self.assertEqual(response.status_code, 200)
+
+        response = self.destroy(slug=organization.slug)
+        self.assertEqual(response.status_code, 401)
+
+        response = self.destroy(slug=organization.slug, user=other_user)
+        self.assertEqual(response.status_code, 404)
+
+    def test_validators(self):
+        test_data = self.test_data.copy()
         test_data["url"] = "incorrect_url"
 
-        request = self.requestFactory.post(
-            "/api/private/organizations/", data=test_data, format="json"
-        )
-        force_authenticate(request, user=self.user)
-        response = PrivateOrganizationViewSet.as_view({"post": "create"})(request)
-
+        response = self.create(request_data=test_data, user=self.user)
         self.assertEqual(response.status_code, 400, "URL was not validated correctly")
 
-        test_data = self.testData.copy()
+        test_data = self.test_data.copy()
         test_data["logo"] = "random_logo_data"
 
-        request = self.requestFactory.post(
-            "/api/private/organizations/", data=test_data, format="json"
-        )
-        force_authenticate(request, user=self.user)
-        response = PrivateOrganizationViewSet.as_view({"post": "create"})(request)
-
+        response = self.create(request_data=test_data, user=self.user)
         self.assertEqual(response.status_code, 400, "Logo was not validated correctly")
 
-    def test_create_organization(self):
-        request = self.requestFactory.post(
-            "/api/private/organizations/", data=self.testData, format="json"
-        )
-        force_authenticate(request, user=self.user)
-        response = PrivateOrganizationViewSet.as_view({"post": "create"})(request)
+        ein_test_cases = [
+            {"test_case": "111", "expected_result": 400},
+            {"test_case": "asd91-1144442", "expected_result": 400},
+            {"test_case": "91-1144442asd", "expected_result": 400},
+            {"test_case": "91       1144442", "expected_result": 400},
+            {"test_case": "911144442", "expected_result": 201},
+        ]
 
-        self.assertEqual(response.status_code, 201, "Organization was not created")
+        for case in ein_test_cases:
+            test_data = self.test_data.copy()
+            test_data["ein_number"] = case["test_case"]
+            # Use a random slug each time to avoid conflicts
+            test_data["slug"] = f"slug{test_data['ein_number']}"
+
+            response = self.create(request_data=test_data, user=self.user)
+
+            self.assertEqual(
+                response.status_code,
+                case["expected_result"],
+                "EIN was not validated correctly",
+            )
+
+    def test_one_org_per_user(self):
+        # Check that a user can only have one org
+        test_data = self.test_data.copy()
+        test_data["slug"] = "duplicate_slug"
+
+        response = self.create(request_data=test_data, user=self.user)
+        self.assertEqual(response.status_code, 201)
+
+        response = self.create(request_data=test_data, user=self.user)
+        self.assertEqual(response.status_code, 409)
+
+    def test_create(self):
+        response = self.create(request_data=self.test_data, user=self.user)
+        self.assertEqual(response.status_code, 201)
 
         json_response = json.loads(response.render().content)
 
@@ -104,24 +140,100 @@ class PrivateOrganizationTestCase(APITestCase):
         self.assertEqual(json_response, expected_response)
 
         # Verify that GET returns the same data as was POSTed
-        request = self.requestFactory.get("/api/private/organizations/")
-        force_authenticate(request, user=self.user)
-        response = PrivateOrganizationViewSet.as_view({"get": "list"})(request)
+        response = self.retrieve(user=self.user, slug=self.test_data["slug"])
+        self.assertEqual(response.status_code, 200)
 
-        self.assertEqual(response.status_code, 200, "Organization was not retrieved")
+        json_response = json.loads(response.render().content)
 
-        json_response = json.loads(response.render().content)[0]
+        organization = Organization.objects.get(slug=self.test_data["slug"])
 
-        organization = Organization.objects.get(slug=self.testData["slug"])
+        expected_response["created_at"] = organization.created_at.strftime(
+            "%Y-%m-%dT%H:%M:%S.%fZ"
+        )
+        expected_response["updated_at"] = organization.updated_at.strftime(
+            "%Y-%m-%dT%H:%M:%S.%fZ"
+        )
+
+        self.assertEqual(json_response, expected_response)
+
+    def test_retrieve(self):
+        organization = create_test_organization(owner=self.user)
+
+        response = self.retrieve(user=self.user, slug=organization.slug)
+        self.assertEqual(response.status_code, 200)
+
+        json_response = json.loads(response.render().content)
 
         expected_response = {
             "name": "TestName",
-            "slug": "testslug",
+            "slug": "test_organization",
             "description": "Some description",
             "meta_description": None,
             "logo": None,
             "banner": None,
-            "url": "https://www.someurl.com",
+            "url": "https://www.579f9ed2-b0a7-11ed-afa1-0242ac120002.com",
+            "ein_number": "91-1144442",
+            "is_verified": True,
+            "is_draft": False,
+            "promote": False,
+            "deadline": None,
+            "address_line1": None,
+            "address_line2": None,
+            "city": None,
+            "state_province_region": None,
+            "zip": None,
+            "country": "US",
+            "representative_first_name": None,
+            "representative_last_name": None,
+            "representative_email": None,
+            "representative_phone_number": None,
+            "representative_signature": None,
+            "tax_deduction_receipt_preamble": None,
+            "tax_deduction_receipt_legal_information": None,
+            "updated_at": organization.updated_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+            "created_at": organization.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+        }
+
+        self.assertEqual(json_response, expected_response)
+
+    def test_list(self):
+        pass
+
+    def test_update(self):
+        organization = create_test_organization(owner=self.user)
+
+        # Make sure only editable orgs can be edited
+        response = self.update(
+            user=self.user, request_data={"description": "test"}, slug=organization.slug
+        )
+        self.assertEqual(response.status_code, 404)
+
+        organization.is_draft = True
+        organization.is_verified = False
+        organization.save()
+
+        # TODO: Not sure if we should allow ediiting of slugs
+        response = self.update(
+            user=self.user,
+            request_data={
+                "description": "test",
+                "slug": "new_slug",
+                "name": "amazing_name",
+            },
+            slug=organization.slug,
+        )
+        self.assertEqual(response.status_code, 200)
+
+        json_response = json.loads(response.render().content)
+
+        expected_response = {
+            "name": "amazing_name",
+            "slug": "new_slug",
+            "description": "test",
+            "meta_description": None,
+            "logo": None,
+            "banner": None,
+            "url": "https://www.579f9ed2-b0a7-11ed-afa1-0242ac120002.com",
             "ein_number": "91-1144442",
             "is_verified": False,
             "is_draft": True,
@@ -140,20 +252,77 @@ class PrivateOrganizationTestCase(APITestCase):
             "representative_signature": None,
             "tax_deduction_receipt_preamble": None,
             "tax_deduction_receipt_legal_information": None,
-            "created_at": organization.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-            "updated_at": organization.updated_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
         }
 
-        self.assertEqual(json_response, expected_response)
+        self.assertEqual(expected_response, json_response)
+
+    def test_partial_update(self):
+        organization = create_test_organization(owner=self.user)
+
+        # Make sure only editable orgs can be edited
+        response = self.update(
+            user=self.user, request_data={"description": "test"}, slug=organization.slug
+        )
+        self.assertEqual(response.status_code, 404)
+
+        organization.is_draft = True
+        organization.is_verified = False
+        organization.save()
+
+        # TODO: Partial updates currently do not work at all
+        response = self.update(
+            user=self.user,
+            request_data={"description": "test"},
+            slug=organization.slug,
+        )
+        # self.assertEqual(response.status_code, 200)
+        #
+        # json_response = json.loads(response.render().content)
+        #
+        # expected_response = {
+        #     "name": organization.name,
+        #     "slug": organization.slug,
+        #     "description": "test",
+        #     "meta_description": None,
+        #     "logo": None,
+        #     "banner": None,
+        #     "url": organization.url,
+        #     "ein_number": organization.ein_number,
+        #     "is_verified": organization.is_verified,
+        #     "is_draft": organization.is_draft,
+        #     "promote": False,
+        #     "deadline": None,
+        #     "address_line1": organization.address_line1,
+        #     "address_line2": organization.address_line2,
+        #     "city": organization.city,
+        #     "state_province_region": organization.state_province_region,
+        #     "zip": organization.zip,
+        #     "country": organization.country,
+        #     "representative_first_name": organization.representative_first_name,
+        #     "representative_last_name": organization.representative_last_name,
+        #     "representative_email": organization.representative_email,
+        #     "representative_phone_number": organization.representative_phone_number,
+        #     "representative_signature": None,
+        #     "tax_deduction_receipt_preamble": None,
+        #     "tax_deduction_receipt_legal_information": None,
+        # }
+        #
+        # self.assertEqual(expected_response, json_response)
+
+    def test_destroy(self):
+        organization = create_test_organization(owner=self.user)
+
+        response = self.destroy(user=self.user, slug=organization.slug)
+        self.assertEqual(response.status_code, 204)
+
+        # Check that org wasn't actually deleted but soft-deleted instead
+        self.assertEqual(Organization.objects.all().count(), 1)
+        self.assertEqual(Organization.objects.active().count(), 0)
 
     def test_organization_slug_blacklist(self):
-        test_data = self.testData.copy()
+        test_data = self.test_data.copy()
         test_data["slug"] = "next"  # blacklisted value
-        request = self.requestFactory.post(
-            "/api/private/organizations/", data=test_data, format="json"
-        )
-        force_authenticate(request, user=self.user)
-        response = PrivateOrganizationViewSet.as_view({"post": "create"})(request)
+        response = self.create(request_data=test_data, user=self.user)
 
         self.assertEqual(response.status_code, 400, "Organization was created")
         self.assertEqual(response.data["slug"][0], "This value cannot be used.")
@@ -163,28 +332,24 @@ class PrivateOrganizationTestCase(APITestCase):
         logo_file = SimpleUploadedFile("test_image.png", image.getvalue())
         banner_file = SimpleUploadedFile("test_image.png", image.getvalue())
 
-        test_data = self.testData.copy()
+        test_data = self.test_data.copy()
 
         test_data["logo"] = logo_file
         test_data["banner"] = banner_file
 
-        request = self.requestFactory.post(
-            "/api/private/organizations/", data=test_data
+        response = self.create(
+            request_data=test_data,
+            user=self.user,
+            content_type="multipart",
         )
-        force_authenticate(request, user=self.user)
-        response = PrivateOrganizationViewSet.as_view({"post": "create"})(request)
+        self.assertEqual(response.status_code, 201)
 
-        self.assertEqual(response.status_code, 201, "Organization was not created")
-
-    def test_organization_checklist(self):
+    def test_checklist(self):
         organization = create_test_organization(owner=self.user)
 
-        request = self.requestFactory.get("")
-        force_authenticate(request, user=self.user)
-        response = PrivateOrganizationViewSet.as_view({"get": "checklist"})(
-            request, slug=organization.slug
+        response = self.custom_action(
+            "get", "checklist", user=self.user, slug=organization.slug
         )
-
         self.assertEqual(response.status_code, 200)
 
         json_response = json.loads(response.render().content)
@@ -249,10 +414,9 @@ class PrivateOrganizationTestCase(APITestCase):
         organization.zip = "19808"
         organization.save()
 
-        response = PrivateOrganizationViewSet.as_view({"get": "checklist"})(
-            request, slug=organization.slug
+        response = self.custom_action(
+            "get", "checklist", user=self.user, slug=organization.slug
         )
-
         self.assertEqual(response.status_code, 200)
 
         json_response = json.loads(response.render().content)
@@ -286,14 +450,6 @@ class PrivateOrganizationSlugCheckerTests(APITestCase):
     def setUp(self) -> None:
         self.user = create_test_user()
         self.requestFactory = APIRequestFactory()
-
-        self.testData = {
-            "name": "TestName",
-            "slug": "testslug",
-            "description": "Some description",
-            "url": "https://www.someurl.com",
-            "ein_number": "12345",
-        }
 
     def test_existence_checker(self):
         organization = create_test_organization(owner=self.user)

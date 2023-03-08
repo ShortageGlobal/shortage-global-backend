@@ -41,3 +41,4 @@ pyyaml==6.0
 uritemplate==4.1.1
 weasyprint==52.5
 python-stdnum==1.18
+coverage==7.2.1
