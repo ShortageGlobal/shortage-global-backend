@@ -22,7 +22,7 @@ jobs:
         run: docker compose -f "docker-compose.yml" up -d --build
 
       - name: Run the tests
-        run: docker compose exec django python manage.py test
+        run: docker compose exec django coverage run --source='.' manage.py test
 
       - name: Clean up
         if: always()

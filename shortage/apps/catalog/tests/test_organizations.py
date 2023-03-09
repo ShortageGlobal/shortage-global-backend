@@ -200,7 +200,48 @@ class PrivateOrganizationTestCase(ShortageAPITestCase):
         self.assertEqual(json_response, expected_response)
 
     def test_list(self):
-        pass
+        organization = create_test_organization(owner=self.user)
+
+        # TODO: Do we really need list if a person can only have on org?
+        response = self.list(user=self.user, slug=organization.slug)
+        self.assertEqual(response.status_code, 200)
+
+        json_response = json.loads(response.render().content)
+
+        expected_response = [
+            {
+                "name": "TestName",
+                "slug": "test_organization",
+                "requested_goods": "very needed goods",
+                "mission_description": "TestName helps people",
+                "meta_description": None,
+                "logo": None,
+                "banner": None,
+                "url": "https://www.579f9ed2-b0a7-11ed-afa1-0242ac120002.com",
+                "ein_number": "91-1144442",
+                "is_verified": True,
+                "is_draft": False,
+                "promote": False,
+                "deadline": None,
+                "address_line1": None,
+                "address_line2": None,
+                "city": None,
+                "state_province_region": None,
+                "zip": None,
+                "country": "US",
+                "representative_first_name": None,
+                "representative_last_name": None,
+                "representative_email": None,
+                "representative_phone_number": None,
+                "representative_signature": None,
+                "tax_deduction_receipt_preamble": None,
+                "tax_deduction_receipt_legal_information": None,
+                "updated_at": organization.updated_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+                "created_at": organization.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+            }
+        ]
+
+        self.assertEqual(json_response, expected_response)
 
     def test_update(self):
         organization = create_test_organization(owner=self.user)

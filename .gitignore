@@ -5,6 +5,7 @@ db.sqlite3
 /media
 /static
 __pycache__
+.coverage
 
 # for convenient debugging in python manage.py shell
 sandbox.py
