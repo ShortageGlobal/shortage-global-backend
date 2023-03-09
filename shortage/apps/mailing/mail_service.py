@@ -170,12 +170,12 @@ class PackageBaseEmail(MailingBackend):
         self.package = package
 
     def get_context(self):
-        package_status_url = "%s/organizations/%s/packages/%s/" % (
+        package_status_url = "%s/%s/packages/%s/" % (
             self.frontend_base_url,
             self.package.organization.slug,
             self.package.uuid,
         )
-        organization_url = "%s/organizations/%s/" % (
+        organization_url = "%s/%s/" % (
             self.frontend_base_url,
             self.package.organization.slug,
         )
@@ -212,7 +212,7 @@ class PackageDeliveryEmail(PackageBaseEmail):
 
         # attach tax deduction receipt to the email if needed
         if package.need_tax_deduction and package.tax_deduction_receipt:
-            # NOTE: we read a file from media storage. This operation might be heavy, better to refactor some day
+            # TODO: we read a file from media storage. This operation might be heavy, better to refactor some day
             self.add_attachment(
                 filename="tax_deduction_receipt.pdf",
                 content=package.tax_deduction_receipt.read(),
@@ -375,7 +375,7 @@ class OrganizationVerificationRequestServiceEmail(MailingBackend):
     Email sent to staff when organization requires verification
     """
 
-    subject = "Nonprofit page needs verification - Shortage"
+    subject = "Nonprofit needs verification - Shortage"
     html_template = "emails/organization_verification_staff/index.html"
     text_template = "emails/organization_verification_staff/index.txt"
 
@@ -411,3 +411,76 @@ class OrganizationVerificationRequestServiceEmail(MailingBackend):
         )
         context["organization"] = self.organization
         return context
+
+
+class OrganizationVerificationRequestEmail(MailingBackend):
+    """
+    Email sent when organization started verification process
+    """
+
+    subject = "Your Shortage page is on verification"
+    html_template = "emails/nonprofit_verification_started/index.html"
+    text_template = "emails/nonprofit_verification_started/index.txt"
+
+    def __init__(self, organization):
+        self.organization = organization
+
+    def get_context(self):
+        organization_url = "%s/private/manage-nonprofit/%s/" % (
+            self.frontend_base_url,
+            self.organization.slug,
+        )
+
+        return {
+            "organization_url": organization_url,
+            "organization": self.organization,
+        }
+
+
+class OrganizationIsVerifiedEmail(MailingBackend):
+    """
+    Email sent when organization is verified
+    """
+
+    subject = "Your Shortage page is verified and published"
+    html_template = "emails/nonprofit_verified/index.html"
+    text_template = "emails/nonprofit_verified/index.txt"
+
+    def __init__(self, organization):
+        self.organization = organization
+
+    def get_context(self):
+        organization_public_url = "%s/%s/" % (
+            self.frontend_base_url,
+            self.organization.slug,
+        )
+
+        return {
+            "organization_public_url": organization_public_url,
+            "organization": self.organization,
+        }
+
+
+class NonprofitHasNewDonationEmail(MailingBackend):
+    """
+    Email sent to the nonprofit about a new donation
+    """
+
+    subject = "New Donation Received via Shortage"
+    html_template = "emails/nonprofit_new_donation/index.html"
+    text_template = "emails/nonprofit_new_donation/index.txt"
+
+    def __init__(self, package):
+        self.package = package
+
+    def get_context(self):
+        donation_url = "%s/private/manage-nonprofit/%s/donations/%s/" % (
+            self.frontend_base_url,
+            self.package.organization.slug,
+            self.package.uuid,
+        )
+
+        return {
+            "donation_url": donation_url,
+            "package": self.package,
+        }

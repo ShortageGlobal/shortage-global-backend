@@ -1,10 +1,8 @@
-import os
-
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework.utils import json
 
-from shortage.apps.catalog.models import Organization
+from shortage.apps.catalog.models import Organization, Instruction
 from shortage.apps.catalog.private.views import (
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
@@ -15,6 +13,8 @@ from shortage.helpers.test_utilities import (
     create_test_organization,
     create_test_image,
     ShortageAPITestCase,
+    create_test_product,
+    create_test_instruction,
 )
 
 
@@ -27,7 +27,8 @@ class PrivateOrganizationTestCase(ShortageAPITestCase):
         cls.test_data = {
             "name": "TestName",
             "slug": "testslug",
-            "description": "Some description",
+            "requested_goods": "a variety of goods",
+            "mission_description": "We support community",
             "url": "https://www.someurl.com",
             "ein_number": "91-1144442",
         }
@@ -112,7 +113,8 @@ class PrivateOrganizationTestCase(ShortageAPITestCase):
         expected_response = {
             "name": "TestName",
             "slug": "testslug",
-            "description": "Some description",
+            "requested_goods": "a variety of goods",
+            "mission_description": "We support community",
             "meta_description": None,
             "logo": None,
             "banner": None,
@@ -167,7 +169,8 @@ class PrivateOrganizationTestCase(ShortageAPITestCase):
         expected_response = {
             "name": "TestName",
             "slug": "test_organization",
-            "description": "Some description",
+            "requested_goods": "very needed goods",
+            "mission_description": "TestName helps people",
             "meta_description": None,
             "logo": None,
             "banner": None,
@@ -229,7 +232,8 @@ class PrivateOrganizationTestCase(ShortageAPITestCase):
         expected_response = {
             "name": "amazing_name",
             "slug": "new_slug",
-            "description": "test",
+            "mission_description": "TestName helps people",
+            "requested_goods": "very needed goods",
             "meta_description": None,
             "logo": None,
             "banner": None,
@@ -344,7 +348,9 @@ class PrivateOrganizationTestCase(ShortageAPITestCase):
         )
         self.assertEqual(response.status_code, 201)
 
-    def test_checklist(self):
+        self.assertEqual(response.status_code, 201, "Organization was not created")
+
+    def test_organization_checklist(self):
         organization = create_test_organization(owner=self.user)
 
         response = self.custom_action(
@@ -377,7 +383,7 @@ class PrivateOrganizationTestCase(ShortageAPITestCase):
                 ],
                 "instructions": [
                     {
-                        "code": "empty_instructions",
+                        "code": "no_instructions",
                         "message": "Delivery instructions are not provided. Donors must know where to send goods.",
                         "severity": "ERROR",
                     }
@@ -399,6 +405,7 @@ class PrivateOrganizationTestCase(ShortageAPITestCase):
         organization.logo = create_test_image(tmp_storage, "test_image.png")
         organization.url = "https://shortage.global"
         organization.banner = organization.logo
+        organization.requested_goods = "vital goods for survival"
         organization.meta_description = "not empty"
         organization.address_line1 = "251 Little Falls Drive"
         organization.address_line2 = "Wilmington, DE, US"
@@ -413,6 +420,8 @@ class PrivateOrganizationTestCase(ShortageAPITestCase):
         organization.ein_number = "941196203"
         organization.zip = "19808"
         organization.save()
+
+        instruction = create_test_instruction(organization=organization, city="")
 
         response = self.custom_action(
             "get", "checklist", user=self.user, slug=organization.slug
@@ -429,12 +438,12 @@ class PrivateOrganizationTestCase(ShortageAPITestCase):
                         "code": "empty_products",
                         "message": "There must be at least one item requested by your organization.",
                         "severity": "ERROR",
-                    }
+                    },
                 ],
                 "instructions": [
                     {
-                        "code": "empty_instructions",
-                        "message": "Delivery instructions are not provided. Donors must know where to send goods.",
+                        "code": "empty_instruction_city",
+                        "message": "City is empty.",
                         "severity": "ERROR",
                     }
                 ],
@@ -445,11 +454,42 @@ class PrivateOrganizationTestCase(ShortageAPITestCase):
 
         self.assertEqual(json_response, validation_errors)
 
+        instruction.city = "New York"
+        instruction.save()
+        create_test_product(organization=organization)
+
+        response = self.custom_action(
+            "get", "checklist", user=self.user, slug=organization.slug
+        )
+        self.assertEqual(response.status_code, 200)
+
+        json_response = json.loads(response.render().content)
+
+        validation_errors = {
+            "checklist": {
+                "page": [],
+                "products": [],
+                "instructions": [],
+                "tax_information": [],
+            },
+            "can_publish": True,
+        }
+
+        self.assertEqual(json_response, validation_errors)
+
 
 class PrivateOrganizationSlugCheckerTests(APITestCase):
     def setUp(self) -> None:
         self.user = create_test_user()
         self.requestFactory = APIRequestFactory()
+
+        self.testData = {
+            "name": "TestName",
+            "slug": "testslug",
+            "description": "Some description",
+            "url": "https://www.someurl.com",
+            "ein_number": "12345",
+        }
 
     def test_existence_checker(self):
         organization = create_test_organization(owner=self.user)

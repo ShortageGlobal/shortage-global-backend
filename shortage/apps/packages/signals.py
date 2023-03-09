@@ -5,6 +5,7 @@ from shortage.apps.mailing.mail_service import (
     PackageDeliveryEmail,
     PackageRegistationServiceEmail,
     CorporateDonationRequestServiceEmail,
+    NonprofitHasNewDonationEmail,
 )
 from shortage.apps.packages.models import (
     Package,
@@ -28,45 +29,58 @@ def package_update_handler(sender, instance, **kwargs):
 
     # fire handler only if status changed
     if is_created or instance.status != old_package.status:
-        package_status_change_handler(instance)
+        package_status_change_handler(
+            instance, is_created=is_created, old_package=old_package
+        )
 
 
-def package_status_change_handler(package):
+def package_status_change_handler(package, is_created=None, old_package=None):
     # create package log entry
     PackageStatusLogEntry.objects.create(package=package, status=package.status)
 
-    status_change_email = None
-    service_status_change_email = None
+    donor_email = None
+    nonprofit_email = None
+    service_email = None
 
     if package.status == PackageStatus.REGISTERED:
         # if package sent by donor - email him right away
         # if package funded by donor - email him on payment success
         if package.type == PackageType.SENT_BY_DONOR:
-            status_change_email = PackageRegistrationEmail(package=package)
-            service_status_change_email = PackageRegistationServiceEmail(
-                package=package
-            )
+            donor_email = PackageRegistrationEmail(package=package)
+            service_email = PackageRegistationServiceEmail(package=package)
     elif package.status == PackageStatus.PAYMENT_SUCCEEDED:
         if package.type == PackageType.FUNDED_BY_DONOR:
             # notify the donor about his payment and registered package
-            status_change_email = PackageRegistrationEmail(package=package)
-            service_status_change_email = PackageRegistationServiceEmail(
-                package=package
-            )
+            donor_email = PackageRegistrationEmail(package=package)
+            service_email = PackageRegistationServiceEmail(package=package)
+    elif package.status in [PackageStatus.CONFIRMED, PackageStatus.ON_ITS_WAY]:
+        if not old_package.status in [
+            PackageStatus.CONFIRMED,
+            PackageStatus.ON_ITS_WAY,
+        ]:
+            nonprofit_email = NonprofitHasNewDonationEmail(package)
     elif package.status == PackageStatus.DELIVERED:
         # Generate receipt before sending an email in case we want to include the link there
         package.generate_tax_receipt()
 
-        status_change_email = PackageDeliveryEmail(package=package)
+        donor_email = PackageDeliveryEmail(package=package)
 
-    # send email to package owner
-    if status_change_email:
-        status_change_email.add_recipient(email=package.email, name=package.full_name)
-        status_change_email.send()
+    # send email to the package owner
+    if donor_email:
+        donor_email.add_recipient(email=package.email, name=package.full_name)
+        donor_email.send()
+
+    # send email to the package owner
+    if nonprofit_email:
+        nonprofit_owner = package.organization.owner
+        nonprofit_email.add_recipient(
+            email=nonprofit_owner.email, name=nonprofit_owner.full_name
+        )
+        nonprofit_email.send()
 
     # send service email to staff
-    if service_status_change_email:
-        service_status_change_email.send()
+    if service_email:
+        service_email.send()
 
 
 @receiver(

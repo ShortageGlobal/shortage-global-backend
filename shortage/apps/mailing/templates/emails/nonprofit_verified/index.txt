@@ -1,0 +1,11 @@
+{% extends "emails/base.txt" %}
+
+{% block body_content %}
+We're so happy to provide you with our service!
+
+Let's celebrate our partnership together! Your page is verified and published on Shortage.
+
+View "{{ organization.name}}": 
+{{organization_public_url}}
+
+{% endblock %}

@@ -13,6 +13,7 @@ from rest_framework.schemas.openapi import AutoSchema
 from rest_framework import exceptions
 from shortage.apps.mailing.mail_service import (
     OrganizationVerificationRequestServiceEmail,
+    OrganizationVerificationRequestEmail,
 )
 from shortage.apps.catalog.models import (
     Product,
@@ -96,6 +97,9 @@ class PrivateOrganizationViewSet(
                 .filter(owner=self.request.user)
                 .order_by("-created_at")
             )
+        elif self.action == "destroy":
+            # allow deleting organization even if it was verified
+            return Organization.objects.active().filter(owner=self.request.user)
         else:
             # Prevent changes to organizations which you don't own and which are published
             return Organization.objects.editable().filter(owner=self.request.user)
@@ -138,6 +142,13 @@ class PrivateOrganizationViewSet(
 
         # notify staff
         OrganizationVerificationRequestServiceEmail(organization).send()
+
+        # notify organization owner
+        email = OrganizationVerificationRequestEmail(organization)
+        email.add_recipient(
+            email=organization.owner.email, name=organization.owner.full_name
+        )
+        email.send()
 
         serializer = PrivateOrganizationReadSerializer(
             organization, context=self.get_serializer_context()

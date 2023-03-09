@@ -1,0 +1,12 @@
+{% extends "emails/base.txt" %}
+
+{% block body_content %}
+We're super excited to have you on board!
+
+Just wanted to inform you that your unique Shortage page is on verification. It takes 2 business days for our team to check everything. 
+
+Review "{{ organization.name}}": 
+{{organization_url}}
+
+Once that's done, you'll receive an email from our support team that the page is published and ready to be shared.
+{% endblock %}

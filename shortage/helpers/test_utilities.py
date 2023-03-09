@@ -8,7 +8,7 @@ from rest_framework.mixins import (
 )
 from rest_framework.views import APIView
 
-from shortage.apps.catalog.models import Organization, Product
+from shortage.apps.catalog.models import Organization, Product, Instruction
 from shortage.apps.packages.models import Package, PackageItem, PackageType
 from io import BytesIO
 from PIL import Image
@@ -145,7 +145,8 @@ def create_test_organization(**kwargs):
         "owner": None,
         "name": "TestName",
         "slug": "test_organization",
-        "description": "Some description",
+        "requested_goods": "very needed goods",
+        "mission_description": "TestName helps people",
         "url": "https://www.579f9ed2-b0a7-11ed-afa1-0242ac120002.com",
         "ein_number": "91-1144442",
         "is_verified": True,
@@ -180,6 +181,26 @@ def create_test_product(**kwargs):
     return product
 
 
+def create_test_instruction(**kwargs):
+    assert (
+        "organization" in kwargs
+    ), "'create_test_instruction' was called without 'organization'"
+
+    test_data = {
+        "organization": None,
+        "name": "Test Instruction",
+        "address_line1": "69 Some Street",
+        "city": "Springfield",
+        "state_province_region": "California",
+        "zip": "98765",
+        **kwargs,
+    }
+
+    instruction = Instruction(**test_data)
+    instruction.save()
+    return instruction
+
+
 def create_test_package(product, **kwargs):
     test_data = {
         "owner": None,
@@ -192,21 +213,6 @@ def create_test_package(product, **kwargs):
     package = Package.objects.create(**test_data)
     PackageItem.objects.create(package=package, product=product, quantity=1)
     return package
-
-
-def setup_test_data():
-    """
-    Sets up a bunch of test entities in database for easier testing.
-    Uses already existing user which should be created via createsuperuser
-    """
-    user = get_user_model().objects.all()[0]
-
-    organization = create_test_organization(owner=user)
-
-    product = create_test_product(organization=organization)
-
-    create_test_package(PackageType.SENT_BY_DONOR, user, product, None)
-    create_test_package(PackageType.FUNDED_BY_DONOR, user, product, None)
 
 
 def create_test_image(

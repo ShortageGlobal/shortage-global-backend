@@ -17,7 +17,8 @@ class PrivateOrganizationWriteSerializer(serializers.ModelSerializer):
             "owner",
             "name",
             "slug",
-            "description",
+            "requested_goods",
+            "mission_description",
             "meta_description",
             "logo",
             "banner",
@@ -113,7 +114,14 @@ class PrivateInstructionSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
-            "description",
+            "address_line1",
+            "address_line2",
+            "city",
+            "state_province_region",
+            "zip",
+            "country",
+            "phone_number",
+            "comment",
         ]
 
     def create(self, validated_data):

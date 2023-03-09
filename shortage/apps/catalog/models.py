@@ -84,7 +84,8 @@ class Organization(models.Model):
         blank=True,
         storage=storage.MediaStorage(),
     )
-    description = HTMLField(null=True, blank=True)
+    requested_goods = models.CharField(max_length=200, null=True, blank=True)
+    mission_description = models.CharField(max_length=1000, null=True, blank=True)
     meta_description = models.CharField(max_length=200, null=True, blank=True)
 
     # tax information
@@ -203,8 +204,15 @@ class Instruction(models.Model):
         Organization, related_name="instructions", on_delete=models.CASCADE
     )
     name = models.CharField(max_length=255)
-    description = HTMLField()
+    address_line1 = models.CharField(max_length=255)
+    address_line2 = models.CharField(max_length=255, null=True, blank=True)
+    city = models.CharField(max_length=255)
+    state_province_region = models.CharField(max_length=255)
+    zip = models.CharField(max_length=100)
     country = CountryField(default="US")
+    phone_number = PhoneNumberField(null=True, blank=True)
+    comment = models.CharField(max_length=500, null=True, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
