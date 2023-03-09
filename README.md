@@ -2,6 +2,7 @@
 
 [![main](https://github.com/ShortageGlobal/shortage-global-backend/actions/workflows/main.yml/badge.svg)](https://github.com/ShortageGlobal/shortage-global-backend/actions/workflows/main.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![coverage](https://ShortageGlobal.github.io/shortage-global-backend/badges/coverage.svg)](https://github.com/shortageglobal/shortage-global-backend/actions)
 
 API: https://app.shortage.global/api/
 

@@ -24,6 +24,9 @@ jobs:
       - name: Run the tests
         run: docker compose exec django coverage run --source='.' manage.py test
 
+      - name: Update Coverage Badge
+        uses: we-cli/coverage-badge-action@main
+
       - name: Clean up
         if: always()
         run: docker-compose -f "docker-compose.yml" down
