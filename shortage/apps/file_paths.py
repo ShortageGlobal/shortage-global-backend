@@ -10,7 +10,7 @@ def get_uuid_path(directory, filename):
 
 
 def get_organization_path(instance, filename):
-    return get_uuid_path(f"photo/organization/{str(instance.slug)}/", filename)
+    return get_uuid_path(f"photo/organization/{str(instance.pk)}/", filename)
 
 
 def get_external_organization_path(instance, filename):
@@ -18,7 +18,7 @@ def get_external_organization_path(instance, filename):
 
 
 def get_product_path(instance, filename):
-    return get_uuid_path(f"photo/product/{str(instance.slug)}/", filename)
+    return get_uuid_path(f"photo/product/{str(instance.pk)}/", filename)
 
 
 def get_package_path(instance, filename):
