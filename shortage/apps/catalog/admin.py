@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin
 from shortage.apps.blog.admin import BlogPostAdmin
 from .models import (
@@ -95,6 +96,13 @@ class OrganizationAdmin(admin.ModelAdmin):
         "updated_at",
     ]
 
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs["widgets"] = {
+            "tax_deduction_receipt_preamble": forms.Textarea,
+            "tax_deduction_receipt_legal_information": forms.Textarea,
+        }
+        return super().get_form(request, obj, **kwargs)
+
 
 class ExternalOrganizationAdmin(admin.ModelAdmin):
     list_display = [
@@ -111,6 +119,12 @@ class InstructionAdmin(admin.ModelAdmin):
         "name",
         "organization",
     ]
+
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs["widgets"] = {
+            "comment": forms.Textarea,
+        }
+        return super().get_form(request, obj, **kwargs)
 
 
 class ProductAdmin(admin.ModelAdmin):

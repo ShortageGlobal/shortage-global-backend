@@ -79,6 +79,7 @@ class Organization(models.Model):
         storage=storage.MediaStorage(),
     )
     banner = ThumbnailerImageField(
+        max_length=500,
         upload_to=get_organization_path,
         null=True,
         blank=True,
@@ -103,6 +104,7 @@ class Organization(models.Model):
     representative_email = models.EmailField(max_length=100, null=True, blank=True)
     representative_phone_number = PhoneNumberField(null=True, blank=True)
     representative_signature = ThumbnailerImageField(
+        max_length=500,
         upload_to=get_organization_path,
         null=True,
         blank=True,
@@ -178,6 +180,7 @@ class Organization(models.Model):
 class ExternalOrganization(models.Model):
     name = models.CharField(max_length=80)
     logo = ThumbnailerImageField(
+        max_length=500,
         upload_to=get_external_organization_path,
         storage=storage.MediaStorage(),
     )
@@ -260,6 +263,7 @@ class Product(models.Model):
         max_length=255, choices=ProductCategory.choices, db_index=True
     )
     photo = ThumbnailerImageField(
+        max_length=500,
         upload_to=get_product_path,
         null=True,
         blank=True,

@@ -112,6 +112,7 @@ class Package(models.Model):
         default=PackageStatus.REGISTERED,
     )
     photo = ThumbnailerImageField(
+        max_length=500,
         upload_to=get_package_path,
         null=True,
         blank=True,
@@ -361,6 +362,7 @@ class CorporateDonation(models.Model):
     estimated_value = models.CharField(max_length=100)
     url = models.URLField(max_length=255, null=True, blank=True)
     photo = ThumbnailerImageField(
+        max_length=500,
         upload_to=get_corporate_donation_path,
         null=True,
         blank=True,

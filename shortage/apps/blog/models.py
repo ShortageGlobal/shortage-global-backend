@@ -35,6 +35,7 @@ class BlogPost(models.Model):
     content = HTMLField()
     meta_description = models.CharField(max_length=200, null=True, blank=True)
     image = ThumbnailerImageField(
+        max_length=500,
         null=True,
         blank=True,
         upload_to=get_blog_post_photo_path,

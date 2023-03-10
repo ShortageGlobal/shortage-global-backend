@@ -176,7 +176,7 @@
     <!-- PREAMBLE -->
     {% if organization.tax_deduction_receipt_preamble %}
     <div class="preamble text-break">
-      {{organization.tax_deduction_receipt_preamble}}
+      {{organization.tax_deduction_receipt_preamble|linebreaksbr}}
     </div>
     {% endif %}
 
@@ -249,7 +249,7 @@
     <!-- legal information -->
     {% if organization.tax_deduction_receipt_legal_information %}
     <div class="legal-information text-break">
-      {{organization.tax_deduction_receipt_legal_information}}
+      {{organization.tax_deduction_receipt_legal_information|linebreaksbr}}
     </div>
     {% endif %}
   </body> 
