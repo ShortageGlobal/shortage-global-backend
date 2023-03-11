@@ -60,6 +60,33 @@ docker-compose exec django python manage.py shell
 docker-compose exec django coverage run --source='.' manage.py test
 ```
 
+## Testing
+
+### Rung tests
+
+```
+docker-compose exec django manage.py test
+```
+
+### Run tests and generate coverage report
+
+```
+docker-compose exec django coverage run --source='.' manage.py test
+```
+
+You can then run to generate HTML report
+```
+docker-compose exec django coverage html
+```
+
+### Testing GitHub actions
+
+If you want to test GitHub actions, you can use [act](https://github.com/nektos/act). In order to properly run it, you need to create a [GitHub token](https://github.com/settings/tokens) and use the following command
+
+```
+act -s GITHUB_TOKEN=[YOUR TOKEN] pull_request
+```
+
 
 ## Installing all dependencies when starting from scratch (on macOS)
 
