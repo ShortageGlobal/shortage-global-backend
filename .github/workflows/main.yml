@@ -25,14 +25,15 @@ jobs:
         run: docker compose exec django coverage run --source='.' manage.py test
 
       - name: Generate JSON coverage report
-        run: docker compose exec django coverage json -o "./coverage/coverage-summary.json"
+        run: docker compose exec django coverage json -o "coverage-summary.json"
 
       - name: Get coverage values from coverage summary
         id: get-values
         shell: bash
         run: |
-            COV=$(node -p 't=require(`./coverage/coverage-summary.json`).totals.percent_covered_display')
+            COV=$(node -p 't=require(`./coverage-summary.json`).totals.percent_covered_display')
             echo "coverage=$COV" >> $GITHUB_OUTPUT
+            echo ${{secrets.DEPLOY_PASSWORD}} | sudo rm -f coverage-summary.json
 
       - name: Clean up
         if: always()
