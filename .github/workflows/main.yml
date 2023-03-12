@@ -25,38 +25,12 @@ jobs:
         run: docker compose exec django coverage run --source='.' manage.py test
 
       - name: Generate JSON coverage report
-        run: docker compose exec django coverage json -o "coverage-summary.json"
+        run: docker compose exec django coverage json -o "/coverage/coverage-summary.json"
 
-      - name: Get coverage values from coverage summary
-        id: get-values
-        shell: bash
-        run: |
-            COV=$(node -p 't=require(`./coverage-summary.json`).totals.percent_covered_display')
-            echo "coverage=$COV" >> $GITHUB_OUTPUT
-            echo ${{secrets.DEPLOY_PASSWORD}} | sudo rm -f coverage-summary.json
+#      - name: Update Coverage Badge
+#        uses: we-cli/coverage-badge-action@main
 
       - name: Clean up
         if: always()
         run: docker compose -f "docker-compose.yml" down
-
-      - name: Checkout gh-pages branch
-        uses: actions/checkout@v3
-        with:
-         ref: gh-pages
-
-      - name: Generate coverage badges
-        shell: bash
-        run: |
-         npm i -g badgen-cli
-         export COV=${{ steps.get-values.outputs.coverage }}
-         COLOR=$(node -p '+process.env.COV >= 95 ? `green` : `orange`')
-         mkdir -p badges
-         badgen -j coverage -s $COV% -c $COLOR > badges/coverage.svg
-
-      - name: Commit coverage badge into gh-pages branch
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-         commit_message: "Update badges [skip ci]"
-         skip_fetch: true
-         skip_checkout: true
 
