@@ -314,44 +314,45 @@ class PrivateOrganizationTestCase(ShortageAPITestCase):
         organization.save()
 
         # TODO: Partial updates currently do not work at all
-        response = self.update(
+        response = self.partial_update(
             user=self.user,
-            request_data={"description": "test"},
+            request_data={"meta_description": "test"},
             slug=organization.slug,
         )
-        # self.assertEqual(response.status_code, 200)
-        #
-        # json_response = json.loads(response.render().content)
-        #
-        # expected_response = {
-        #     "name": organization.name,
-        #     "slug": organization.slug,
-        #     "description": "test",
-        #     "meta_description": None,
-        #     "logo": None,
-        #     "banner": None,
-        #     "url": organization.url,
-        #     "ein_number": organization.ein_number,
-        #     "is_verified": organization.is_verified,
-        #     "is_draft": organization.is_draft,
-        #     "promote": False,
-        #     "deadline": None,
-        #     "address_line1": organization.address_line1,
-        #     "address_line2": organization.address_line2,
-        #     "city": organization.city,
-        #     "state_province_region": organization.state_province_region,
-        #     "zip": organization.zip,
-        #     "country": organization.country,
-        #     "representative_first_name": organization.representative_first_name,
-        #     "representative_last_name": organization.representative_last_name,
-        #     "representative_email": organization.representative_email,
-        #     "representative_phone_number": organization.representative_phone_number,
-        #     "representative_signature": None,
-        #     "tax_deduction_receipt_preamble": None,
-        #     "tax_deduction_receipt_legal_information": None,
-        # }
-        #
-        # self.assertEqual(expected_response, json_response)
+        self.assertEqual(response.status_code, 200)
+
+        json_response = json.loads(response.render().content)
+
+        expected_response = {
+            "name": organization.name,
+            "slug": organization.slug,
+            "meta_description": "test",
+            "mission_description": "TestName helps people",
+            "requested_goods": "very needed goods",
+            "logo": None,
+            "banner": None,
+            "url": organization.url,
+            "ein_number": organization.ein_number,
+            "is_verified": organization.is_verified,
+            "is_draft": organization.is_draft,
+            "promote": False,
+            "deadline": None,
+            "address_line1": organization.address_line1,
+            "address_line2": organization.address_line2,
+            "city": organization.city,
+            "state_province_region": organization.state_province_region,
+            "zip": organization.zip,
+            "country": "US",
+            "representative_first_name": organization.representative_first_name,
+            "representative_last_name": organization.representative_last_name,
+            "representative_email": organization.representative_email,
+            "representative_phone_number": organization.representative_phone_number,
+            "representative_signature": None,
+            "tax_deduction_receipt_preamble": None,
+            "tax_deduction_receipt_legal_information": None,
+        }
+
+        self.assertEqual(expected_response, json_response)
 
     def test_destroy(self):
         organization = create_test_organization(owner=self.user)
