@@ -256,7 +256,6 @@ class PrivateOrganizationTestCase(ShortageAPITestCase):
         organization.is_verified = False
         organization.save()
 
-        # TODO: Not sure if we should allow ediiting of slugs
         response = self.update(
             user=self.user,
             request_data={
@@ -362,6 +361,27 @@ class PrivateOrganizationTestCase(ShortageAPITestCase):
 
         # Check that org wasn't actually deleted but soft-deleted instead
         self.assertEqual(Organization.objects.all().count(), 1)
+        self.assertEqual(Organization.objects.active().count(), 0)
+
+        # Check that we can't delete an already deleted org
+        response = self.destroy(user=self.user, slug=organization.slug)
+        self.assertEqual(response.status_code, 404)
+
+        # Check that we can create a new org for the same user after old one was deleted
+        response = self.create(request_data=self.test_data, user=self.user)
+        self.assertEqual(response.status_code, 201)
+
+        organization = Organization.objects.get(slug=self.test_data["slug"])
+
+        organization.is_draft = False
+        organization.is_verified = True
+        organization.save()
+
+        # Check that we can delete verified and non-draft orgs too
+        response = self.destroy(user=self.user, slug=organization.slug)
+        self.assertEqual(response.status_code, 204)
+
+        self.assertEqual(Organization.objects.all().count(), 2)
         self.assertEqual(Organization.objects.active().count(), 0)
 
     def test_organization_slug_blacklist(self):

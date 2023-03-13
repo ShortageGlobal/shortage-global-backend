@@ -40,20 +40,47 @@ class ShortageAPITestCase(APITestCase):
 
         # Check if CRUD tests are needed
         crud = [
-            {"mixin": CreateModelMixin, "required_method_name": "create"},
-            {"mixin": RetrieveModelMixin, "required_method_name": "retrieve"},
-            {"mixin": UpdateModelMixin, "required_method_name": "update"},
-            {"mixin": UpdateModelMixin, "required_method_name": "partial_update"},
-            {"mixin": DestroyModelMixin, "required_method_name": "destroy"},
-            {"mixin": ListModelMixin, "required_method_name": "list"},
+            {
+                "mixin": CreateModelMixin,
+                "http_method": "post",
+                "required_method_name": "create",
+            },
+            {
+                "mixin": RetrieveModelMixin,
+                "http_method": "get",
+                "required_method_name": "retrieve",
+            },
+            {
+                "mixin": UpdateModelMixin,
+                "http_method": "put",
+                "required_method_name": "update",
+            },
+            {
+                "mixin": UpdateModelMixin,
+                "http_method": "patch",
+                "required_method_name": "partial_update",
+            },
+            {
+                "mixin": DestroyModelMixin,
+                "http_method": "delete",
+                "required_method_name": "destroy",
+            },
+            {
+                "mixin": ListModelMixin,
+                "http_method": "get",
+                "required_method_name": "list",
+            },
         ]
 
         for item in crud:
             mixin = item["mixin"]
+            http_method = item["http_method"]
             required_method = f"test_{item['required_method_name']}"
 
-            if issubclass(cls.tested_view_class, mixin) and not hasattr(
-                cls, required_method
+            if (
+                issubclass(cls.tested_view_class, mixin)
+                and http_method in cls.tested_view_class.http_method_names
+                and not hasattr(cls, required_method)
             ):
                 raise ValueError(
                     f"Your view {cls.tested_view_class} contains has {mixin} and must define {required_method} to test it"
@@ -78,7 +105,7 @@ class ShortageAPITestCase(APITestCase):
 
     def update(self, request_data=None, user=None, content_type="json", **kwargs):
         return self.custom_action(
-            "patch", "update", request_data, user, content_type, **kwargs
+            "put", "update", request_data, user, content_type, **kwargs
         )
 
     def partial_update(

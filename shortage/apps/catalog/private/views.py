@@ -84,14 +84,7 @@ class PrivateOrganizationViewSet(
         return PrivateOrganizationReadSerializer
 
     def get_queryset(self):
-        if self.action in [
-            "list",
-            "retrieve",
-            "checklist",
-            "publish",
-            "unpublish",
-            "destroy",
-        ]:
+        if self.action in ["list", "retrieve", "checklist", "publish", "unpublish"]:
             return (
                 Organization.objects.active()
                 .filter(owner=self.request.user)
