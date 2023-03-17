@@ -103,6 +103,7 @@ class Organization(models.Model):
     representative_last_name = models.CharField(max_length=255, null=True, blank=True)
     representative_email = models.EmailField(max_length=100, null=True, blank=True)
     representative_phone_number = PhoneNumberField(null=True, blank=True)
+    representative_url = models.URLField(max_length=75, null=True, blank=True)
     representative_signature = ThumbnailerImageField(
         max_length=500,
         upload_to=get_organization_path,
@@ -111,13 +112,13 @@ class Organization(models.Model):
         storage=storage.MediaStorage(),
     )
     tax_deduction_receipt_preamble = models.CharField(
-        max_length=500,
+        max_length=1000,
         null=True,
         blank=True,
         help_text="Text added to automatically generated tax deduction receipts before the table",
     )
     tax_deduction_receipt_legal_information = models.CharField(
-        max_length=500,
+        max_length=1000,
         null=True,
         blank=True,
         help_text="Text added to automatically generated tax deduction receipts at the end of the document",
