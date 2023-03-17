@@ -2,6 +2,7 @@
 
 [![main](https://github.com/ShortageGlobal/shortage-global-backend/actions/workflows/main.yml/badge.svg)](https://github.com/ShortageGlobal/shortage-global-backend/actions/workflows/main.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![coverage](https://ShortageGlobal.github.io/shortage-global-backend/badges/coverage.svg)](https://github.com/shortageglobal/shortage-global-backend/actions)
 
 API: https://app.shortage.global/api/
 
@@ -56,7 +57,34 @@ docker-compose exec django python manage.py shell
 ### Run tests
 
 ```
-docker compose exec django python manage.py test
+docker-compose exec django coverage run --source='.' manage.py test
+```
+
+## Testing
+
+### Rung tests
+
+```
+docker-compose exec django manage.py test
+```
+
+### Run tests and generate coverage report
+
+```
+docker-compose exec django coverage run --source='.' manage.py test
+```
+
+You can then run to generate HTML report
+```
+docker-compose exec django coverage html
+```
+
+### Testing GitHub actions
+
+If you want to test GitHub actions, you can use [act](https://github.com/nektos/act). In order to properly run it, you need to create a [GitHub token](https://github.com/settings/tokens) and use the following command
+
+```
+act -s GITHUB_TOKEN=[YOUR TOKEN] pull_request
 ```
 
 

@@ -22,8 +22,15 @@ jobs:
         run: docker compose -f "docker-compose.yml" up -d --build
 
       - name: Run the tests
-        run: docker compose exec django python manage.py test
+        run: docker compose exec django coverage run --source='.' manage.py test
+
+      - name: Generate JSON coverage report
+        run: docker compose exec django coverage json -o "/coverage/coverage-summary.json"
+
+#      - name: Update Coverage Badge
+#        uses: we-cli/coverage-badge-action@main
 
       - name: Clean up
         if: always()
-        run: docker-compose -f "docker-compose.yml" down
+        run: docker compose -f "docker-compose.yml" down
+
