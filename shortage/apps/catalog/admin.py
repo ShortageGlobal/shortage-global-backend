@@ -73,6 +73,7 @@ class OrganizationAdmin(admin.ModelAdmin):
                     "representative_first_name",
                     "representative_last_name",
                     "representative_email",
+                    "representative_url",
                     "representative_phone_number",
                     "representative_signature",
                     "tax_deduction_receipt_preamble",
