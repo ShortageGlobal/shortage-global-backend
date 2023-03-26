@@ -199,13 +199,17 @@ class Package(models.Model):
         Check if an organization admin can mark a package as Delivered
         """
 
+        if (
+            self.type == PackageType.DROPPED_OFF_BY_DONOR
+            and self.status != PackageStatus.DELIVERED
+        ):
+            # dropped off packages can be marked as delivered right after registration
+            return True
+
+        # sent/funded packages can be marked as delivered only after the Shortage staff confirmed them first
         return (
             self.status == PackageStatus.CONFIRMED
             or self.status == PackageStatus.ON_ITS_WAY
-            or (
-                self.type == PackageType.DROPPED_OFF_BY_DONOR
-                and self.status != PackageStatus.DELIVERED
-            )
         )
 
     def payment_canceled(self):
