@@ -43,21 +43,30 @@ def package_status_change_handler(package, is_created=None, old_package=None):
     service_email = None
 
     if package.status == PackageStatus.REGISTERED:
-        # if package sent by donor - email him right away
-        # if package funded by donor - email him on payment success
+        # if package is sent or dropped off by donor - email them right away;
+        # if package is funded by donor - email them on payment success;
+        # notify nonprofit right away is package was dropped of by donor;
         if package.type == PackageType.SENT_BY_DONOR:
             donor_email = PackageRegistrationEmail(package=package)
             service_email = PackageRegistationServiceEmail(package=package)
+        if package.type == PackageType.DROPPED_OFF_BY_DONOR:
+            donor_email = PackageRegistrationEmail(package=package)
+            service_email = PackageRegistationServiceEmail(package=package)
+            nonprofit_email = NonprofitHasNewDonationEmail(package)
     elif package.status == PackageStatus.PAYMENT_SUCCEEDED:
         if package.type == PackageType.FUNDED_BY_DONOR:
             # notify the donor about his payment and registered package
             donor_email = PackageRegistrationEmail(package=package)
             service_email = PackageRegistationServiceEmail(package=package)
     elif package.status in [PackageStatus.CONFIRMED, PackageStatus.ON_ITS_WAY]:
-        if not old_package.status in [
-            PackageStatus.CONFIRMED,
-            PackageStatus.ON_ITS_WAY,
-        ]:
+        if (
+            not old_package.status
+            in [
+                PackageStatus.CONFIRMED,
+                PackageStatus.ON_ITS_WAY,
+            ]
+            and not package.type == PackageType.DROPPED_OFF_BY_DONOR
+        ):
             nonprofit_email = NonprofitHasNewDonationEmail(package)
     elif package.status == PackageStatus.DELIVERED:
         # Generate receipt before sending an email in case we want to include the link there

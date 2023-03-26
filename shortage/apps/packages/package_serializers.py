@@ -104,26 +104,36 @@ class PackageCreationSerializer(serializers.ModelSerializer):
         read_only_fields = ["status"]
 
     def validate(self, attrs):
+        type = attrs.get("type")
         items = attrs.get("items")
 
-        organization = self.context["view"].organization
+        errors = {}
 
-        # check all products are unique
+        # Check tracking info is provided if needed
+        if type == PackageType.SENT_BY_DONOR or not type:
+            # require Delivery Company
+            if not attrs.get("delivery_company"):
+                errors["delivery_company"] = ["This field is required."]
+            # require Tracking Code
+            if not attrs.get("tracking_code"):
+                errors["tracking_code"] = ["This field is required."]
+
+        # Check all products are unique
         products_slug_set = set()
         for item in items:
             product = item["product"]
 
-            if product.organization != organization:
-                raise serializers.ValidationError(
-                    "Product organization does not match package organization"
-                )
-
             product_slug = product.slug
             if product_slug in products_slug_set:
-                raise serializers.ValidationError(
-                    "All items must be unique. Duplicated product: %s" % product_slug
+                errors["non_field_errors"] = (
+                    "All items must be unique. Duplicated product: %s" % product.name
                 )
+                break
             products_slug_set.add(product_slug)
+
+        # Raise validation errors if any
+        if len(errors):
+            raise serializers.ValidationError(errors)
 
         return super().validate(attrs)
 

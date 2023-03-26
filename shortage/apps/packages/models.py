@@ -44,6 +44,10 @@ class PackageStatus(models.TextChoices):
 
 
 class PackageType(models.TextChoices):
+    DROPPED_OFF_BY_DONOR = (
+        settings.PACKAGE_TYPE["DROPPED_OFF_BY_DONOR"],
+        "Dropped off by donor",
+    )
     SENT_BY_DONOR = settings.PACKAGE_TYPE["SENT_BY_DONOR"], "Sent by donor"
     FUNDED_BY_DONOR = settings.PACKAGE_TYPE["FUNDED_BY_DONOR"], "Funded by donor"
 
@@ -195,9 +199,17 @@ class Package(models.Model):
         Check if an organization admin can mark a package as Delivered
         """
 
+        if (
+            self.type == PackageType.DROPPED_OFF_BY_DONOR
+            and self.status != PackageStatus.DELIVERED
+        ):
+            # dropped off packages can be marked as delivered right after registration
+            return True
+
+        # sent/funded packages can be marked as delivered only after the Shortage staff confirmed them first
         return (
-            self.status == settings.PACKAGE_STATUS["CONFIRMED"]
-            or self.status == settings.PACKAGE_STATUS["ON_ITS_WAY"]
+            self.status == PackageStatus.CONFIRMED
+            or self.status == PackageStatus.ON_ITS_WAY
         )
 
     def payment_canceled(self):
