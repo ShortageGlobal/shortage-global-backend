@@ -44,6 +44,10 @@ class PackageStatus(models.TextChoices):
 
 
 class PackageType(models.TextChoices):
+    DROPPED_OFF_BY_DONOR = (
+        settings.PACKAGE_TYPE["DROPPED_OFF_BY_DONOR"],
+        "Dropped off by donor",
+    )
     SENT_BY_DONOR = settings.PACKAGE_TYPE["SENT_BY_DONOR"], "Sent by donor"
     FUNDED_BY_DONOR = settings.PACKAGE_TYPE["FUNDED_BY_DONOR"], "Funded by donor"
 
@@ -196,8 +200,12 @@ class Package(models.Model):
         """
 
         return (
-            self.status == settings.PACKAGE_STATUS["CONFIRMED"]
-            or self.status == settings.PACKAGE_STATUS["ON_ITS_WAY"]
+            self.status == PackageStatus.CONFIRMED
+            or self.status == PackageStatus.ON_ITS_WAY
+            or (
+                self.type == PackageType.DROPPED_OFF_BY_DONOR
+                and self.status != PackageStatus.DELIVERED
+            )
         )
 
     def payment_canceled(self):
