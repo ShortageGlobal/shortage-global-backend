@@ -1,5 +1,6 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+from corsheaders.signals import check_request_enabled
 from shortage.apps.catalog.models import Organization
 from shortage.apps.packages.models import CartItem
 from shortage.apps.mailing.mail_service import (
@@ -75,3 +76,10 @@ def organization_is_verified(sender, instance, **kwargs):
         email = OrganizationIsVerifiedEmail(instance)
         email.add_recipient(email=instance.owner.email, name=instance.owner.full_name)
         email.send()
+
+
+def cors_allow_api_for_integrations(sender, request, **kwargs):
+    return request.path.startswith("/api/available/")
+
+
+check_request_enabled.connect(cors_allow_api_for_integrations)

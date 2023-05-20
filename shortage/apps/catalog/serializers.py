@@ -69,7 +69,7 @@ class ProductPreviewSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
-class PromotedProductPreviewSerializer(ProductPreviewSerializer):
+class ProductPreviewWithOrganizationSerializer(ProductPreviewSerializer):
     organization = OrganizationPreviewSerializer(read_only=True)
 
     class Meta:

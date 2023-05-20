@@ -20,7 +20,7 @@ from .serializers import (
     OrganizationPreviewSerializer,
     ExternalOrganizationPreviewSerializer,
     InstructionSerializer,
-    PromotedProductPreviewSerializer,
+    ProductPreviewWithOrganizationSerializer,
     ProductPreviewSerializer,
     OrganizationBlogPostPreviewSerializer,
     OrganizationBlogPostSerializer,
@@ -54,7 +54,7 @@ class PromotedExternalOrganizationsViewSet(
 class PromotedProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """A list of promoted products"""
 
-    serializer_class = PromotedProductPreviewSerializer
+    serializer_class = ProductPreviewWithOrganizationSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["name"]
     ordering = ["position", "-created_at"]
@@ -259,3 +259,35 @@ class SitemapViewSet(viewsets.ViewSet):
         )
         serializer = OrganizationBlogPostSlugSerializer(queryset, many=True)
         return Response(serializer.data)
+
+
+class AvailableOrganizationsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """
+    A list of all available organizations.
+    Used by integrations like Shopify
+    """
+
+    queryset = Organization.objects.public().order_by("-created_at")
+    serializer_class = OrganizationPreviewSerializer
+
+
+class AvailableProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """
+    A list of all available products.
+    Used by integrations like Shopify
+    """
+
+    serializer_class = ProductPreviewWithOrganizationSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["name"]
+    ordering = ["position", "-created_at"]
+
+    def get_queryset(self):
+        queryset = Product.objects.active().prefetch_related("organization")
+
+        # filter by category
+        category = self.request.query_params.get("category")
+        if category:
+            queryset = queryset.filter(category=category)
+
+        return queryset
