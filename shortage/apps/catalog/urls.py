@@ -16,6 +16,8 @@ from .views import (
     OrganizationBlogPostsViewSet,
     OrganizationRegistrationRequestViewSet,
     SitemapViewSet,
+    AvailableOrganizationsViewSet,
+    AvailableProductsViewSet,
 )
 from .private.views import (
     PrivateProductsSlugExistsViewSet,
@@ -141,6 +143,16 @@ router.register(
     r"sitemap",
     SitemapViewSet,
     basename="sitemap",
+)
+
+# All available products and organizations
+router.register(
+    r"available/organizations",
+    AvailableOrganizationsViewSet,
+    basename="available_organizations",
+)
+router.register(
+    r"available/products", AvailableProductsViewSet, basename="available_products"
 )
 
 # Wire up our API using automatic URL routing.
