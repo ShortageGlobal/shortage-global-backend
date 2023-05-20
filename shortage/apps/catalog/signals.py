@@ -79,7 +79,11 @@ def organization_is_verified(sender, instance, **kwargs):
 
 
 def cors_allow_api_for_integrations(sender, request, **kwargs):
-    return request.path.startswith("/api/available/")
+    public_org_api = request.path.startswith("/api/organizations/")
+    public_available_api = request.path.startswith("/api/available/")
+    return public_org_api or public_available_api
 
 
-check_request_enabled.connect(cors_allow_api_for_integrations)
+check_request_enabled.connect(
+    cors_allow_api_for_integrations, dispatch_uid="cors_allow_api_for_integrations"
+)
