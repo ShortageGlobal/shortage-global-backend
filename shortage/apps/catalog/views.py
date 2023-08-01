@@ -164,7 +164,9 @@ class OrganizationBlogPostsViewSet(
             Organization.objects.public_or_owned(user=self.request.user),
             slug=self.kwargs["org_slug"],
         )
-        queryset = organization.blog_posts.public_or_owned(user=self.request.user)
+        queryset = organization.blog_posts.public_or_owned(
+            user=self.request.user
+        ).order_by("-updated_at")
         return queryset
 
     def perform_destroy(self, instance):

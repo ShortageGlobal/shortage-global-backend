@@ -54,15 +54,10 @@ docker-compose exec django python manage.py createsuperuser
 docker-compose exec django python manage.py shell
 ```
 
-### Run tests
-
-```
-docker-compose exec django coverage run --source='.' manage.py test
-```
 
 ## Testing
 
-### Rung tests
+### Run tests without coverage
 
 ```
 docker-compose exec django manage.py test
@@ -74,7 +69,7 @@ docker-compose exec django manage.py test
 docker-compose exec django coverage run --source='.' manage.py test
 ```
 
-You can then run to generate HTML report
+You can then run this command to generate HTML report:
 ```
 docker-compose exec django coverage html
 ```
