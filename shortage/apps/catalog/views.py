@@ -151,7 +151,6 @@ class OrganizationBlogPostsViewSet(
 ):
     """A list of blog posts that belong to the given organization"""
 
-    ordering = ["-created_at"]
     lookup_field = "slug"
 
     def get_serializer_class(self):
