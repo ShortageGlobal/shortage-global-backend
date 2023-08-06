@@ -284,7 +284,15 @@ class AvailableProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     ordering = ["position", "-created_at"]
 
     def get_queryset(self):
-        queryset = Product.objects.active().prefetch_related("organization")
+        queryset = (
+            Product.objects.active()
+            .filter(
+                organization_id__in=models.Subquery(
+                    Organization.objects.public().values("id")
+                )
+            )
+            .prefetch_related("organization")
+        )
 
         # filter by category
         category = self.request.query_params.get("category")

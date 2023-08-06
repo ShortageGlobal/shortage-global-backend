@@ -86,7 +86,10 @@ class PrivateProductWriteSerializer(serializers.ModelSerializer):
         DRF currently doesn't create validators for them automatically.
         See: https://github.com/encode/django-rest-framework/issues/7173
         """
-        another_product = Product.objects.filter(slug=value)
+        organization = self.context["view"].organization
+        another_product = Product.objects.filter(
+            slug=value, organization_id=organization.id
+        )
         if self.instance:
             # if we edit product, exclude current instance from queryset
             another_product = another_product.exclude(id=self.instance.id)
