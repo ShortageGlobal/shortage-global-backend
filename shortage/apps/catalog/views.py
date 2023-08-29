@@ -124,7 +124,7 @@ class InstructionsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
 class ProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    """A list of products that belong to the given organization"""
+    """A list of public products that belong to the given organization"""
 
     serializer_class = ProductPreviewSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
@@ -136,7 +136,7 @@ class ProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             Organization.objects.public_or_owned(user=self.request.user),
             slug=self.kwargs["org_slug"],
         )
-        queryset = Product.objects.active().filter(organization=organization)
+        queryset = Product.objects.public().filter(organization=organization)
 
         # filter by category
         category = self.request.query_params.get("category")
@@ -185,7 +185,7 @@ class CategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             slug=self.kwargs["org_slug"],
         )
         return (
-            Product.objects.active()
+            Product.objects.public()
             .filter(organization=organization)
             .distinct("category")
             .values_list("category", flat=True)
@@ -235,7 +235,7 @@ class SitemapViewSet(viewsets.ViewSet):
     def all_product_slugs(self, request, *args, **kwargs):
         """Get slugs of public products of public organizations"""
         queryset = (
-            Product.objects.active()
+            Product.objects.public()
             .filter(
                 organization_id__in=models.Subquery(
                     Organization.objects.public().values("id")

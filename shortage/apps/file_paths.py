@@ -13,6 +13,10 @@ def get_organization_path(instance, filename):
     return get_uuid_path(f"photo/organization/{str(instance.slug)}/", filename)
 
 
+def get_campaign_path(instance, filename):
+    return get_uuid_path(f"photo/campaign/{str(instance.slug)}/", filename)
+
+
 def get_external_organization_path(instance, filename):
     return get_uuid_path(f"photo/external_organizations/", filename)
 

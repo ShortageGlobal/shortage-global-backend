@@ -5,15 +5,7 @@ import django.db.models.deletion
 from shortage.apps.packages.models import Package
 
 
-def migrate_organization_from_package_item_to_package(apps, schema_editor):
-    for package in Package.objects.all():
-        organization = package.items.latest("created_at").product.organization
-        package.organization = organization
-        package.save()
-
-
 class Migration(migrations.Migration):
-
     dependencies = [
         ("catalog", "0006_alter_organization_logo"),
         ("packages", "0005_package_tax_deduction_receipt"),
@@ -30,10 +22,6 @@ class Migration(migrations.Migration):
                 related_name="packages",
                 to="catalog.organization",
             ),
-        ),
-        migrations.RunPython(
-            migrate_organization_from_package_item_to_package,
-            reverse_code=migrations.RunPython.noop,
         ),
         migrations.AlterField(
             model_name="package",

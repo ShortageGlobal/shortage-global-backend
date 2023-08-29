@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
@@ -12,6 +13,7 @@ from shortage.apps import storage
 from shortage.apps.blog.models import BlogPost, BlogPostManager
 from shortage.apps.file_paths import (
     get_organization_path,
+    get_campaign_path,
     get_external_organization_path,
     get_product_path,
 )
@@ -178,6 +180,56 @@ class Organization(models.Model):
         )
 
 
+class CampaignsManager(models.Manager):
+    def active(self):
+        """Return all available campaigns which have not been deleted"""
+        return self.get_queryset().filter(is_deleted=False)
+
+
+class Campaign(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    organization = models.ForeignKey(
+        Organization, related_name="campaigns", on_delete=models.CASCADE
+    )
+    name = models.CharField(max_length=150)
+    slug = models.SlugField(max_length=150, db_index=True)
+    banner = ThumbnailerImageField(
+        max_length=500,
+        upload_to=get_campaign_path,
+        null=True,
+        blank=True,
+        storage=storage.MediaStorage(),
+    )
+    requested_goods = models.CharField(max_length=200, null=True, blank=True)
+    mission_description = models.CharField(max_length=1000, null=True, blank=True)
+    meta_description = models.CharField(max_length=200, null=True, blank=True)
+
+    is_draft = models.BooleanField(default=True, db_index=True)
+    is_public = models.BooleanField(default=True, db_index=True)
+    is_deleted = models.BooleanField(default=False, db_index=True)
+    deadline = models.DateTimeField(null=True, blank=True)
+
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = CampaignsManager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["slug", "organization"],
+                name="unique_campaign_slug_organization",
+            )
+        ]
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def medium_banner_photo(self):
+        return get_thumbnail_for_image(self.banner, "campaign_banner_medium")
+
+
 class ExternalOrganization(models.Model):
     name = models.CharField(max_length=80)
     logo = ThumbnailerImageField(
@@ -229,15 +281,19 @@ class ProductsManager(models.Manager):
         Return high demand public products for all promoted organizations.
         In the future, use a "promoted' flag or something.
         """
-        return self.active().filter(
+        return self.public().filter(
             organization_id__in=models.Subquery(
                 Organization.objects.promoted().values("id")
             ),
             top_priority=True,
         )
 
+    def public(self):
+        """Return all public products which have not been deleted"""
+        return self.active().filter(is_public=True)
+
     def active(self):
-        """Return all available products which have not been deleted"""
+        """Return all products which have not been deleted"""
         return self.get_queryset().filter(is_deleted=False)
 
 
@@ -283,6 +339,7 @@ class Product(models.Model):
         blank=False,
         null=False,
     )
+    is_public = models.BooleanField(default=True, db_index=True)
     is_deleted = models.BooleanField(default=False, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -291,7 +348,7 @@ class Product(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["slug", "organization"], name="unique_slug_organization"
+                fields=["slug", "organization"], name="unique_product_slug_organization"
             )
         ]
 
@@ -366,6 +423,7 @@ class OrganizationBlogPost(BlogPost):
 
 
 auditlog.register(Organization)
+auditlog.register(Campaign)
 auditlog.register(Instruction)
 auditlog.register(Product)
 auditlog.register(OrganizationRegistrationRequest)

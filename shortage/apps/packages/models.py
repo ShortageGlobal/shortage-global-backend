@@ -16,7 +16,12 @@ from django_countries.fields import CountryField
 from easy_thumbnails.fields import ThumbnailerImageField
 from weasyprint import HTML
 from shortage.apps import storage
-from shortage.apps.catalog.models import Product, Organization, OrganizationBlogPost
+from shortage.apps.catalog.models import (
+    Product,
+    Organization,
+    Campaign,
+    OrganizationBlogPost,
+)
 from shortage.apps.file_paths import (
     get_package_path,
     get_corporate_donation_path,
@@ -54,7 +59,7 @@ class PackageType(models.TextChoices):
 
 class Package(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    # User can be empty because we allow anonymous donations
+    # Owner can be empty because we allow anonymous donations
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="packages",
@@ -64,6 +69,13 @@ class Package(models.Model):
     )
     organization = models.ForeignKey(
         Organization, related_name="packages", on_delete=models.CASCADE
+    )
+    campaign = models.ForeignKey(
+        Campaign,
+        related_name="packages",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     # donor details
@@ -339,6 +351,13 @@ class CartItem(models.Model):
     product = models.ForeignKey(
         Product, related_name="cart_items", on_delete=models.CASCADE
     )
+    campaign = models.ForeignKey(
+        Campaign,
+        related_name="cart_items",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
 
     updated_at = models.DateTimeField(auto_now=True)
@@ -347,7 +366,7 @@ class CartItem(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["cart", "product"], name="unique_cart_product"
+                fields=["cart", "product", "campaign"], name="unique_cart_product"
             )
         ]
 

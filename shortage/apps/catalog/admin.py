@@ -3,6 +3,7 @@ from django.contrib import admin
 from shortage.apps.blog.admin import BlogPostAdmin
 from .models import (
     Organization,
+    Campaign,
     ExternalOrganization,
     Product,
     Instruction,
@@ -105,6 +106,21 @@ class OrganizationAdmin(admin.ModelAdmin):
         return super().get_form(request, obj, **kwargs)
 
 
+class CampaignAdmin(admin.ModelAdmin):
+    list_display = [
+        "name",
+        "organization",
+        "is_public",
+        "is_draft",
+        "created_at",
+    ]
+    search_fields = ["name"]
+    readonly_fields = [
+        "created_at",
+        "updated_at",
+    ]
+
+
 class ExternalOrganizationAdmin(admin.ModelAdmin):
     list_display = [
         "name",
@@ -135,6 +151,7 @@ class ProductAdmin(admin.ModelAdmin):
         "category",
         "price",
         "top_priority",
+        "is_public",
     ]
     search_fields = ["name", "organization__name"]
     autocomplete_fields = ["organization"]
@@ -188,6 +205,7 @@ class OrganizationBlogPostAdmin(BlogPostAdmin):
 
 
 admin.site.register(Organization, OrganizationAdmin)
+admin.site.register(Campaign, CampaignAdmin)
 admin.site.register(ExternalOrganization, ExternalOrganizationAdmin)
 admin.site.register(Instruction, InstructionAdmin)
 admin.site.register(Product, ProductAdmin)
