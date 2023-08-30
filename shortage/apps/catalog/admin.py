@@ -4,6 +4,7 @@ from shortage.apps.blog.admin import BlogPostAdmin
 from .models import (
     Organization,
     Campaign,
+    CampaignProduct,
     ExternalOrganization,
     Product,
     Instruction,
@@ -106,6 +107,10 @@ class OrganizationAdmin(admin.ModelAdmin):
         return super().get_form(request, obj, **kwargs)
 
 
+class CampaignProductAdmin(admin.TabularInline):
+    model = CampaignProduct
+
+
 class CampaignAdmin(admin.ModelAdmin):
     list_display = [
         "name",
@@ -115,6 +120,7 @@ class CampaignAdmin(admin.ModelAdmin):
         "created_at",
     ]
     search_fields = ["name"]
+    inlines = (CampaignProductAdmin,)
     readonly_fields = [
         "created_at",
         "updated_at",
@@ -160,6 +166,7 @@ class ProductAdmin(admin.ModelAdmin):
         "top_priority",
         "category",
         "created_at",
+        "is_public",
         "is_deleted",
     ]
 

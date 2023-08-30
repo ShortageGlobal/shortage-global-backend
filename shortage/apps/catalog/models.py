@@ -180,56 +180,6 @@ class Organization(models.Model):
         )
 
 
-class CampaignsManager(models.Manager):
-    def active(self):
-        """Return all available campaigns which have not been deleted"""
-        return self.get_queryset().filter(is_deleted=False)
-
-
-class Campaign(models.Model):
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    organization = models.ForeignKey(
-        Organization, related_name="campaigns", on_delete=models.CASCADE
-    )
-    name = models.CharField(max_length=150)
-    slug = models.SlugField(max_length=150, db_index=True)
-    banner = ThumbnailerImageField(
-        max_length=500,
-        upload_to=get_campaign_path,
-        null=True,
-        blank=True,
-        storage=storage.MediaStorage(),
-    )
-    requested_goods = models.CharField(max_length=200, null=True, blank=True)
-    mission_description = models.CharField(max_length=1000, null=True, blank=True)
-    meta_description = models.CharField(max_length=200, null=True, blank=True)
-
-    is_draft = models.BooleanField(default=True, db_index=True)
-    is_public = models.BooleanField(default=True, db_index=True)
-    is_deleted = models.BooleanField(default=False, db_index=True)
-    deadline = models.DateTimeField(null=True, blank=True)
-
-    updated_at = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    objects = CampaignsManager()
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["slug", "organization"],
-                name="unique_campaign_slug_organization",
-            )
-        ]
-
-    def __str__(self):
-        return self.name
-
-    @property
-    def medium_banner_photo(self):
-        return get_thumbnail_for_image(self.banner, "campaign_banner_medium")
-
-
 class ExternalOrganization(models.Model):
     name = models.CharField(max_length=80)
     logo = ThumbnailerImageField(
@@ -369,6 +319,89 @@ class Product(models.Model):
     @property
     def medium_photo(self):
         return get_thumbnail_for_image(self.photo, "product_medium")
+
+
+class CampaignsManager(models.Manager):
+    def active(self):
+        """Return all available campaigns which have not been deleted"""
+        return self.get_queryset().filter(is_deleted=False)
+
+
+class Campaign(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    organization = models.ForeignKey(
+        Organization, related_name="campaigns", on_delete=models.CASCADE
+    )
+    name = models.CharField(max_length=150)
+    slug = models.SlugField(max_length=150, db_index=True)
+    banner = ThumbnailerImageField(
+        max_length=500,
+        upload_to=get_campaign_path,
+        null=True,
+        blank=True,
+        storage=storage.MediaStorage(),
+    )
+    requested_goods = models.CharField(max_length=200, null=True, blank=True)
+    mission_description = models.CharField(max_length=1000, null=True, blank=True)
+    meta_description = models.CharField(max_length=200, null=True, blank=True)
+
+    is_draft = models.BooleanField(default=True, db_index=True)
+    is_public = models.BooleanField(default=True, db_index=True)
+    is_deleted = models.BooleanField(default=False, db_index=True)
+    deadline = models.DateTimeField(null=True, blank=True)
+
+    # related products
+    products = models.ManyToManyField(
+        Product,
+        through="CampaignProduct",
+        through_fields=("campaign", "product"),
+    )
+
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = CampaignsManager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["slug", "organization"],
+                name="unique_campaign_slug_organization",
+            )
+        ]
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def medium_banner_photo(self):
+        return get_thumbnail_for_image(self.banner, "campaign_banner_medium")
+
+
+class CampaignProduct(models.Model):
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["campaign", "product"],
+                name="unique_campaign_product",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.campaign.name} - {self.product.name}"
+
+    def clean(self):
+        """Validate Campaign <-> Product relationship. Note, this method is called in django admin only"""
+
+        # make sure campaign doesn't get products from other organizations
+        if self.campaign.organization != self.product.organization:
+            raise ValidationError(
+                {"product": _("This product belongs to another organization")}
+            )
 
 
 class OrganizationRegistrationRequest(models.Model):

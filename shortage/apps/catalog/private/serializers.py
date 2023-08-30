@@ -75,6 +75,7 @@ class PrivateProductWriteSerializer(serializers.ModelSerializer):
             "requested_amount",
             "description",
             "top_priority",
+            "is_public",
             "position",
             "created_at",
         ]
