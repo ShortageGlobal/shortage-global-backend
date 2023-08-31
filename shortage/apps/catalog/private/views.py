@@ -27,6 +27,8 @@ from shortage.apps.catalog.private.serializers import (
     PrivateProductReadSerializer,
     PrivateProductWriteSerializer,
     PrivateInstructionSerializer,
+    PrivateCampaignReadSerializer,
+    PrivateCampaignWriteSerializer,
     PrivateOrganizationBlogPostReadSerializer,
     PrivateOrganizationBlogPostWriteSerializer,
 )
@@ -256,6 +258,48 @@ class PrivateInstructionsViewSet(viewsets.ModelViewSet):
         )
 
         return super().create(request, *args, **kwargs)
+
+
+class PrivateCampaignsViewSet(viewsets.ModelViewSet):
+    """List/retrieve/create/update campaigns belonging to the organization"""
+
+    schema = AutoSchema(
+        tags=["Private", "Campaign"],
+    )
+
+    permission_classes = [permissions.IsAuthenticated, IsObjectOwner]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["name"]
+    ordering = ["-created_at"]
+
+    def __init__(self, **kwargs):
+        self.organization = None
+        super().__init__(**kwargs)
+
+    def get_serializer_class(self):
+        if self.action in ["create", "update", "partial_update"]:
+            return PrivateCampaignWriteSerializer
+        return PrivateCampaignReadSerializer
+
+    def get_queryset(self):
+        self.organization = get_object_or_404(
+            Organization.objects.active(), slug=self.kwargs["org_slug"]
+        )
+        queryset = self.organization.campaigns.active()
+
+        return queryset
+
+    def create(self, request, *args, **kwargs):
+        self.organization = get_object_or_404(
+            Organization.objects.active(), slug=self.kwargs["org_slug"]
+        )
+
+        return super().create(request, *args, **kwargs)
+
+    def perform_destroy(self, instance):
+        # Do a soft delete
+        instance.is_deleted = True
+        instance.save()
 
 
 class PrivateOrganizationBlogPostsViewSet(viewsets.ModelViewSet):

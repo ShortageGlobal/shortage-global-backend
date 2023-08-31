@@ -4,6 +4,7 @@ from .models import (
     Organization,
     Instruction,
     Product,
+    Campaign,
     OrganizationRegistrationRequest,
     OrganizationBlogPost,
 )
@@ -171,6 +172,37 @@ class OrganizationRegistrationRequestSerializer(serializers.ModelSerializer):
         # ignore this field after validation
         validated_data.pop("agreed_to_terms_of_use")
         return super().create(validated_data)
+
+
+class CampaignPreviewSerializer(serializers.ModelSerializer):
+    organization = OrganizationPreviewSerializer(read_only=True)
+    banner = serializers.ImageField(source="banner_photo_preview", read_only=True)
+
+    class Meta:
+        model = Campaign
+        fields = [
+            "organization",
+            "uuid",
+            "name",
+            "slug",
+            "banner",
+            "created_at",
+            "updated_at",
+            "is_draft",
+        ]
+
+
+class CampaignSerializer(CampaignPreviewSerializer):
+    banner = serializers.ImageField(source="banner_photo", read_only=True)
+
+    class Meta:
+        model = Campaign
+        fields = CampaignPreviewSerializer.Meta.fields + [
+            "requested_goods",
+            "mission_description",
+            "meta_description",
+            "deadline",
+        ]
 
 
 class OrganizationBlogPostPreviewSerializer(BlogPostPreviewSerializer):

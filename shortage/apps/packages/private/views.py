@@ -163,7 +163,7 @@ class PrivatePackageBlogPostsViewSet(mixins.ListModelMixin, viewsets.GenericView
 
     def get_queryset(self):
         return (
-            OrganizationBlogPost.objects.public()
+            OrganizationBlogPost.objects.published()
             .filter(
                 packageblogpost__package__in=Package.objects.filter(
                     owner=self.request.user

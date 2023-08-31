@@ -91,7 +91,7 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     def blog_posts(self, request, *args, **kwargs):
         """Get blog posts for the package"""
         package = self.get_object()
-        queryset = package.blog_posts.public().order_by("-created_at")
+        queryset = package.blog_posts.published().order_by("-created_at")
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -110,7 +110,7 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         # check organization and store it into view,
         # so serializer could use it for validation
         self.organization = generics.get_object_or_404(
-            Organization.objects.public_or_owned(user=self.request.user),
+            Organization.objects.published_or_owned(user=self.request.user),
             slug=self.kwargs["org_slug"],
         )
 

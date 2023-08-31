@@ -117,6 +117,7 @@ class CampaignAdmin(admin.ModelAdmin):
         "organization",
         "is_public",
         "is_draft",
+        "is_deleted",
         "created_at",
     ]
     search_fields = ["name"]
@@ -158,6 +159,7 @@ class ProductAdmin(admin.ModelAdmin):
         "price",
         "top_priority",
         "is_public",
+        "is_deleted",
     ]
     search_fields = ["name", "organization__name"]
     autocomplete_fields = ["organization"]

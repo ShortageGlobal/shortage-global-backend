@@ -13,6 +13,7 @@ from .views import (
     CategoriesViewSet,
     ProductsViewSet,
     ProductViewSet,
+    CampaignsViewSet,
     OrganizationBlogPostsViewSet,
     OrganizationRegistrationRequestViewSet,
     SitemapViewSet,
@@ -22,6 +23,7 @@ from .views import (
 from .private.views import (
     PrivateProductsSlugExistsViewSet,
     PrivateProductsViewSet,
+    PrivateCampaignsViewSet,
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
     PrivateInstructionsViewSet,
@@ -105,6 +107,18 @@ router.register(
     r"private/exists/organizations/(?P<org_slug>[^/.]+)/products",
     PrivateProductsSlugExistsViewSet,
     basename="private_exists_products",
+)
+
+# Campaigns
+router.register(
+    r"organizations/(?P<org_slug>[^/.]+)/campaigns",
+    CampaignsViewSet,
+    basename="campaigns",
+)
+router.register(
+    r"private/organizations/(?P<org_slug>[^/.]+)/campaigns",
+    PrivateCampaignsViewSet,
+    basename="private_campaigns",
 )
 
 # Blog posts

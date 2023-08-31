@@ -26,16 +26,16 @@ class OrganizationManager(models.Manager):
         """Return all available organizations which have not been deleted"""
         return self.get_queryset().filter(is_deleted=False)
 
-    def public(self):
-        """Return all publicly available organizations"""
+    def published(self):
+        """Return all published organizations"""
         return self.active().filter(is_draft=False, is_verified=True)
 
-    def public_or_owned(self, user=None):
-        """Return either public organization or owned by the current user"""
+    def published_or_owned(self, user=None):
+        """Return either published organization or owned by the current user"""
         user = user if user.is_authenticated else None
-        public = self.public()
+        published = self.published()
         owned = self.active().filter(owner=user)
-        return public | owned
+        return published | owned
 
     def editable(self):
         """Return all organizations eligible for editing"""
@@ -43,7 +43,7 @@ class OrganizationManager(models.Manager):
 
     def promoted(self):
         """Return handpicked list of organizations to show on the main page"""
-        return self.public().filter(promote=True)
+        return self.published().filter(promote=True)
 
 
 def validate_organization_slug_blacklist(value):
@@ -228,7 +228,7 @@ class Instruction(models.Model):
 class ProductsManager(models.Manager):
     def promoted(self):
         """
-        Return high demand public products for all promoted organizations.
+        Return high demand published products for all promoted organizations.
         In the future, use a "promoted' flag or something.
         """
         return self.public().filter(
@@ -323,8 +323,19 @@ class Product(models.Model):
 
 class CampaignsManager(models.Manager):
     def active(self):
-        """Return all available campaigns which have not been deleted"""
+        """Return all campaigns which have not been deleted"""
         return self.get_queryset().filter(is_deleted=False)
+
+    def published(self):
+        """Return all published campaigns"""
+        return self.active().filter(is_draft=False)
+
+    def published_or_owned(self, user=None):
+        """Return either published campaign or owned by the current user"""
+        user = user if user.is_authenticated else None
+        published = self.published()
+        owned = self.active().filter(owner=user)
+        return published | owned
 
 
 class Campaign(models.Model):
@@ -374,8 +385,12 @@ class Campaign(models.Model):
         return self.name
 
     @property
-    def medium_banner_photo(self):
-        return get_thumbnail_for_image(self.banner, "campaign_banner_medium")
+    def banner_photo(self):
+        return get_thumbnail_for_image(self.banner, "campaign_banner")
+
+    @property
+    def banner_photo_preview(self):
+        return get_thumbnail_for_image(self.banner, "campaign_banner_preview")
 
 
 class CampaignProduct(models.Model):
@@ -435,7 +450,7 @@ class OrganizationBlogPostManager(BlogPostManager):
         """
         Return handpicked list of organization blog posts to show on the main page
         """
-        return self.public().filter(promote=True)
+        return self.published().filter(promote=True)
 
 
 class OrganizationBlogPost(BlogPost):

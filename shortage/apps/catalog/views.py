@@ -22,6 +22,8 @@ from .serializers import (
     InstructionSerializer,
     ProductPreviewWithOrganizationSerializer,
     ProductPreviewSerializer,
+    CampaignPreviewSerializer,
+    CampaignSerializer,
     OrganizationBlogPostPreviewSerializer,
     OrganizationBlogPostSerializer,
     OrganizationBlogPostSlugSerializer,
@@ -106,7 +108,7 @@ class OrganizationViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     lookup_field = "slug"
 
     def get_queryset(self):
-        return Organization.objects.public_or_owned(user=self.request.user)
+        return Organization.objects.published_or_owned(user=self.request.user)
 
 
 class InstructionsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -117,7 +119,7 @@ class InstructionsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     def get_queryset(self):
         organization = generics.get_object_or_404(
-            Organization.objects.public_or_owned(user=self.request.user),
+            Organization.objects.published_or_owned(user=self.request.user),
             slug=self.kwargs["org_slug"],
         )
         return Instruction.objects.filter(organization=organization)
@@ -133,7 +135,7 @@ class ProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     def get_queryset(self):
         organization = generics.get_object_or_404(
-            Organization.objects.public_or_owned(user=self.request.user),
+            Organization.objects.published_or_owned(user=self.request.user),
             slug=self.kwargs["org_slug"],
         )
         queryset = Product.objects.public().filter(organization=organization)
@@ -143,6 +145,29 @@ class ProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         if category:
             queryset = queryset.filter(category=category)
 
+        return queryset
+
+
+class CampaignsViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
+    """A list of campaigns that belong to the given organization"""
+
+    lookup_field = "slug"
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return CampaignPreviewSerializer
+        return CampaignSerializer
+
+    def get_queryset(self):
+        organization = generics.get_object_or_404(
+            Organization.objects.published_or_owned(user=self.request.user),
+            slug=self.kwargs["org_slug"],
+        )
+        queryset = organization.campaigns.published_or_owned(
+            user=self.request.user
+        ).order_by("-updated_at")
         return queryset
 
 
@@ -160,10 +185,10 @@ class OrganizationBlogPostsViewSet(
 
     def get_queryset(self):
         organization = generics.get_object_or_404(
-            Organization.objects.public_or_owned(user=self.request.user),
+            Organization.objects.published_or_owned(user=self.request.user),
             slug=self.kwargs["org_slug"],
         )
-        queryset = organization.blog_posts.public_or_owned(
+        queryset = organization.blog_posts.published_or_owned(
             user=self.request.user
         ).order_by("-updated_at")
         return queryset
@@ -181,7 +206,7 @@ class CategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     def get_queryset(self):
         organization = generics.get_object_or_404(
-            Organization.objects.public_or_owned(user=self.request.user),
+            Organization.objects.published_or_owned(user=self.request.user),
             slug=self.kwargs["org_slug"],
         )
         return (
@@ -200,7 +225,7 @@ class ProductViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
     def get_queryset(self):
         organization = generics.get_object_or_404(
-            Organization.objects.public_or_owned(user=self.request.user),
+            Organization.objects.published_or_owned(user=self.request.user),
             slug=self.kwargs["org_slug"],
         )
         return Product.objects.filter(organization=organization)
@@ -226,19 +251,19 @@ class SitemapViewSet(viewsets.ViewSet):
 
     @action(detail=False)
     def all_organization_slugs(self, request, *args, **kwargs):
-        """Get slugs of public organizations"""
-        queryset = Organization.objects.public()
+        """Get slugs of published organizations"""
+        queryset = Organization.objects.published()
         serializer = OrganizationSlugSerializer(queryset, many=True)
         return Response(serializer.data)
 
     @action(detail=False)
     def all_product_slugs(self, request, *args, **kwargs):
-        """Get slugs of public products of public organizations"""
+        """Get slugs of public products of published organizations"""
         queryset = (
             Product.objects.public()
             .filter(
                 organization_id__in=models.Subquery(
-                    Organization.objects.public().values("id")
+                    Organization.objects.published().values("id")
                 )
             )
             .prefetch_related("organization")
@@ -248,12 +273,12 @@ class SitemapViewSet(viewsets.ViewSet):
 
     @action(detail=False)
     def all_blog_post_slugs(self, request, *args, **kwargs):
-        """Get slugs of public blog posts of public organizations"""
+        """Get slugs of published blog posts of published organizations"""
         queryset = (
-            OrganizationBlogPost.objects.public()
+            OrganizationBlogPost.objects.published()
             .filter(
                 organization_id__in=models.Subquery(
-                    Organization.objects.public().values("id")
+                    Organization.objects.published().values("id")
                 )
             )
             .prefetch_related("organization")
@@ -268,7 +293,7 @@ class AvailableOrganizationsViewSet(mixins.ListModelMixin, viewsets.GenericViewS
     Used by integrations like Shopify
     """
 
-    queryset = Organization.objects.public().order_by("-created_at")
+    queryset = Organization.objects.published().order_by("-created_at")
     serializer_class = OrganizationPreviewSerializer
 
 
@@ -288,7 +313,7 @@ class AvailableProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             Product.objects.active()
             .filter(
                 organization_id__in=models.Subquery(
-                    Organization.objects.public().values("id")
+                    Organization.objects.published().values("id")
                 )
             )
             .prefetch_related("organization")

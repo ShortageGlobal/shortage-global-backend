@@ -13,16 +13,16 @@ class BlogPostManager(models.Manager):
         """Return blog posts which have not been deleted"""
         return self.get_queryset().filter(is_deleted=False)
 
-    def public(self):
-        """Return publicly available blog posts"""
+    def published(self):
+        """Return published blog posts"""
         return self.active().filter(is_draft=False)
 
-    def public_or_owned(self, user=None):
-        """Return either public blog posts or authored by the current user"""
+    def published_or_owned(self, user=None):
+        """Return either published blog posts or authored by the current user"""
         user = user if user.is_authenticated else None
-        public = self.public()
+        published = self.published()
         owned = self.active().filter(author=user)
-        return public | owned
+        return published | owned
 
 
 class BlogPost(models.Model):

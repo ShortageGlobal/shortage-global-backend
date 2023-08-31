@@ -14,7 +14,7 @@ from .models import Organization, OrganizationRegistrationRequest
 @receiver(post_save, sender=Organization, dispatch_uid="remove_cart_items")
 def remove_cart_items(sender, instance, **kwargs):
     """
-    Remove all CartItems of the organization if it became non-public/deleted
+    Remove all CartItems of the organization if it became draft/deleted
     """
     if not instance.is_verified or instance.is_deleted:
         CartItem.objects.filter(product__organization=instance).delete()
@@ -79,9 +79,9 @@ def organization_is_verified(sender, instance, **kwargs):
 
 
 def cors_allow_api_for_integrations(sender, request, **kwargs):
-    public_org_api = request.path.startswith("/api/organizations/")
-    public_available_api = request.path.startswith("/api/available/")
-    return public_org_api or public_available_api
+    published_org_api = request.path.startswith("/api/organizations/")
+    published_available_api = request.path.startswith("/api/available/")
+    return published_org_api or published_available_api
 
 
 check_request_enabled.connect(
