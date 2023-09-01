@@ -94,6 +94,7 @@ class PrivateProductsAPITestCase(ShortageAPITestCase):
                     "requested_amount": 20,
                     "description": None,
                     "top_priority": False,
+                    "is_public": True,
                     "position": 1,
                     "created_at": product1.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
                 },
@@ -126,6 +127,7 @@ class PrivateProductsAPITestCase(ShortageAPITestCase):
                     "requested_amount": 20,
                     "description": None,
                     "top_priority": False,
+                    "is_public": True,
                     "position": 1,
                     "created_at": product2.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
                 },
@@ -139,6 +141,7 @@ class PrivateProductsAPITestCase(ShortageAPITestCase):
                     "requested_amount": 20,
                     "description": None,
                     "top_priority": False,
+                    "is_public": True,
                     "position": 1,
                     "created_at": product1.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
                 },
@@ -167,6 +170,7 @@ class PrivateProductsAPITestCase(ShortageAPITestCase):
             "requested_amount": 20,
             "description": None,
             "top_priority": False,
+            "is_public": True,
             "position": 1,
             "created_at": product.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
         }
@@ -223,6 +227,7 @@ class PrivateProductsAPITestCase(ShortageAPITestCase):
             "requested_amount": product.requested_amount,
             "description": product.description,
             "top_priority": product.top_priority,
+            "is_public": True,
             "position": product.position,
             "created_at": product.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
         }
@@ -252,6 +257,7 @@ class PrivateProductsAPITestCase(ShortageAPITestCase):
             "requested_amount": product.requested_amount,
             "description": product.description,
             "top_priority": product.top_priority,
+            "is_public": True,
             "position": product.position,
             "created_at": product.created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
         }
