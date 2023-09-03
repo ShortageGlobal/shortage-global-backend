@@ -392,6 +392,10 @@ class Campaign(models.Model):
     def banner_photo_preview(self):
         return get_thumbnail_for_image(self.banner, "campaign_banner_preview")
 
+    @property
+    def products_count(self):
+        return self.products.active().count()
+
 
 class CampaignProduct(models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)

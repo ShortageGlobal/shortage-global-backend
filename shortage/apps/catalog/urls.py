@@ -24,6 +24,7 @@ from .private.views import (
     PrivateProductsSlugExistsViewSet,
     PrivateProductsViewSet,
     PrivateCampaignsViewSet,
+    PrivateCampaignProductsViewSet,
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
     PrivateInstructionsViewSet,
@@ -119,6 +120,11 @@ router.register(
     r"private/organizations/(?P<org_slug>[^/.]+)/campaigns",
     PrivateCampaignsViewSet,
     basename="private_campaigns",
+)
+router.register(
+    r"private/organizations/(?P<org_slug>[^/.]+)/campaigns/(?P<campaign_uuid>[^/.]+)/products",
+    PrivateCampaignProductsViewSet,
+    basename="private_campaign_products",
 )
 
 # Blog posts

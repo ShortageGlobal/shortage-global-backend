@@ -184,7 +184,15 @@ class PrivateCampaignReadSerializer(PrivateCampaignWriteSerializer):
     banner = serializers.ImageField(source="banner_photo", required=False)
 
     class Meta(PrivateCampaignWriteSerializer.Meta):
-        fields = PrivateCampaignWriteSerializer.Meta.fields
+        fields = PrivateCampaignWriteSerializer.Meta.fields + ["products_count"]
+        read_only_fields = fields
+
+
+class PrivateCampaignProductSerializer(PrivateProductReadSerializer):
+    is_included_in_campaign = serializers.BooleanField(required=False)
+
+    class Meta(PrivateProductWriteSerializer.Meta):
+        fields = PrivateProductReadSerializer.Meta.fields + ["is_included_in_campaign"]
         read_only_fields = fields
 
 
