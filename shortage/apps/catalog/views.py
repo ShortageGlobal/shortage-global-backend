@@ -148,27 +148,39 @@ class ProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         return queryset
 
 
-class CampaignsViewSet(
-    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
-):
+class CampaignsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """A list of campaigns that belong to the given organization"""
 
-    lookup_field = "slug"
-
-    def get_serializer_class(self):
-        if self.action == "list":
-            return CampaignPreviewSerializer
-        return CampaignSerializer
+    serializer_class = CampaignPreviewSerializer
 
     def get_queryset(self):
         organization = generics.get_object_or_404(
             Organization.objects.published_or_owned(user=self.request.user),
             slug=self.kwargs["org_slug"],
         )
-        queryset = organization.campaigns.published_or_owned(
-            user=self.request.user
-        ).order_by("-updated_at")
-        return queryset
+        # show only public campaigns on the organization's page
+        return (
+            organization.campaigns.published_or_owned(user=self.request.user)
+            .filter(is_public=True)
+            .order_by("-created_at")
+        )
+
+
+class CampaignViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """Get campaign by slug, uuid, and organization slug"""
+
+    serializer_class = CampaignSerializer
+
+    def get_queryset(self):
+        organization = generics.get_object_or_404(
+            Organization.objects.published_or_owned(user=self.request.user),
+            slug=self.kwargs["org_slug"],
+        )
+        # make sure we check by slug and uuid (lookup_field),
+        # so private campaigns remain private
+        return organization.campaigns.published_or_owned(user=self.request.user).filter(
+            slug=self.kwargs["campaign_slug"]
+        )
 
 
 class OrganizationBlogPostsViewSet(

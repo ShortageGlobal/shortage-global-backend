@@ -14,6 +14,7 @@ from .views import (
     ProductsViewSet,
     ProductViewSet,
     CampaignsViewSet,
+    CampaignViewSet,
     OrganizationBlogPostsViewSet,
     OrganizationRegistrationRequestViewSet,
     SitemapViewSet,
@@ -115,6 +116,11 @@ router.register(
     r"organizations/(?P<org_slug>[^/.]+)/campaigns",
     CampaignsViewSet,
     basename="campaigns",
+)
+router.register(
+    r"organizations/(?P<org_slug>[^/.]+)/campaigns/(?P<campaign_slug>[^/.]+)",
+    CampaignViewSet,
+    basename="campaign",
 )
 router.register(
     r"private/organizations/(?P<org_slug>[^/.]+)/campaigns",

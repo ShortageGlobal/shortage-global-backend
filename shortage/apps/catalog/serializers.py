@@ -175,19 +175,18 @@ class OrganizationRegistrationRequestSerializer(serializers.ModelSerializer):
 
 
 class CampaignPreviewSerializer(serializers.ModelSerializer):
-    organization = OrganizationPreviewSerializer(read_only=True)
     banner = serializers.ImageField(source="banner_photo_preview", read_only=True)
 
     class Meta:
         model = Campaign
         fields = [
-            "organization",
             "uuid",
             "name",
             "slug",
             "banner",
             "created_at",
             "updated_at",
+            "products_count",
             "is_draft",
         ]
 

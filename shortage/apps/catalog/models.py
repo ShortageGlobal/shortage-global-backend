@@ -331,10 +331,10 @@ class CampaignsManager(models.Manager):
         return self.active().filter(is_draft=False)
 
     def published_or_owned(self, user=None):
-        """Return either published campaign or owned by the current user"""
+        """Return either published campaigns or owned by the current user"""
         user = user if user.is_authenticated else None
         published = self.published()
-        owned = self.active().filter(owner=user)
+        owned = self.active().filter(organization__owner=user)
         return published | owned
 
 
