@@ -183,6 +183,79 @@ class CampaignViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         )
 
 
+class CampaignCategoriesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """A list of categories of the given organization campaign's products"""
+
+    serializer_class = CategorySerializer
+    paginator = None
+
+    def get_queryset(self):
+        organization = generics.get_object_or_404(
+            Organization.objects.published_or_owned(user=self.request.user),
+            slug=self.kwargs["org_slug"],
+        )
+        campaign = generics.get_object_or_404(
+            organization.campaigns.published_or_owned(user=self.request.user),
+            organization__slug=self.kwargs["org_slug"],
+            slug=self.kwargs["campaign_slug"],
+            pk=self.kwargs["campaign_uuid"],
+        )
+        return (
+            campaign.products.active()
+            .distinct("category")
+            .values_list("category", flat=True)
+        )
+
+
+class CampaignProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """A list of campaign products that belong to the given organization"""
+
+    serializer_class = ProductPreviewSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["name"]
+    ordering = ["-top_priority", "position", "-created_at"]
+
+    def get_queryset(self):
+        organization = generics.get_object_or_404(
+            Organization.objects.published_or_owned(user=self.request.user),
+            slug=self.kwargs["org_slug"],
+        )
+        campaign = generics.get_object_or_404(
+            organization.campaigns.published_or_owned(user=self.request.user),
+            organization__slug=self.kwargs["org_slug"],
+            slug=self.kwargs["campaign_slug"],
+            pk=self.kwargs["campaign_uuid"],
+        )
+        queryset = campaign.products.active()
+
+        # filter by category
+        category = self.request.query_params.get("category")
+        if category:
+            queryset = queryset.filter(category=category)
+
+        return queryset
+
+
+class CampaignProductViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """Product details for the given slug and the given organization and campaign"""
+
+    serializer_class = ProductSerializer
+    lookup_field = "slug"
+
+    def get_queryset(self):
+        organization = generics.get_object_or_404(
+            Organization.objects.published_or_owned(user=self.request.user),
+            slug=self.kwargs["org_slug"],
+        )
+        campaign = generics.get_object_or_404(
+            organization.campaigns.published_or_owned(user=self.request.user),
+            organization__slug=self.kwargs["org_slug"],
+            slug=self.kwargs["campaign_slug"],
+            pk=self.kwargs["campaign_uuid"],
+        )
+        return campaign.products.active()
+
+
 class OrganizationBlogPostsViewSet(
     mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
 ):

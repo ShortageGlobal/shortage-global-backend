@@ -15,6 +15,9 @@ from .views import (
     ProductViewSet,
     CampaignsViewSet,
     CampaignViewSet,
+    CampaignCategoriesViewSet,
+    CampaignProductsViewSet,
+    CampaignProductViewSet,
     OrganizationBlogPostsViewSet,
     OrganizationRegistrationRequestViewSet,
     SitemapViewSet,
@@ -121,6 +124,21 @@ router.register(
     r"organizations/(?P<org_slug>[^/.]+)/campaigns/(?P<campaign_slug>[^/.]+)",
     CampaignViewSet,
     basename="campaign",
+)
+router.register(
+    r"organizations/(?P<org_slug>[^/.]+)/campaigns/(?P<campaign_slug>[^/.]+)/(?P<campaign_uuid>[^/.]+)/categories",
+    CampaignCategoriesViewSet,
+    basename="campaign-categories",
+)
+router.register(
+    r"organizations/(?P<org_slug>[^/.]+)/campaigns/(?P<campaign_slug>[^/.]+)/(?P<campaign_uuid>[^/.]+)/products",
+    CampaignProductsViewSet,
+    basename="campaign-products",
+)
+router.register(
+    r"organizations/(?P<org_slug>[^/.]+)/campaigns/(?P<campaign_slug>[^/.]+)/(?P<campaign_uuid>[^/.]+)/products",
+    CampaignProductViewSet,
+    basename="campaign-product",
 )
 router.register(
     r"private/organizations/(?P<org_slug>[^/.]+)/campaigns",
