@@ -243,17 +243,17 @@ class CampaignProductViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet)
     lookup_field = "slug"
 
     def get_queryset(self):
-        organization = generics.get_object_or_404(
+        self.organization = generics.get_object_or_404(
             Organization.objects.published_or_owned(user=self.request.user),
             slug=self.kwargs["org_slug"],
         )
-        campaign = generics.get_object_or_404(
-            organization.campaigns.published_or_owned(user=self.request.user),
+        self.campaign = generics.get_object_or_404(
+            self.organization.campaigns.published_or_owned(user=self.request.user),
             organization__slug=self.kwargs["org_slug"],
             slug=self.kwargs["campaign_slug"],
             pk=self.kwargs["campaign_uuid"],
         )
-        return campaign.products.active()
+        return self.campaign.products.active()
 
 
 class OrganizationBlogPostsViewSet(
