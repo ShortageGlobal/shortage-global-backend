@@ -136,7 +136,10 @@ class CartViewSet(
         queryset = Cart.objects.all()
         if self.action == "retrieve":
             return queryset.prefetch_related(
-                "items", "items__product", "items__product__organization"
+                "items",
+                "items__product",
+                "items__product__organization",
+                "items__campaign",
             ).order_by("-created_at")
         return queryset
 
