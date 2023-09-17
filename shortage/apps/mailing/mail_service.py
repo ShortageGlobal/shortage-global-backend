@@ -398,6 +398,12 @@ class OrganizationVerificationRequestServiceEmail(MailingBackend):
             self.organization.pk,
         )
         context[
+            "campaigns_admin_url"
+        ] = "%s/catalog/campaign/?organization__id__exact=%s" % (
+            self.admin_base_url,
+            self.organization.pk,
+        )
+        context[
             "instructions_admin_url"
         ] = "%s/catalog/instruction/?organization__id__exact=%s" % (
             self.admin_base_url,

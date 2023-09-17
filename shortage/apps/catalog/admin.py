@@ -120,7 +120,14 @@ class CampaignAdmin(admin.ModelAdmin):
         "is_deleted",
         "created_at",
     ]
-    search_fields = ["name"]
+    list_filter = [
+        "organization",
+        "created_at",
+        "is_public",
+        "is_draft",
+        "is_deleted",
+    ]
+    search_fields = ["name", "organization__name"]
     inlines = (CampaignProductAdmin,)
     readonly_fields = [
         "created_at",

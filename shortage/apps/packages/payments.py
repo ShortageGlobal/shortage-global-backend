@@ -26,12 +26,24 @@ def generate_package_checkout_url(
     items,
     cart_item_uuids,
     customer_email,
+    campaign_slug=None,
+    campaign_uuid=None,
+    campaign_name=None,
 ):
-    package_status_url = "%s/organizations/%s/packages/%s" % (
-        settings.FRONTEND_BASE_URL,
-        organization_slug,
-        package_uuid,
-    )
+    if campaign_slug and campaign_uuid:
+        package_status_url = "%s/organizations/%s/campaigns/%s/%s/packages/%s/" % (
+            settings.FRONTEND_BASE_URL,
+            organization_slug,
+            campaign_slug,
+            campaign_uuid,
+            package_uuid,
+        )
+    else:
+        package_status_url = "%s/organizations/%s/packages/%s/" % (
+            settings.FRONTEND_BASE_URL,
+            organization_slug,
+            package_uuid,
+        )
 
     cart_url = "%s/donation/details/cart" % settings.FRONTEND_BASE_URL
 
@@ -49,6 +61,9 @@ def generate_package_checkout_url(
     metadata = {
         "organization_slug": organization_slug,
         "organization_name": organization_name,
+        "campaign_slug": campaign_slug,
+        "campaign_uuid": campaign_uuid,
+        "campaign_name": campaign_name,
         "package_uuid": package_uuid,
     }
 

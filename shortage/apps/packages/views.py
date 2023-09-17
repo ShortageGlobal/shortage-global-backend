@@ -44,7 +44,8 @@ class PackageViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
     def get_object(self):
         organization = generics.get_object_or_404(
-            Organization.objects.active(), slug=self.kwargs["org_slug"]
+            Organization.objects.published_or_owned(user=self.request.user),
+            slug=self.kwargs["org_slug"],
         )
         package = generics.get_object_or_404(
             Package.objects.all(),
@@ -107,12 +108,21 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     serializer_class = PackageCreationSerializer
 
     def create(self, request, *args, **kwargs):
-        # check organization and store it into view,
+        # check organization & campaign and store it into view,
         # so serializer could use it for validation
         self.organization = generics.get_object_or_404(
             Organization.objects.published_or_owned(user=self.request.user),
             slug=self.kwargs["org_slug"],
         )
+
+        campaign_slug = self.request.data.get("campaign_slug")
+        campaign_uuid = self.request.data.get("campaign_uuid")
+        if campaign_slug and campaign_uuid:
+            self.campaign = generics.get_object_or_404(
+                self.organization.campaigns.active(),
+                slug=campaign_slug,
+                uuid=campaign_uuid,
+            )
 
         return super().create(request, *args, **kwargs)
 
