@@ -24,8 +24,8 @@ def get_organization_checklist(organization=None):
     # form a list of remarks grouped by categories
     checklist = {
         "page": get_nonprofit_page_remarks(organization),
-        "campaigns": get_campaigns_page_remarks(organization),
         "products": get_products_remarks(organization),
+        "campaigns": get_campaigns_page_remarks(organization),
         "instructions": get_instructions_remarks(organization),
         "tax_information": get_tax_information_remarks(organization),
     }
