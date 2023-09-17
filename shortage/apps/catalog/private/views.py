@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db.models import Exists, OuterRef, Count
 from rest_framework import (
     viewsets,
     mixins,
@@ -18,6 +19,7 @@ from shortage.apps.mailing.mail_service import (
 from shortage.apps.catalog.models import (
     Product,
     Organization,
+    Campaign,
     Instruction,
     OrganizationBlogPost,
 )
@@ -27,6 +29,9 @@ from shortage.apps.catalog.private.serializers import (
     PrivateProductReadSerializer,
     PrivateProductWriteSerializer,
     PrivateInstructionSerializer,
+    PrivateCampaignReadSerializer,
+    PrivateCampaignWriteSerializer,
+    PrivateCampaignProductSerializer,
     PrivateOrganizationBlogPostReadSerializer,
     PrivateOrganizationBlogPostWriteSerializer,
 )
@@ -256,6 +261,114 @@ class PrivateInstructionsViewSet(viewsets.ModelViewSet):
         )
 
         return super().create(request, *args, **kwargs)
+
+
+class PrivateCampaignsViewSet(viewsets.ModelViewSet):
+    """List/retrieve/create/update campaigns belonging to the organization"""
+
+    schema = AutoSchema(
+        tags=["Private", "Campaign"],
+    )
+
+    permission_classes = [permissions.IsAuthenticated, IsObjectOwner]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["name"]
+    ordering = ["-created_at"]
+
+    def __init__(self, **kwargs):
+        self.organization = None
+        super().__init__(**kwargs)
+
+    def get_serializer_class(self):
+        if self.action in ["create", "update", "partial_update"]:
+            return PrivateCampaignWriteSerializer
+        return PrivateCampaignReadSerializer
+
+    def get_queryset(self):
+        self.organization = get_object_or_404(
+            Organization.objects.active(), slug=self.kwargs["org_slug"]
+        )
+        queryset = self.organization.campaigns.active()
+
+        return queryset
+
+    def create(self, request, *args, **kwargs):
+        self.organization = get_object_or_404(
+            Organization.objects.active(), slug=self.kwargs["org_slug"]
+        )
+
+        return super().create(request, *args, **kwargs)
+
+    def perform_destroy(self, instance):
+        # Do a soft delete
+        instance.is_deleted = True
+        instance.save()
+
+
+class PrivateCampaignProductsViewSet(
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
+    schema = AutoSchema(
+        tags=["Private", "Campaigns", "Products"],
+    )
+
+    permission_classes = [permissions.IsAuthenticated, IsObjectOwner]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    serializer_class = PrivateCampaignProductSerializer
+    search_fields = ["name"]
+    ordering = ["-created_at"]
+
+    def get_campaign(self):
+        return get_object_or_404(
+            Campaign.objects.active(),
+            pk=self.kwargs["campaign_uuid"],
+            organization__slug=self.kwargs["org_slug"],
+        )
+
+    def get_queryset(self):
+        self.campaign = self.get_campaign()
+
+        queryset = (
+            Product.objects.active()
+            .filter(organization__slug=self.kwargs["org_slug"])
+            .annotate(
+                is_included_in_campaign=Exists(
+                    self.campaign.products.filter(pk=OuterRef("pk"))
+                )
+            )
+        )
+
+        # filter by category
+        category = self.request.query_params.get("category")
+        if category:
+            queryset = queryset.filter(category=category)
+
+        return queryset
+
+    @action(detail=False, methods=["POST"])
+    def add(self, request, *args, **kwargs):
+        self.campaign = self.get_campaign()
+
+        product = get_object_or_404(
+            Product.objects.active(),
+            pk=request.data["product_id"],
+            organization__slug=self.kwargs["org_slug"],
+        )
+        self.campaign.products.add(product)
+        return Response(status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["DELETE"])
+    def remove(self, request, *args, **kwargs):
+        self.campaign = self.get_campaign()
+
+        product = get_object_or_404(
+            Product.objects.active(),
+            pk=request.data["product_id"],
+            organization__slug=self.kwargs["org_slug"],
+        )
+        self.campaign.products.remove(product)
+        return Response(status=status.HTTP_200_OK)
 
 
 class PrivateOrganizationBlogPostsViewSet(viewsets.ModelViewSet):

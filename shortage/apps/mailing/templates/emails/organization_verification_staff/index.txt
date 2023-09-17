@@ -4,6 +4,9 @@ Organization:
 Products ({{ organization.products.active.count }}):
 {{ products_admin_url }}
 
+Campaigns ({{  organization.campaigns.active.count }}):
+{{ campaigns_admin_url }}
+
 Instructions:
 {{ instructions_admin_url }}
 

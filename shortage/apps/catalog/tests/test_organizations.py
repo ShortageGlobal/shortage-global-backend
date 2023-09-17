@@ -448,6 +448,7 @@ class PrivateOrganizationTestCase(ShortageAPITestCase):
                         "severity": "ERROR",
                     }
                 ],
+                "campaigns": [],
                 "instructions": [
                     {
                         "code": "no_instructions",
@@ -507,6 +508,7 @@ class PrivateOrganizationTestCase(ShortageAPITestCase):
                         "severity": "ERROR",
                     },
                 ],
+                "campaigns": [],
                 "instructions": [
                     {
                         "code": "empty_instruction_city",
@@ -536,6 +538,7 @@ class PrivateOrganizationTestCase(ShortageAPITestCase):
             "checklist": {
                 "page": [],
                 "products": [],
+                "campaigns": [],
                 "instructions": [],
                 "tax_information": [],
             },

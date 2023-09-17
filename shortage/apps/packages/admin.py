@@ -22,6 +22,7 @@ class PackageAdmin(admin.ModelAdmin):
     list_display = [
         "created_at",
         "organization",
+        "campaign",
         "status",
         "type",
         "owner",
@@ -37,6 +38,7 @@ class PackageAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "organization",
+                    "campaign",
                     "type",
                     "status",
                     "need_tax_deduction",
@@ -104,6 +106,7 @@ class PackageAdmin(admin.ModelAdmin):
 
     readonly_fields = [
         "organization",
+        "campaign",
         "type",
         "owner",
         "need_tax_deduction",
@@ -218,7 +221,7 @@ class CartAdmin(admin.ModelAdmin):
 
 
 class CartItemAdmin(admin.ModelAdmin):
-    list_display = ["product", "quantity", "created_at", "cart"]
+    list_display = ["product", "campaign", "quantity", "created_at", "cart"]
     readonly_fields = ["created_at", "updated_at"]
     search_fields = ["cart__pk", "product__name"]
     list_filter = ["created_at"]

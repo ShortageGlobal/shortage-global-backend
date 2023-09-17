@@ -168,6 +168,8 @@ THUMBNAIL_ALIASES = {
     "": {
         "organization_logo_medium": {"size": (300, 300), "crop": False},
         "organization_banner_medium": {"size": (700, 700), "crop": False},
+        "campaign_banner": {"size": (700, 700), "crop": False},
+        "campaign_banner_preview": {"size": (355, 200), "crop": True},
         "product_medium": {"size": (300, 300), "crop": False},
         "product_large": {"size": (1024, 1024), "crop": False},
         "package_medium": {"size": (1024, 1024), "crop": False},

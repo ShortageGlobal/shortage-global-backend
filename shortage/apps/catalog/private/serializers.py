@@ -4,6 +4,7 @@ from shortage.apps.catalog.models import (
     Organization,
     Product,
     Instruction,
+    Campaign,
     OrganizationBlogPost,
 )
 
@@ -75,6 +76,7 @@ class PrivateProductWriteSerializer(serializers.ModelSerializer):
             "requested_amount",
             "description",
             "top_priority",
+            "is_public",
             "position",
             "created_at",
         ]
@@ -133,6 +135,65 @@ class PrivateInstructionSerializer(serializers.ModelSerializer):
         validated_data["organization"] = organization
 
         return Instruction.objects.create(**validated_data)
+
+
+class PrivateCampaignWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Campaign
+        fields = [
+            "uuid",
+            "name",
+            "slug",
+            "banner",
+            "requested_goods",
+            "mission_description",
+            "meta_description",
+            "is_draft",
+            "is_public",
+            "deadline",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["uuid", "created_at", "updated_at"]
+
+    def validate_slug(self, value):
+        """
+        Validate UniqueConstraint constraint.
+        DRF currently doesn't create validators for them automatically.
+        See: https://github.com/encode/django-rest-framework/issues/7173
+        """
+        organization = self.context["view"].organization
+        another_campaign = Campaign.objects.filter(
+            slug=value, organization_id=organization.id
+        )
+        if self.instance:
+            # if we edit campaign, exclude current instance from queryset
+            another_campaign = another_campaign.exclude(uuid=self.instance.uuid)
+        if another_campaign.exists():
+            raise serializers.ValidationError("This address has already been taken.")
+        return value
+
+    def create(self, validated_data):
+        organization = self.context["view"].organization
+        validated_data["organization"] = organization
+
+        return Campaign.objects.create(**validated_data)
+
+
+class PrivateCampaignReadSerializer(PrivateCampaignWriteSerializer):
+    banner = serializers.ImageField(source="banner_photo", required=False)
+
+    class Meta(PrivateCampaignWriteSerializer.Meta):
+        fields = PrivateCampaignWriteSerializer.Meta.fields + ["products_count"]
+        read_only_fields = fields
+
+
+class PrivateCampaignProductSerializer(PrivateProductReadSerializer):
+    is_included_in_campaign = serializers.BooleanField(required=False)
+
+    class Meta(PrivateProductWriteSerializer.Meta):
+        fields = PrivateProductReadSerializer.Meta.fields + ["is_included_in_campaign"]
+        read_only_fields = fields
 
 
 class PrivateOrganizationBlogPostWriteSerializer(serializers.ModelSerializer):

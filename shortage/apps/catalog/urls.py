@@ -13,6 +13,11 @@ from .views import (
     CategoriesViewSet,
     ProductsViewSet,
     ProductViewSet,
+    CampaignsViewSet,
+    CampaignViewSet,
+    CampaignCategoriesViewSet,
+    CampaignProductsViewSet,
+    CampaignProductViewSet,
     OrganizationBlogPostsViewSet,
     OrganizationRegistrationRequestViewSet,
     SitemapViewSet,
@@ -22,6 +27,8 @@ from .views import (
 from .private.views import (
     PrivateProductsSlugExistsViewSet,
     PrivateProductsViewSet,
+    PrivateCampaignsViewSet,
+    PrivateCampaignProductsViewSet,
     PrivateOrganizationViewSet,
     PrivateOrganizationSlugExistsViewSet,
     PrivateInstructionsViewSet,
@@ -105,6 +112,43 @@ router.register(
     r"private/exists/organizations/(?P<org_slug>[^/.]+)/products",
     PrivateProductsSlugExistsViewSet,
     basename="private_exists_products",
+)
+
+# Campaigns
+router.register(
+    r"organizations/(?P<org_slug>[^/.]+)/campaigns",
+    CampaignsViewSet,
+    basename="campaigns",
+)
+router.register(
+    r"organizations/(?P<org_slug>[^/.]+)/campaigns/(?P<campaign_slug>[^/.]+)",
+    CampaignViewSet,
+    basename="campaign",
+)
+router.register(
+    r"organizations/(?P<org_slug>[^/.]+)/campaigns/(?P<campaign_slug>[^/.]+)/(?P<campaign_uuid>[^/.]+)/categories",
+    CampaignCategoriesViewSet,
+    basename="campaign-categories",
+)
+router.register(
+    r"organizations/(?P<org_slug>[^/.]+)/campaigns/(?P<campaign_slug>[^/.]+)/(?P<campaign_uuid>[^/.]+)/products",
+    CampaignProductsViewSet,
+    basename="campaign-products",
+)
+router.register(
+    r"organizations/(?P<org_slug>[^/.]+)/campaigns/(?P<campaign_slug>[^/.]+)/(?P<campaign_uuid>[^/.]+)/products",
+    CampaignProductViewSet,
+    basename="campaign-product",
+)
+router.register(
+    r"private/organizations/(?P<org_slug>[^/.]+)/campaigns",
+    PrivateCampaignsViewSet,
+    basename="private_campaigns",
+)
+router.register(
+    r"private/organizations/(?P<org_slug>[^/.]+)/campaigns/(?P<campaign_uuid>[^/.]+)/products",
+    PrivateCampaignProductsViewSet,
+    basename="private_campaign_products",
 )
 
 # Blog posts

@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
@@ -12,6 +13,7 @@ from shortage.apps import storage
 from shortage.apps.blog.models import BlogPost, BlogPostManager
 from shortage.apps.file_paths import (
     get_organization_path,
+    get_campaign_path,
     get_external_organization_path,
     get_product_path,
 )
@@ -24,16 +26,16 @@ class OrganizationManager(models.Manager):
         """Return all available organizations which have not been deleted"""
         return self.get_queryset().filter(is_deleted=False)
 
-    def public(self):
-        """Return all publicly available organizations"""
+    def published(self):
+        """Return all published organizations"""
         return self.active().filter(is_draft=False, is_verified=True)
 
-    def public_or_owned(self, user=None):
-        """Return either public organization or owned by the current user"""
+    def published_or_owned(self, user=None):
+        """Return either published organization or owned by the current user"""
         user = user if user.is_authenticated else None
-        public = self.public()
+        published = self.published()
         owned = self.active().filter(owner=user)
-        return public | owned
+        return published | owned
 
     def editable(self):
         """Return all organizations eligible for editing"""
@@ -41,7 +43,7 @@ class OrganizationManager(models.Manager):
 
     def promoted(self):
         """Return handpicked list of organizations to show on the main page"""
-        return self.public().filter(promote=True)
+        return self.published().filter(promote=True)
 
 
 def validate_organization_slug_blacklist(value):
@@ -226,18 +228,22 @@ class Instruction(models.Model):
 class ProductsManager(models.Manager):
     def promoted(self):
         """
-        Return high demand public products for all promoted organizations.
+        Return high demand published products for all promoted organizations.
         In the future, use a "promoted' flag or something.
         """
-        return self.active().filter(
+        return self.public().filter(
             organization_id__in=models.Subquery(
                 Organization.objects.promoted().values("id")
             ),
             top_priority=True,
         )
 
+    def public(self):
+        """Return all public products which have not been deleted"""
+        return self.active().filter(is_public=True)
+
     def active(self):
-        """Return all available products which have not been deleted"""
+        """Return all products which have not been deleted"""
         return self.get_queryset().filter(is_deleted=False)
 
 
@@ -283,6 +289,7 @@ class Product(models.Model):
         blank=False,
         null=False,
     )
+    is_public = models.BooleanField(default=True, db_index=True)
     is_deleted = models.BooleanField(default=False, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -291,7 +298,7 @@ class Product(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["slug", "organization"], name="unique_slug_organization"
+                fields=["slug", "organization"], name="unique_product_slug_organization"
             )
         ]
 
@@ -312,6 +319,108 @@ class Product(models.Model):
     @property
     def medium_photo(self):
         return get_thumbnail_for_image(self.photo, "product_medium")
+
+
+class CampaignsManager(models.Manager):
+    def active(self):
+        """Return all campaigns which have not been deleted"""
+        return self.get_queryset().filter(is_deleted=False)
+
+    def published(self):
+        """Return all published campaigns"""
+        return self.active().filter(is_draft=False)
+
+    def published_or_owned(self, user=None):
+        """Return either published campaigns or owned by the current user"""
+        user = user if user.is_authenticated else None
+        published = self.published()
+        owned = self.active().filter(organization__owner=user)
+        return published | owned
+
+
+class Campaign(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    organization = models.ForeignKey(
+        Organization, related_name="campaigns", on_delete=models.CASCADE
+    )
+    name = models.CharField(max_length=150)
+    slug = models.SlugField(max_length=150, db_index=True)
+    banner = ThumbnailerImageField(
+        max_length=500,
+        upload_to=get_campaign_path,
+        null=True,
+        blank=True,
+        storage=storage.MediaStorage(),
+    )
+    requested_goods = models.CharField(max_length=200, null=True, blank=True)
+    mission_description = models.CharField(max_length=1000, null=True, blank=True)
+    meta_description = models.CharField(max_length=200, null=True, blank=True)
+
+    is_draft = models.BooleanField(default=True, db_index=True)
+    is_public = models.BooleanField(default=True, db_index=True)
+    is_deleted = models.BooleanField(default=False, db_index=True)
+    deadline = models.DateTimeField(null=True, blank=True)
+
+    # related products
+    products = models.ManyToManyField(
+        Product,
+        through="CampaignProduct",
+        through_fields=("campaign", "product"),
+    )
+
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = CampaignsManager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["slug", "organization"],
+                name="unique_campaign_slug_organization",
+            )
+        ]
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def banner_photo(self):
+        return get_thumbnail_for_image(self.banner, "campaign_banner")
+
+    @property
+    def banner_photo_preview(self):
+        return get_thumbnail_for_image(self.banner, "campaign_banner_preview")
+
+    @property
+    def products_count(self):
+        return self.products.active().count()
+
+
+class CampaignProduct(models.Model):
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["campaign", "product"],
+                name="unique_campaign_product",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.campaign.name} - {self.product.name}"
+
+    def clean(self):
+        """Validate Campaign <-> Product relationship. Note, this method is called in django admin only"""
+
+        # make sure campaign doesn't get products from other organizations
+        if self.campaign.organization != self.product.organization:
+            raise ValidationError(
+                {"product": _("This product belongs to another organization")}
+            )
 
 
 class OrganizationRegistrationRequest(models.Model):
@@ -345,7 +454,7 @@ class OrganizationBlogPostManager(BlogPostManager):
         """
         Return handpicked list of organization blog posts to show on the main page
         """
-        return self.public().filter(promote=True)
+        return self.published().filter(promote=True)
 
 
 class OrganizationBlogPost(BlogPost):
@@ -366,6 +475,7 @@ class OrganizationBlogPost(BlogPost):
 
 
 auditlog.register(Organization)
+auditlog.register(Campaign)
 auditlog.register(Instruction)
 auditlog.register(Product)
 auditlog.register(OrganizationRegistrationRequest)

@@ -35,6 +35,19 @@
     font-size: 16px;
   "
 >
+  <a href="{{ campaigns_admin_url }}" style="color: #00b657; text-decoration: underline; word-break: break-word;">
+    Campaigns ({{ organization.campaigns.active.count }})
+  </a>
+</p>
+
+<p 
+  style="
+    margin: 0 0 12px 0;
+    line-height: 24px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+  "
+>
   <a href="{{ instructions_admin_url }}" style="color: #00b657; text-decoration: underline; word-break: break-word;">
     Instructions
   </a>

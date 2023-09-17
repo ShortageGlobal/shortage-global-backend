@@ -4,6 +4,7 @@ from .models import (
     Organization,
     Instruction,
     Product,
+    Campaign,
     OrganizationRegistrationRequest,
     OrganizationBlogPost,
 )
@@ -113,26 +114,6 @@ class OrganizationSlugSerializer(serializers.ModelSerializer):
         ]
 
 
-class ProductSerializer(serializers.ModelSerializer):
-    photo = serializers.ImageField(source="large_photo", read_only=True)
-    organization = OrganizationPreviewSerializer(read_only=True)
-
-    class Meta:
-        model = Product
-        fields = [
-            "id",
-            "name",
-            "slug",
-            "category",
-            "photo",
-            "price",
-            "requested_amount",
-            "description",
-            "top_priority",
-            "organization",
-        ]
-
-
 class OrganizationProductSlugSerializer(serializers.ModelSerializer):
     organization = OrganizationSlugSerializer()
 
@@ -171,6 +152,77 @@ class OrganizationRegistrationRequestSerializer(serializers.ModelSerializer):
         # ignore this field after validation
         validated_data.pop("agreed_to_terms_of_use")
         return super().create(validated_data)
+
+
+class CampaignPreviewSerializer(serializers.ModelSerializer):
+    banner = serializers.ImageField(source="banner_photo_preview", read_only=True)
+
+    class Meta:
+        model = Campaign
+        fields = [
+            "uuid",
+            "name",
+            "slug",
+            "banner",
+            "created_at",
+            "updated_at",
+            "products_count",
+            "is_draft",
+        ]
+
+
+class CampaignMinimalPreviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Campaign
+        fields = [
+            "uuid",
+            "name",
+            "slug",
+            "is_draft",
+        ]
+
+
+class CampaignSerializer(CampaignPreviewSerializer):
+    banner = serializers.ImageField(source="banner_photo", read_only=True)
+
+    class Meta:
+        model = Campaign
+        fields = CampaignPreviewSerializer.Meta.fields + [
+            "requested_goods",
+            "mission_description",
+            "meta_description",
+            "deadline",
+        ]
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    photo = serializers.ImageField(source="large_photo", read_only=True)
+    organization = OrganizationPreviewSerializer(read_only=True)
+    campaign = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = [
+            "id",
+            "name",
+            "slug",
+            "category",
+            "photo",
+            "price",
+            "requested_amount",
+            "description",
+            "top_priority",
+            "organization",
+            "campaign",
+        ]
+
+    def get_campaign(self, obj):
+        if hasattr(self.context["view"], "campaign"):
+            campaign = self.context["view"].campaign
+            serializer = CampaignMinimalPreviewSerializer(instance=campaign)
+            return serializer.data
+        else:
+            return None
 
 
 class OrganizationBlogPostPreviewSerializer(BlogPostPreviewSerializer):

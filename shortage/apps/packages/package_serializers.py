@@ -2,7 +2,10 @@ from django.db import transaction
 from rest_framework import serializers
 from shortage.helpers.serializers import AuthorizedUserOrNone
 from shortage.apps.catalog.models import Product
-from shortage.apps.catalog.serializers import OrganizationPreviewSerializer
+from shortage.apps.catalog.serializers import (
+    OrganizationPreviewSerializer,
+    CampaignMinimalPreviewSerializer,
+)
 from .models import (
     Package,
     PackageItem,
@@ -15,12 +18,14 @@ from .payments import generate_package_checkout_url
 
 class PackageSerializer(serializers.ModelSerializer):
     organization = OrganizationPreviewSerializer(read_only=True)
+    campaign = CampaignMinimalPreviewSerializer(read_only=True)
 
     class Meta:
         model = Package
         fields = [
             "uuid",
             "organization",
+            "campaign",
             "delivery_company",
             "tracking_code",
             "created_at",
@@ -71,6 +76,8 @@ class PackageItemCreationSerializer(serializers.ModelSerializer):
 
 
 class PackageCreationSerializer(serializers.ModelSerializer):
+    campaign_uuid = serializers.UUIDField(required=False, allow_null=True)
+    campaign_slug = serializers.SlugField(required=False, allow_null=True)
     items = PackageItemCreationSerializer(
         write_only=True, many=True, required=True, allow_empty=False
     )
@@ -80,6 +87,8 @@ class PackageCreationSerializer(serializers.ModelSerializer):
         model = Package
         fields = [
             "uuid",
+            "campaign_uuid",
+            "campaign_slug",
             "first_name",
             "last_name",
             "email",
@@ -144,6 +153,15 @@ class PackageCreationSerializer(serializers.ModelSerializer):
         organization = self.context["view"].organization
         validated_data["organization"] = organization
 
+        campaign = None
+        if hasattr(self.context["view"], "campaign"):
+            campaign = self.context["view"].campaign
+            validated_data["campaign"] = campaign
+
+        # ignore these fields after validation
+        validated_data.pop("campaign_slug", None)
+        validated_data.pop("campaign_uuid", None)
+
         # create package
         package = Package.objects.create(**validated_data)
         # create package items
@@ -161,6 +179,9 @@ class PackageCreationSerializer(serializers.ModelSerializer):
             organization = self.context["view"].organization
             organization_slug = organization.slug
             organization_name = organization.name
+            campaign_slug = campaign.slug if campaign else None
+            campaign_uuid = campaign.uuid if campaign else None
+            campaign_name = campaign.name if campaign else None
             cart_item_uuids = [item["cart_item_uuid"] for item in validated_items_data]
 
             package.checkout_url = generate_package_checkout_url(
@@ -170,6 +191,9 @@ class PackageCreationSerializer(serializers.ModelSerializer):
                 items,
                 cart_item_uuids,
                 package.email,
+                campaign_slug,
+                campaign_uuid,
+                campaign_name,
             )
             package.save()
 

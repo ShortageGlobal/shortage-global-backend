@@ -1,8 +1,11 @@
 from django.db import transaction
 from rest_framework import serializers, exceptions
 from shortage.helpers.serializers import AuthorizedUserOrNone
-from shortage.apps.catalog.models import Product
-from shortage.apps.catalog.serializers import OrganizationPreviewSerializer
+from shortage.apps.catalog.models import Product, Campaign
+from shortage.apps.catalog.serializers import (
+    OrganizationPreviewSerializer,
+    CampaignMinimalPreviewSerializer,
+)
 from .models import Cart, CartItem
 
 
@@ -26,11 +29,12 @@ class CartItemProductSerializer(serializers.ModelSerializer):
 
 class CartItemSerializer(serializers.ModelSerializer):
     product = CartItemProductSerializer()
+    campaign = CampaignMinimalPreviewSerializer()
     quantity = serializers.IntegerField(min_value=1, max_value=2147483647)
 
     class Meta:
         model = CartItem
-        fields = ["uuid", "product", "quantity", "created_at"]
+        fields = ["uuid", "product", "campaign", "quantity", "created_at"]
 
 
 class CartItemUpdateSerializer(serializers.ModelSerializer):
@@ -46,17 +50,28 @@ class CartItemUpdateSerializer(serializers.ModelSerializer):
 class CartItemCreationSerializer(serializers.ModelSerializer):
     product_slug = serializers.SlugField(write_only=True)
     organization_slug = serializers.SlugField(write_only=True)
+    campaign_slug = serializers.SlugField(write_only=True, required=False)
+    campaign_uuid = serializers.UUIDField(write_only=True, required=False)
     quantity = serializers.IntegerField(
         min_value=1, max_value=2147483647, required=True, write_only=True
     )
 
     class Meta:
         model = CartItem
-        fields = ["uuid", "product_slug", "organization_slug", "quantity"]
+        fields = [
+            "uuid",
+            "product_slug",
+            "organization_slug",
+            "campaign_slug",
+            "campaign_uuid",
+            "quantity",
+        ]
 
     def validate(self, attrs):
         product_slug = attrs.get("product_slug")
         organization_slug = attrs.get("organization_slug")
+        campaign_slug = attrs.get("campaign_slug")
+        campaign_uuid = attrs.get("campaign_uuid")
 
         # if we create/update/delete a CartItem of the existing Cart, not creating a new Cart,
         # there will be 'cart_pk' in the context
@@ -67,24 +82,44 @@ class CartItemCreationSerializer(serializers.ModelSerializer):
             if not Cart.objects.filter(pk=cart_pk).exists():
                 raise exceptions.NotFound()
 
+            queryset = CartItem.objects.filter(
+                cart=cart_pk,
+                product__slug=product_slug,
+                product__organization__slug=organization_slug,
+            )
+
+            # check the product/organization/campaign triplet is unique for the given cart
+            if campaign_slug and campaign_uuid:
+                if (
+                    queryset.filter(
+                        campaign__slug=campaign_slug,
+                        campaign__uuid=campaign_uuid,
+                    )
+                    .exclude(pk=pk)
+                    .exists()
+                ):
+                    raise serializers.ValidationError(
+                        "Cart already includes this product for the given campaign"
+                    )
             # check the product/organization pair is unique for the given cart
-            if (
-                CartItem.objects.filter(
-                    cart=cart_pk,
-                    product__slug=product_slug,
-                    product__organization__slug=organization_slug,
-                )
-                .exclude(pk=pk)
-                .exists()
-            ):
+            elif queryset.filter(campaign=None).exclude(pk=pk).exists():
                 raise serializers.ValidationError("Cart already includes this product")
 
-        # check product with the given slug and the given organization slug exists
-        if (
-            not Product.objects.active()
-            .filter(slug=product_slug, organization__slug=organization_slug)
-            .exists()
-        ):
+        # check product with the given slug and the given organization/campaign exists
+        queryset = Product.objects.active().filter(
+            slug=product_slug, organization__slug=organization_slug
+        )
+
+        if campaign_slug and campaign_uuid:
+            if not queryset.filter(
+                campaign__slug=campaign_slug,
+                campaign__uuid=campaign_uuid,
+            ).exists():
+                raise serializers.ValidationError(
+                    'Product with "%s" slug, "%s" organization slug, "%s" campaign slug, and "%s" campaign uuid does not exist'
+                    % (product_slug, organization_slug, campaign_slug, campaign_uuid)
+                )
+        elif not queryset.exists():
             raise serializers.ValidationError(
                 'Product with "%s" slug and "%s" organization slug does not exist'
                 % (product_slug, organization_slug)
@@ -95,16 +130,23 @@ class CartItemCreationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         product_slug = validated_data.pop("product_slug")
         organization_slug = validated_data.pop("organization_slug")
+        campaign_uuid = validated_data.pop("campaign_uuid", None)
         quantity = validated_data.pop("quantity")
         cart_pk = self.context["cart_pk"]
 
-        cart_item = CartItem.objects.create(
-            cart_id=cart_pk,
-            product=Product.objects.active().get(
-                slug=product_slug, organization__slug=organization_slug
+        cart_params = {
+            "cart_id": cart_pk,
+            "product": Product.objects.active().get(
+                slug=product_slug,
+                organization__slug=organization_slug,
             ),
-            quantity=quantity,
-        )
+            "quantity": quantity,
+        }
+
+        if campaign_uuid:
+            cart_params["campaign"] = Campaign.objects.active().get(pk=campaign_uuid)
+
+        cart_item = CartItem.objects.create(**cart_params)
 
         return cart_item
 

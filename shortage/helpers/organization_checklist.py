@@ -25,6 +25,7 @@ def get_organization_checklist(organization=None):
     checklist = {
         "page": get_nonprofit_page_remarks(organization),
         "products": get_products_remarks(organization),
+        "campaigns": get_campaigns_page_remarks(organization),
         "instructions": get_instructions_remarks(organization),
         "tax_information": get_tax_information_remarks(organization),
     }
@@ -68,6 +69,20 @@ def get_nonprofit_page_remarks(organization):
                 code="empty_banner",
                 message="Banner is empty.",
                 severity=Remark.SEVERITY_WARNING,
+            )
+        )
+    return result
+
+
+def get_campaigns_page_remarks(organization):
+    result = []
+    # no campaigns with products
+    if organization.campaigns.published().filter(products=None).exists():
+        result.append(
+            Remark.make(
+                code="empty_campaigns",
+                message="All published campaigns must have at least one requested item.",
+                severity=Remark.SEVERITY_ERROR,
             )
         )
     return result

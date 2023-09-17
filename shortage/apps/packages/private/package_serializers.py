@@ -1,6 +1,9 @@
 from rest_framework import serializers
-from shortage.apps.catalog.models import Product, OrganizationBlogPost
-from shortage.apps.catalog.serializers import OrganizationPreviewSerializer
+from shortage.apps.catalog.models import Campaign, Product, OrganizationBlogPost
+from shortage.apps.catalog.serializers import (
+    OrganizationPreviewSerializer,
+    CampaignMinimalPreviewSerializer,
+)
 from shortage.apps.packages.models import Package, PackageItem
 
 
@@ -30,14 +33,24 @@ class PrivateOrganizationPackageItemSerializer(serializers.ModelSerializer):
         fields = ["quantity", "product"]
 
 
+class PrivateOrganizationPackageCampaignSerializer(CampaignMinimalPreviewSerializer):
+    class Meta:
+        model = Campaign
+        fields = CampaignMinimalPreviewSerializer.Meta.fields + [
+            "is_deleted",
+        ]
+
+
 class PrivateOrganizationPackageSerializer(serializers.ModelSerializer):
     items = PrivateOrganizationPackageItemSerializer(many=True)
+    campaign = PrivateOrganizationPackageCampaignSerializer(read_only=True)
 
     class Meta:
         model = Package
         fields = [
             "uuid",
             "items",
+            "campaign",
             "need_tax_deduction",
             "first_name",
             "last_name",
