@@ -291,6 +291,8 @@ class Product(models.Model):
     )
     is_public = models.BooleanField(default=True, db_index=True)
     is_deleted = models.BooleanField(default=False, db_index=True)
+
+    updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     objects = ProductsManager()
