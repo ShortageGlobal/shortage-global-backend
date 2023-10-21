@@ -384,6 +384,14 @@ class Campaign(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return "%s/%s/campaigns/%s/%s/" % (
+            settings.FRONTEND_BASE_URL,
+            self.organization.slug,
+            self.slug,
+            self.uuid,
+        )
+
     @property
     def banner_photo(self):
         return get_thumbnail_for_image(self.banner, "campaign_banner")
