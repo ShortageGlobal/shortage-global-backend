@@ -163,7 +163,7 @@ class ProductAdmin(admin.ModelAdmin):
         "name",
         "organization",
         "category",
-        "price",
+        "base_price",
         "updated_at",
         "created_at",
         "top_priority",
