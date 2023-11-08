@@ -18,7 +18,7 @@ class PrivateOrganizationPackageItemProductSerializer(serializers.ModelSerialize
             "slug",
             "category",
             "photo",
-            "price",
+            "base_price",
             "requested_amount",
             "is_deleted",
             "top_priority",
