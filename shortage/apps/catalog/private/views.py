@@ -190,8 +190,6 @@ class PrivateProductsViewSet(viewsets.ModelViewSet):
         self.organization = get_object_or_404(
             Organization.objects.active(), slug=self.kwargs["org_slug"]
         )
-        # TODO: prevent editing/deleting if organization is not in draft state
-        # (except for "requrested_amount" and "position")
         queryset = Product.objects.active().filter(organization=self.organization)
 
         # filter by category

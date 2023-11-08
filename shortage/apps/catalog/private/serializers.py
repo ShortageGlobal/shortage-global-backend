@@ -72,7 +72,7 @@ class PrivateProductWriteSerializer(serializers.ModelSerializer):
             "slug",
             "category",
             "photo",
-            "price",
+            "base_price",
             "requested_amount",
             "description",
             "top_priority",

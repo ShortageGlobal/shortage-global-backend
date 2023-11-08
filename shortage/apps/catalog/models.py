@@ -1,4 +1,5 @@
 import uuid
+from decimal import Decimal
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
@@ -39,7 +40,9 @@ class OrganizationManager(models.Manager):
 
     def editable(self):
         """Return all organizations eligible for editing"""
-        return self.active().filter(is_draft=True, is_verified=False)
+        # previously we allowed editing only for draft organizations,
+        # but now we allow editing for all active organizations
+        return self.active()
 
     def promoted(self):
         """Return handpicked list of organizations to show on the main page"""
@@ -276,7 +279,7 @@ class Product(models.Model):
         blank=True,
         storage=storage.MediaStorage(),
     )
-    price = models.DecimalField(
+    base_price = models.DecimalField(
         max_digits=8, decimal_places=2, validators=[MinValueValidator(1)]
     )
     requested_amount = models.PositiveIntegerField(
@@ -289,8 +292,16 @@ class Product(models.Model):
         blank=False,
         null=False,
     )
-    is_public = models.BooleanField(default=True, db_index=True)
-    is_deleted = models.BooleanField(default=False, db_index=True)
+    is_public = models.BooleanField(
+        default=True,
+        db_index=True,
+        help_text="If checked, the product will be visible on the organization's main page.",
+    )
+    is_deleted = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text="If checked, the product will be hidden from donors and nonprofits.",
+    )
 
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -313,6 +324,10 @@ class Product(models.Model):
             self.organization.slug,
             self.slug,
         )
+
+    @property
+    def price(self):
+        return (self.base_price * settings.PRICE_COEFFICIENT).quantize(Decimal(".01"))
 
     @property
     def large_photo(self):
