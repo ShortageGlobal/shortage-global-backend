@@ -246,7 +246,6 @@ def create_test_package(product, **kwargs):
         name=product.name,
         category=product.category,
         photo=product.photo,
-        photo=product.photo,
         description=product.description,
     )
     return package
