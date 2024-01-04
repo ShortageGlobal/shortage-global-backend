@@ -238,7 +238,17 @@ def create_test_package(product, **kwargs):
         **kwargs,
     }
     package = Package.objects.create(**test_data)
-    PackageItem.objects.create(package=package, product=product, quantity=1)
+    PackageItem.objects.create(
+        package=package,
+        product=product,
+        quantity=1,
+        price=product.price,
+        name=product.name,
+        category=product.category,
+        photo=product.photo,
+        photo=product.photo,
+        description=product.description,
+    )
     return package
 
 
