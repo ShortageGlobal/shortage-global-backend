@@ -3,6 +3,7 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
+from django_cleanup import cleanup
 from stdnum.us import ein
 from tinymce.models import HTMLField
 from django_countries.fields import CountryField
@@ -260,6 +261,7 @@ class ProductCategory(models.TextChoices):
     CLOTHES = settings.PRODUCT_CATEGORY["CLOTHES"], "Clothes"
 
 
+@cleanup.ignore  # keep the product image, so it can be used in the package items
 class Product(models.Model):
     organization = models.ForeignKey(
         Organization, related_name="products", on_delete=models.CASCADE

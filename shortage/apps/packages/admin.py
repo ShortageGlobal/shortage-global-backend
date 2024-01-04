@@ -164,7 +164,7 @@ class PackageAdmin(admin.ModelAdmin):
 
 
 class PackageItemAdmin(admin.ModelAdmin):
-    list_display = ["product", "quantity", "created_at", "package"]
+    list_display = ["product", "quantity", "price", "created_at", "package"]
     readonly_fields = ["created_at"]
     search_fields = ["package__pk", "product__name"]
     list_filter = ["created_at"]

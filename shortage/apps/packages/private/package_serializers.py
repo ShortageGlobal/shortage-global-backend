@@ -8,29 +8,22 @@ from shortage.apps.packages.models import Package, PackageItem
 
 
 class PrivateOrganizationPackageItemProductSerializer(serializers.ModelSerializer):
-    photo = serializers.ImageField(source="medium_photo", read_only=True)
-
     class Meta:
         model = Product
         fields = [
             "id",
-            "name",
             "slug",
-            "category",
-            "photo",
-            "price",
-            "requested_amount",
             "is_deleted",
-            "top_priority",
         ]
 
 
 class PrivateOrganizationPackageItemSerializer(serializers.ModelSerializer):
     product = PrivateOrganizationPackageItemProductSerializer()
+    photo = serializers.ImageField(source="medium_photo", read_only=True)
 
     class Meta:
         model = PackageItem
-        fields = ["quantity", "product"]
+        fields = ["quantity", "price", "name", "photo", "category", "product"]
 
 
 class PrivateOrganizationPackageCampaignSerializer(CampaignMinimalPreviewSerializer):
@@ -98,27 +91,9 @@ class PrivateOrganizationPackageTaxDeductionReceiptSerializer(
         fields = ["tax_deduction_receipt"]
 
 
-class PrivateAccountPackageItemProductSerializer(serializers.ModelSerializer):
-    photo = serializers.ImageField(source="medium_photo", read_only=True)
-
-    class Meta:
-        model = Product
-        fields = [
-            "name",
-            "slug",
-            "category",
-            "photo",
-            "price",
-        ]
-
-
-class PrivateAccountPackageItemSerializer(PrivateOrganizationPackageItemSerializer):
-    product = PrivateAccountPackageItemProductSerializer()
-
-
 class PrivateAccountPackageSerializer(PrivateOrganizationPackageSerializer):
     organization = OrganizationPreviewSerializer(read_only=True)
-    items = PrivateAccountPackageItemSerializer(many=True)
+    items = PrivateOrganizationPackageItemSerializer(many=True)
 
     class Meta(PrivateOrganizationPackageSerializer.Meta):
         fields = PrivateOrganizationPackageSerializer.Meta.fields + ["organization"]

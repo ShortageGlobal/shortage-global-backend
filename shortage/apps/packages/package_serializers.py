@@ -165,11 +165,17 @@ class PackageCreationSerializer(serializers.ModelSerializer):
         # create package
         package = Package.objects.create(**validated_data)
         # create package items
+
         items = [
             PackageItem(
                 package=package,
                 product=validated_item_data["product"],
                 quantity=validated_item_data["quantity"],
+                name=validated_item_data["product"].name,
+                category=validated_item_data["product"].category,
+                photo=validated_item_data["product"].photo,
+                price=validated_item_data["product"].price,
+                description=validated_item_data["product"].description,
             )
             for validated_item_data in validated_items_data
         ]
