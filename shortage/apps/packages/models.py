@@ -15,8 +15,10 @@ from phonenumber_field.modelfields import PhoneNumberField
 from django_countries.fields import CountryField
 from easy_thumbnails.fields import ThumbnailerImageField
 from weasyprint import HTML
+from tinymce.models import HTMLField
 from shortage.apps import storage
 from shortage.apps.catalog.models import (
+    ProductCategory,
     Product,
     Organization,
     Campaign,
@@ -24,6 +26,7 @@ from shortage.apps.catalog.models import (
 )
 from shortage.apps.file_paths import (
     get_package_path,
+    get_package_item_path,
     get_corporate_donation_path,
     get_tax_deduction_receipt_path,
 )
@@ -274,6 +277,34 @@ class PackageItem(models.Model):
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # product details at the time of package registration
+    name = models.CharField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
+    category = models.CharField(
+        max_length=255,
+        choices=ProductCategory.choices,
+        null=True,
+        blank=True,
+    )
+    price = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        validators=[MinValueValidator(1)],
+        null=True,
+        blank=True,
+    )
+    description = HTMLField(null=True, blank=True)
+    photo = ThumbnailerImageField(
+        max_length=500,
+        upload_to=get_package_item_path,
+        null=True,
+        blank=True,
+        storage=storage.MediaStorage(),
+    )
+
     def __init__(self, *args, **kwargs):
         if "package" in kwargs and "product" in kwargs:
             product = kwargs["product"]
@@ -288,7 +319,15 @@ class PackageItem(models.Model):
         return self.product.name
 
     def total_price(self):
-        return self.quantity * self.product.price
+        return self.quantity * self.price
+
+    @property
+    def large_photo(self):
+        return get_thumbnail_for_image(self.photo, "product_large")
+
+    @property
+    def medium_photo(self):
+        return get_thumbnail_for_image(self.photo, "product_medium")
 
 
 class PackageStatusLogEntry(models.Model):
