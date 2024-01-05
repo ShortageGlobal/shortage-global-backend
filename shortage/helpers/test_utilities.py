@@ -196,7 +196,7 @@ def create_test_product(**kwargs):
         "name": "Test Product",
         "slug": "test_product",
         "category": "VITAL_GOODS",
-        "price": 999,
+        "base_price": 999,
         "requested_amount": 20,
         "top_priority": False,
         "position": 1,
