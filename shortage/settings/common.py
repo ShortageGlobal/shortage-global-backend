@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
+from decimal import Decimal
 from pathlib import Path
 from datetime import timedelta
 from django.core.management.utils import get_random_secret_key
@@ -283,3 +284,8 @@ STRIPE_ENDPOINT_SECRET = os.getenv("DJANGO_STRIPE_ENDPOINT_SECRET", "")
 RAINFOREST_API_KEY = os.getenv("DJANGO_RAINFOREST_API_KEY", "")
 
 WEASYPRINT_BASE_URI = None
+
+
+# we use this coefficient to calculate the price of the product,
+# including the Stripe fee and taxes
+PRICE_COEFFICIENT = Decimal(1.2)
