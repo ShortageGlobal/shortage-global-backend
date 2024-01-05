@@ -1,3 +1,4 @@
+from decimal import Decimal
 from rest_framework.test import APITestCase, APIRequestFactory
 from shortage.apps.packages.views import CartViewSet, CartItemViewSet
 from shortage.helpers.test_utilities import (
@@ -103,7 +104,7 @@ class CartItemsTestCase(APITestCase):
                 "slug": "test_product",
                 "category": "VITAL_GOODS",
                 "photo": None,
-                "price": "999.00",
+                "price": Decimal("1198.80"),
                 "requested_amount": 20,
                 "top_priority": False,
                 "organization": {
@@ -126,7 +127,7 @@ class CartItemsTestCase(APITestCase):
                 "slug": "test_product",
                 "category": "VITAL_GOODS",
                 "photo": None,
-                "price": "999.00",
+                "price": Decimal("1198.80"),
                 "requested_amount": 20,
                 "top_priority": False,
                 "organization": {
