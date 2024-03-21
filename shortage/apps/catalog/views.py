@@ -9,6 +9,8 @@ from rest_framework import (
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
+from shortage.apps.blog.models import ShortageBlogPost
+from shortage.apps.blog.serializers import ShortageBlogPostSlugSerializer
 from .models import (
     Organization,
     ExternalOrganization,
@@ -369,6 +371,13 @@ class SitemapViewSet(viewsets.ViewSet):
             .prefetch_related("organization")
         )
         serializer = OrganizationBlogPostSlugSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False)
+    def all_shortage_blog_post_slugs(self, request, *args, **kwargs):
+        """Get slugs of published blog posts from the Shortage Team"""
+        queryset = ShortageBlogPost.objects.published()
+        serializer = ShortageBlogPostSlugSerializer(queryset, many=True)
         return Response(serializer.data)
 
 

@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.conf import settings
+from auditlog.registry import auditlog
 from tinymce.models import HTMLField
 from shortage.apps import storage
 from shortage.apps.file_paths import get_blog_post_photo_path
@@ -28,7 +29,9 @@ class BlogPostManager(models.Manager):
 class BlogPost(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="authors", on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL,
+        related_name="%(class)s_authors",
+        on_delete=models.CASCADE,
     )
     title = models.CharField(max_length=1000)
     slug = models.SlugField(max_length=80)
@@ -61,3 +64,18 @@ class BlogPost(models.Model):
     @property
     def card_preview(self):
         return get_thumbnail_for_image(self.image, "card_preview")
+
+
+class ShortageBlogPost(BlogPost):
+    slug = models.SlugField(max_length=80, unique=True, db_index=True)
+
+    class Meta:
+        verbose_name = "Blog Post"
+        verbose_name_plural = "Blog Posts"
+        ordering = ["-created_at"]
+
+    def get_absolute_url(self):
+        return "%s/blog/%s/" % (settings.FRONTEND_BASE_URL, self.slug)
+
+
+auditlog.register(ShortageBlogPost)
