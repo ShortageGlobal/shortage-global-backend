@@ -62,4 +62,6 @@ class ShortageBlogPostViewSet(
         return ShortageBlogPostSerializer
 
     def get_queryset(self):
-        return ShortageBlogPost.objects.published().order_by("-updated_at")
+        return ShortageBlogPost.objects.published_or_owned(
+            user=self.request.user
+        ).order_by("-updated_at")
