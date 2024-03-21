@@ -28,7 +28,9 @@ class BlogPostManager(models.Manager):
 class BlogPost(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="authors", on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL,
+        related_name="%(class)s_authors",
+        on_delete=models.CASCADE,
     )
     title = models.CharField(max_length=1000)
     slug = models.SlugField(max_length=80)
@@ -61,3 +63,12 @@ class BlogPost(models.Model):
     @property
     def card_preview(self):
         return get_thumbnail_for_image(self.image, "card_preview")
+
+
+class ShortageBlogPost(BlogPost):
+    slug = models.SlugField(max_length=80, unique=True, db_index=True)
+
+    class Meta:
+        verbose_name = "Blog Post"
+        verbose_name_plural = "Blog Posts"
+        ordering = ["-created_at"]

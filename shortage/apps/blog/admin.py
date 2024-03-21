@@ -1,4 +1,5 @@
 from django.contrib import admin
+from .models import ShortageBlogPost
 
 
 class BlogPostAdmin(admin.ModelAdmin):
@@ -29,3 +30,10 @@ class BlogPostAdmin(admin.ModelAdmin):
         if getattr(obj, "author", None) is None:
             obj.author = request.user
         return super().save_model(request, obj, form, change)
+
+
+class ShortageBlogPostAdmin(BlogPostAdmin):
+    pass
+
+
+admin.site.register(ShortageBlogPost, ShortageBlogPostAdmin)

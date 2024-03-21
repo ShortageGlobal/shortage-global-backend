@@ -1,9 +1,11 @@
-from rest_framework import permissions, exceptions
+from rest_framework import generics, viewsets, mixins, permissions, exceptions
 from rest_framework.decorators import api_view, permission_classes, schema
 from rest_framework.schemas.openapi import AutoSchema
 from rest_framework.response import Response
 from shortage.apps.storage import MediaStorage
 from shortage.apps.file_paths import get_blog_post_content_uploads_path
+from .models import ShortageBlogPost
+from .serializers import ShortageBlogPostPreviewSerializer, ShortageBlogPostSerializer
 
 
 @api_view(["POST"])
@@ -45,3 +47,19 @@ def upload_image(request):
             "location": storage.url(file_path),
         }
     )
+
+
+class ShortageBlogPostViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
+    """A list of blog posts from the Shortage Team"""
+
+    lookup_field = "slug"
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return ShortageBlogPostPreviewSerializer
+        return ShortageBlogPostSerializer
+
+    def get_queryset(self):
+        return ShortageBlogPost.objects.published().order_by("-updated_at")
