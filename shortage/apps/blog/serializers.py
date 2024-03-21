@@ -65,3 +65,9 @@ class ShortageBlogPostPreviewSerializer(BlogPostPreviewSerializer):
 class ShortageBlogPostSerializer(BlogPostSerializer):
     class Meta(BlogPostSerializer.Meta):
         model = ShortageBlogPost
+
+
+class ShortageBlogPostSlugSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShortageBlogPost
+        fields = ["slug"]
