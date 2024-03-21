@@ -1,6 +1,7 @@
 """
 API urlpatterns
 """
+
 from django.urls import path, include
 from django.views.generic import TemplateView
 from shortage import settings

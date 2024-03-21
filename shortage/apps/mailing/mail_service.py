@@ -391,29 +391,33 @@ class OrganizationVerificationRequestServiceEmail(MailingBackend):
             self.admin_base_url,
             self.organization.pk,
         )
-        context[
-            "products_admin_url"
-        ] = "%s/catalog/product/?organization__id__exact=%s" % (
-            self.admin_base_url,
-            self.organization.pk,
+        context["products_admin_url"] = (
+            "%s/catalog/product/?organization__id__exact=%s"
+            % (
+                self.admin_base_url,
+                self.organization.pk,
+            )
         )
-        context[
-            "campaigns_admin_url"
-        ] = "%s/catalog/campaign/?organization__id__exact=%s" % (
-            self.admin_base_url,
-            self.organization.pk,
+        context["campaigns_admin_url"] = (
+            "%s/catalog/campaign/?organization__id__exact=%s"
+            % (
+                self.admin_base_url,
+                self.organization.pk,
+            )
         )
-        context[
-            "instructions_admin_url"
-        ] = "%s/catalog/instruction/?organization__id__exact=%s" % (
-            self.admin_base_url,
-            self.organization.pk,
+        context["instructions_admin_url"] = (
+            "%s/catalog/instruction/?organization__id__exact=%s"
+            % (
+                self.admin_base_url,
+                self.organization.pk,
+            )
         )
-        context[
-            "impact_stories_admin_url"
-        ] = "%s/catalog/organizationblogpost/?organization__id__exact=%s" % (
-            self.admin_base_url,
-            self.organization.pk,
+        context["impact_stories_admin_url"] = (
+            "%s/catalog/organizationblogpost/?organization__id__exact=%s"
+            % (
+                self.admin_base_url,
+                self.organization.pk,
+            )
         )
         context["organization"] = self.organization
         return context
