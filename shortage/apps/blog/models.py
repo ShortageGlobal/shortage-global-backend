@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.conf import settings
+from auditlog.registry import auditlog
 from tinymce.models import HTMLField
 from shortage.apps import storage
 from shortage.apps.file_paths import get_blog_post_photo_path
@@ -72,3 +73,9 @@ class ShortageBlogPost(BlogPost):
         verbose_name = "Blog Post"
         verbose_name_plural = "Blog Posts"
         ordering = ["-created_at"]
+
+    def get_absolute_url(self):
+        return "%s/blog/%s/" % (settings.FRONTEND_BASE_URL, self.slug)
+
+
+auditlog.register(ShortageBlogPost)
