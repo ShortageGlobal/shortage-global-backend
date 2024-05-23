@@ -58,6 +58,7 @@ class PackageType(models.TextChoices):
     )
     SENT_BY_DONOR = settings.PACKAGE_TYPE["SENT_BY_DONOR"], "Sent by donor"
     FUNDED_BY_DONOR = settings.PACKAGE_TYPE["FUNDED_BY_DONOR"], "Funded by donor"
+    SHOPIFY_PURCHASE = settings.PACKAGE_TYPE["SHOPIFY_PURCHASE"], "Purchased on Shopify"
 
 
 class Package(models.Model):
