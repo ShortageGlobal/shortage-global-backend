@@ -53,6 +53,10 @@ def package_status_change_handler(package, is_created=None, old_package=None):
             donor_email = PackageRegistrationEmail(package=package)
             service_email = PackageRegistationServiceEmail(package=package)
             nonprofit_email = NonprofitHasNewDonationEmail(package)
+        if package.type == PackageType.SHOPIFY_PURCHASE:
+            donor_email = PackageRegistrationEmail(package=package)
+            service_email = PackageRegistationServiceEmail(package=package)
+            nonprofit_email = NonprofitHasNewDonationEmail(package)
     elif package.status == PackageStatus.PAYMENT_SUCCEEDED:
         if package.type == PackageType.FUNDED_BY_DONOR:
             # notify the donor about his payment and registered package
