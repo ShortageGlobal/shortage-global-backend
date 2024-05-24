@@ -15,6 +15,7 @@ from decimal import Decimal
 from pathlib import Path
 from datetime import timedelta
 from django.core.management.utils import get_random_secret_key
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -161,6 +162,11 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=15),
 }
 
+CORS_ALLOW_HEADERS = (
+    *default_headers,
+    "Shopify-Authorization",
+)
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
@@ -285,6 +291,8 @@ STRIPE_SECRET_KEY = os.getenv("DJANGO_STRIPE_SECRET_KEY", "")
 STRIPE_ENDPOINT_SECRET = os.getenv("DJANGO_STRIPE_ENDPOINT_SECRET", "")
 
 RAINFOREST_API_KEY = os.getenv("DJANGO_RAINFOREST_API_KEY", "")
+
+SHOPIFY_AUTHORIZATION_SECRET = os.getenv("DJANGO_SHOPIFY_AUTHORIZATION_SECRET", "")
 
 WEASYPRINT_BASE_URI = None
 
