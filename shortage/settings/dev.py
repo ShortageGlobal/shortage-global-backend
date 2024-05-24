@@ -45,3 +45,5 @@ EMAIL_PORT = os.getenv("DJANGO_EMAIL_PORT", "1025")
 SERVER_EMAIL = os.getenv("DJANGO_SERVER_EMAIL", "support@shortage.global")
 
 WEASYPRINT_BASE_URI = "http://localhost:8080"
+
+SHOPIFY_AUTHORIZATION_SECRET = os.getenv("DJANGO_SHOPIFY_AUTHORIZATION_SECRET", "dev")
