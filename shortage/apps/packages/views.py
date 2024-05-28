@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.conf import settings
 from rest_framework import generics, viewsets, mixins, permissions, exceptions
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -6,7 +7,7 @@ from rest_framework.schemas.openapi import AutoSchema
 from shortage.apps.catalog.models import Organization
 from shortage.apps.catalog.serializers import OrganizationBlogPostPreviewSerializer
 from shortage.apps.packages.payments import deserialize_stripe_event
-from .models import Package, Cart, CartItem
+from .models import Package, PackageType, Cart, CartItem
 from .package_serializers import (
     PackageSerializer,
     PackageNoteSerializer,
@@ -108,6 +109,16 @@ class PackageCreationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     serializer_class = PackageCreationSerializer
 
     def create(self, request, *args, **kwargs):
+        shopify_authorization = request.headers.get("Shopify-Authorization")
+        package_type = request.data.get("type")
+
+        # Shopify purchase requires authorization
+        if package_type == PackageType.SHOPIFY_PURCHASE:
+            if shopify_authorization is None:
+                raise exceptions.NotAuthenticated()
+            if shopify_authorization != settings.SHOPIFY_AUTHORIZATION_SECRET:
+                raise exceptions.AuthenticationFailed()
+
         # check organization & campaign and store it into view,
         # so serializer could use it for validation
         self.organization = generics.get_object_or_404(
