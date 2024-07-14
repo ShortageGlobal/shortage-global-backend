@@ -132,6 +132,11 @@ class Organization(models.Model):
     is_draft = models.BooleanField(default=True, db_index=True)
     is_deleted = models.BooleanField(default=False, db_index=True)
     promote = models.BooleanField(default=False, db_index=True)
+    whitelabel = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text="Does the organization use a custom page styling",
+    )
     deadline = models.DateTimeField(null=True, blank=True)
 
     updated_at = models.DateTimeField(auto_now=True)
