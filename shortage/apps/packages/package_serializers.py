@@ -109,12 +109,14 @@ class PackageCreationSerializer(serializers.ModelSerializer):
             "items",
             "type",
             "checkout_url",
+            "shopify_order_id",
         ]
         read_only_fields = ["status"]
 
     def validate(self, attrs):
         type = attrs.get("type")
         items = attrs.get("items")
+        shopify_order_id = attrs.get("shopify_order_id")
 
         errors = {}
 
@@ -122,10 +124,37 @@ class PackageCreationSerializer(serializers.ModelSerializer):
         if type == PackageType.SENT_BY_DONOR or not type:
             # require Delivery Company
             if not attrs.get("delivery_company"):
-                errors["delivery_company"] = ["This field is required."]
+                errors["delivery_company"] = [
+                    "This field is required for packages sent by donor."
+                ]
             # require Tracking Code
             if not attrs.get("tracking_code"):
-                errors["tracking_code"] = ["This field is required."]
+                errors["tracking_code"] = [
+                    "This field is required for packages sent by donor."
+                ]
+
+        if type == PackageType.SHOPIFY_PURCHASE:
+            # require Shopify Order ID
+            if not shopify_order_id:
+                errors["shopify_order_id"] = [
+                    "This field is required for packages purchased on Shopify."
+                ]
+            else:
+                # make sure the order is not already registered
+                organization_id = self.context["view"].organization.id
+                is_order_registered = Package.objects.filter(
+                    shopify_order_id=shopify_order_id, organization_id=organization_id
+                ).exists()
+                if is_order_registered:
+                    errors["shopify_order_id"] = (
+                        "The package for the following order has already been created."
+                    )
+
+        # Check shopify_order_id is not saved for anything else than SHOPIFY_PURCHASE
+        if type != PackageType.SHOPIFY_PURCHASE and shopify_order_id:
+            errors["shopify_order_id"] = (
+                "This field is only allowed for packages purchased on Shopify."
+            )
 
         # Check all products are unique
         products_slug_set = set()

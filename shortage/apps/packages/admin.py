@@ -98,7 +98,7 @@ class PackageAdmin(admin.ModelAdmin):
             "Advanced",
             {
                 "classes": ("collapse",),
-                "fields": ("checkout_url",),
+                "fields": ("checkout_url", "shopify_order_id"),
             },
         ),
     )
@@ -126,6 +126,7 @@ class PackageAdmin(admin.ModelAdmin):
         "created_at",
         "note",
         "checkout_url",
+        "shopify_order_id",
     ]
     search_fields = [
         "email",
