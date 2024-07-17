@@ -112,6 +112,9 @@ class Package(models.Model):
     # valid for 24 hours
     checkout_url = models.TextField(null=True, blank=True, validators=[URLValidator()])
 
+    # only relevant for Shopify purchases
+    shopify_order_id = models.CharField(max_length=100, null=True, blank=True)
+
     # related blog posts
     blog_posts = models.ManyToManyField(
         OrganizationBlogPost,
@@ -147,6 +150,9 @@ class Package(models.Model):
                 "Receive emails about package registration",
             ),
         )
+        # Prevent duplicates for Shopify purchases.
+        # Webhooks can fire multiple times for the same order.
+        unique_together = ["organization", "shopify_order_id"]
 
     def __str__(self):
         return self.uuid.__str__()
