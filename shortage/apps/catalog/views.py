@@ -404,7 +404,7 @@ class AvailableProductsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     def get_queryset(self):
         queryset = (
-            Product.objects.active()
+            Product.objects.public()
             .filter(
                 organization_id__in=models.Subquery(
                     Organization.objects.published().values("id")
