@@ -255,6 +255,12 @@ PRODUCT_CATEGORY = {
     "CLOTHES": "CLOTHES",
 }
 
+# IMPORTANT: the list of category keys must be synchronized with frontend
+DEMO_REQUEST_SOURCE = {
+    "GENERAL": "GENERAL",
+    "SHOPIFY_INTEGRATION": "SHOPIFY_INTEGRATION",
+}
+
 # IMPORTANT: the list of package statuses must be synchronized with frontend
 PACKAGE_STATUS = {
     "REGISTERED": "REGISTERED",

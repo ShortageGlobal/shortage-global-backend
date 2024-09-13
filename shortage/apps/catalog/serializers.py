@@ -6,6 +6,7 @@ from .models import (
     Product,
     Campaign,
     OrganizationRegistrationRequest,
+    DemoRequest,
     OrganizationBlogPost,
 )
 
@@ -152,6 +153,15 @@ class OrganizationRegistrationRequestSerializer(serializers.ModelSerializer):
         # ignore this field after validation
         validated_data.pop("agreed_to_terms_of_use")
         return super().create(validated_data)
+
+
+class DemoRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DemoRequest
+        fields = [
+            "email",
+            "source",
+        ]
 
 
 class CampaignPreviewSerializer(serializers.ModelSerializer):

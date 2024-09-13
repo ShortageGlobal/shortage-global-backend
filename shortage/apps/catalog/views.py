@@ -35,6 +35,7 @@ from .serializers import (
     ProductSerializer,
     OrganizationProductSlugSerializer,
     OrganizationRegistrationRequestSerializer,
+    DemoRequestSerializer,
 )
 
 
@@ -329,6 +330,17 @@ class OrganizationRegistrationRequestViewSet(
 
     permission_classes = [permissions.AllowAny]
     serializer_class = OrganizationRegistrationRequestSerializer
+
+
+class DemoRequestViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    """Demo Request"""
+
+    schema = AutoSchema(
+        tags=["Organizations"],
+    )
+
+    permission_classes = [permissions.AllowAny]
+    serializer_class = DemoRequestSerializer
 
 
 class SitemapViewSet(viewsets.ViewSet):
