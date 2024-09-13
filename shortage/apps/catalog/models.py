@@ -448,32 +448,6 @@ class CampaignProduct(models.Model):
             )
 
 
-class OrganizationRegistrationRequest(models.Model):
-    first_name = models.CharField(max_length=255, null=True, blank=True)
-    last_name = models.CharField(max_length=255, null=True, blank=True)
-    phone_number = PhoneNumberField(null=True, blank=True)
-    email = models.EmailField(max_length=100)
-    organization_name = models.CharField(max_length=255, null=True, blank=True)
-    ein_number = models.CharField(max_length=255, null=True, blank=True)
-    url = models.URLField(max_length=255, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        permissions = (
-            (
-                "can_receive_organization_registration_request_emails",
-                "Receive emails about organization registration request",
-            ),
-        )
-
-    def __str__(self):
-        return self.full_name
-
-    @property
-    def full_name(self):
-        return get_full_name(first_name=self.first_name, last_name=self.last_name)
-
-
 class DemoRequestSources(models.TextChoices):
     GENERAL = settings.DEMO_REQUEST_SOURCE["GENERAL"], "General Demo"
     SHOPIFY_INTEGRATION = (
@@ -528,5 +502,5 @@ auditlog.register(Organization)
 auditlog.register(Campaign)
 auditlog.register(Instruction)
 auditlog.register(Product)
-auditlog.register(OrganizationRegistrationRequest)
+auditlog.register(DemoRequest)
 auditlog.register(OrganizationBlogPost)

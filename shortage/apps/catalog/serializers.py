@@ -5,7 +5,6 @@ from .models import (
     Instruction,
     Product,
     Campaign,
-    OrganizationRegistrationRequest,
     DemoRequest,
     OrganizationBlogPost,
 )
@@ -124,35 +123,6 @@ class OrganizationProductSlugSerializer(serializers.ModelSerializer):
             "slug",
             "organization",
         ]
-
-
-class OrganizationRegistrationRequestSerializer(serializers.ModelSerializer):
-    agreed_to_terms_of_use = serializers.BooleanField(required=True, write_only=True)
-
-    class Meta:
-        model = OrganizationRegistrationRequest
-        fields = [
-            "first_name",
-            "last_name",
-            "phone_number",
-            "email",
-            "organization_name",
-            "ein_number",
-            "url",
-            "agreed_to_terms_of_use",
-        ]
-
-    def validate_agreed_to_terms_of_use(self, value):
-        if not value:
-            raise serializers.ValidationError(
-                "You must agree to the Terms of Use Policy."
-            )
-        return value
-
-    def create(self, validated_data):
-        # ignore this field after validation
-        validated_data.pop("agreed_to_terms_of_use")
-        return super().create(validated_data)
 
 
 class DemoRequestSerializer(serializers.ModelSerializer):

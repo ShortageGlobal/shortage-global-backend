@@ -8,7 +8,6 @@ from .models import (
     ExternalOrganization,
     Product,
     Instruction,
-    OrganizationRegistrationRequest,
     DemoRequest,
     OrganizationBlogPost,
 )
@@ -184,44 +183,6 @@ class ProductAdmin(admin.ModelAdmin):
     ]
 
 
-class OrganizationRegistrationRequestAdmin(admin.ModelAdmin):
-    list_display = [
-        "email",
-        "full_name",
-        "phone_number",
-        "organization_name",
-        "ein_number",
-        "created_at",
-    ]
-    fields = [
-        "first_name",
-        "last_name",
-        "phone_number",
-        "email",
-        "organization_name",
-        "ein_number",
-        "url",
-        "created_at",
-    ]
-    readonly_fields = [
-        "first_name",
-        "last_name",
-        "phone_number",
-        "email",
-        "organization_name",
-        "ein_number",
-        "url",
-        "created_at",
-    ]
-    search_fields = ["organization_name", "first_name", "last_name"]
-
-    def has_add_permission(self, request, obj=None):
-        return False
-
-    def get_ordering(self, request):
-        return super().get_ordering(request) or ["-created_at"]
-
-
 class DemoRequestAdmin(admin.ModelAdmin):
     list_display = [
         "email",
@@ -265,8 +226,5 @@ admin.site.register(Campaign, CampaignAdmin)
 admin.site.register(ExternalOrganization, ExternalOrganizationAdmin)
 admin.site.register(Instruction, InstructionAdmin)
 admin.site.register(Product, ProductAdmin)
-admin.site.register(
-    OrganizationRegistrationRequest, OrganizationRegistrationRequestAdmin
-)
 admin.site.register(DemoRequest, DemoRequestAdmin)
 admin.site.register(OrganizationBlogPost, OrganizationBlogPostAdmin)

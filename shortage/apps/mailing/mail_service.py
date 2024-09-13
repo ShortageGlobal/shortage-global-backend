@@ -302,28 +302,6 @@ class PasswordResetEmail(MailingBackend):
         }
 
 
-class OrganizationRegistrationRequestServiceEmail(MailingBackend):
-    subject = "New organization registration request - Shortage"
-    html_template = "emails/organization_registration_request_staff/index.html"
-    text_template = "emails/organization_registration_request_staff/index.txt"
-
-    service_email = True
-    permission_codename = "can_receive_organization_registration_request_emails"
-
-    def __init__(self, organization_registration_request):
-        self.instance = organization_registration_request
-
-    def get_context(self):
-        organization_registration_request_url = (
-            "%s/catalog/organizationregistrationrequest/%s/change/"
-            % (self.admin_base_url, self.instance.pk)
-        )
-
-        return {
-            "organization_registration_request_url": organization_registration_request_url,
-        }
-
-
 class DemoRequestServiceEmail(MailingBackend):
     subject = "New demo request - Shortage"
     html_template = "emails/demo_request_staff/index.html"
