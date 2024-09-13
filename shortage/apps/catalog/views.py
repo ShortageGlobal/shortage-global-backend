@@ -34,7 +34,6 @@ from .serializers import (
     OrganizationSlugSerializer,
     ProductSerializer,
     OrganizationProductSlugSerializer,
-    OrganizationRegistrationRequestSerializer,
     DemoRequestSerializer,
 )
 
@@ -317,19 +316,6 @@ class ProductViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             slug=self.kwargs["org_slug"],
         )
         return Product.objects.filter(organization=organization)
-
-
-class OrganizationRegistrationRequestViewSet(
-    mixins.CreateModelMixin, viewsets.GenericViewSet
-):
-    """Organization Registration Request"""
-
-    schema = AutoSchema(
-        tags=["Organizations"],
-    )
-
-    permission_classes = [permissions.AllowAny]
-    serializer_class = OrganizationRegistrationRequestSerializer
 
 
 class DemoRequestViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):

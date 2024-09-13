@@ -19,7 +19,6 @@ from .views import (
     CampaignProductsViewSet,
     CampaignProductViewSet,
     OrganizationBlogPostsViewSet,
-    OrganizationRegistrationRequestViewSet,
     DemoRequestViewSet,
     SitemapViewSet,
     AvailableOrganizationsViewSet,
@@ -163,14 +162,6 @@ router.register(
     PrivateOrganizationBlogPostsViewSet,
     basename="private_blog_posts",
 )
-
-# Request for nonprofits
-router.register(
-    r"register-nonprofit",
-    OrganizationRegistrationRequestViewSet,
-    basename="register_nonprofit",
-)
-
 
 # Demo request
 router.register(
