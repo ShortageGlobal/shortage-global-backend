@@ -324,6 +324,28 @@ class OrganizationRegistrationRequestServiceEmail(MailingBackend):
         }
 
 
+class DemoRequestServiceEmail(MailingBackend):
+    subject = "New demo request - Shortage"
+    html_template = "emails/demo_request_staff/index.html"
+    text_template = "emails/demo_request_staff/index.txt"
+
+    service_email = True
+    permission_codename = "can_receive_demo_request_emails"
+
+    def __init__(self, demo_request):
+        self.instance = demo_request
+
+    def get_context(self):
+        demo_request_url = "%s/catalog/demorequest/%s/change/" % (
+            self.admin_base_url,
+            self.instance.pk,
+        )
+
+        return {
+            "demo_request_url": demo_request_url,
+        }
+
+
 class CorporateDonationRequestServiceEmail(MailingBackend):
     subject = "New corporate donation request - Shortage"
     html_template = "emails/corporate_donation_staff/index.html"

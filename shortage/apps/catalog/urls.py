@@ -20,6 +20,7 @@ from .views import (
     CampaignProductViewSet,
     OrganizationBlogPostsViewSet,
     OrganizationRegistrationRequestViewSet,
+    DemoRequestViewSet,
     SitemapViewSet,
     AvailableOrganizationsViewSet,
     AvailableProductsViewSet,
@@ -168,6 +169,14 @@ router.register(
     r"register-nonprofit",
     OrganizationRegistrationRequestViewSet,
     basename="register_nonprofit",
+)
+
+
+# Demo request
+router.register(
+    r"demo-request",
+    DemoRequestViewSet,
+    basename="demo_request",
 )
 
 # Amazon (rainforest integration)

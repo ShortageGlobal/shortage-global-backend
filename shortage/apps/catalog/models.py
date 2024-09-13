@@ -474,6 +474,31 @@ class OrganizationRegistrationRequest(models.Model):
         return get_full_name(first_name=self.first_name, last_name=self.last_name)
 
 
+class DemoRequestSources(models.TextChoices):
+    GENERAL = settings.DEMO_REQUEST_SOURCE["GENERAL"], "General Demo"
+    SHOPIFY_INTEGRATION = (
+        settings.DEMO_REQUEST_SOURCE["SHOPIFY_INTEGRATION"],
+        "Shopify Integration Demo",
+    )
+
+
+class DemoRequest(models.Model):
+    email = models.EmailField(max_length=100)
+    source = models.CharField(max_length=255, choices=DemoRequestSources.choices)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        permissions = (
+            (
+                "can_receive_demo_request_emails",
+                "Receive demo request emails",
+            ),
+        )
+
+    def __str__(self):
+        return self.email
+
+
 class OrganizationBlogPostManager(BlogPostManager):
     def promoted(self):
         """

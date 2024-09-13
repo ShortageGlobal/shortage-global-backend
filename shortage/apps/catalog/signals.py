@@ -1,14 +1,18 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from corsheaders.signals import check_request_enabled
-from shortage.apps.catalog.models import Organization
+from shortage.apps.catalog.models import (
+    Organization,
+    OrganizationRegistrationRequest,
+    DemoRequest,
+)
 from shortage.apps.packages.models import CartItem
 from shortage.apps.mailing.mail_service import (
     OrganizationRegistrationRequestServiceEmail,
+    DemoRequestServiceEmail,
     NonprofitRegistrationEmail,
     OrganizationIsVerifiedEmail,
 )
-from .models import Organization, OrganizationRegistrationRequest
 
 
 @receiver(post_save, sender=Organization, dispatch_uid="remove_cart_items")
@@ -36,6 +40,21 @@ def send_email_on_org_registration_request_creation(
         service_email = OrganizationRegistrationRequestServiceEmail(
             organization_registration_request=instance
         )
+        service_email.send()
+
+
+@receiver(
+    post_save,
+    sender=DemoRequest,
+    dispatch_uid="send_email_on_demo_request_creation",
+)
+def send_email_on_demo_request_creation(sender, instance, created, **kwargs):
+    """
+    Send a service email when Demo Request is created
+    """
+    if created:
+        # send service email to staff
+        service_email = DemoRequestServiceEmail(demo_request=instance)
         service_email.send()
 
 
