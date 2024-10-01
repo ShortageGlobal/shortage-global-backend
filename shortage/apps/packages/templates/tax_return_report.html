@@ -218,16 +218,16 @@
           <td class="index-cell">{{ forloop.counter }}</td>
           <td class="date-cell">{{package.created_at|date:"DATE_FORMAT"}}</td>
           <td class="donor-cell">
-            {{package.first_name}} {{package.last_name}}
+            {{package.first_name|default:""}} {{package.last_name|default:""}}
             <br />
             {{package.email}}
           </td>
           <td class="address-cell">
-            <div>{{package.address_line1}}</div>
-            <div>{{package.address_line2}}</div>
-            <div>{{package.city}}</div>
-            <div>{{package.state_province_region}}</div>
-            <div>{{package.zip}}</div>
+            <div>{{package.address_line1|default:""}}</div>
+            <div>{{package.address_line2|default:""}}</div>
+            <div>{{package.city|default:""}}</div>
+            <div>{{package.state_province_region|default:""}}</div>
+            <div>{{package.zip|default:""}}</div>
           </td>
           <td class="donated-items-cell">{{item.product.name}}</td>
           <td class="qty-cell no-wrap">{{item.quantity}}</td>
