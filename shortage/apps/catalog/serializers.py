@@ -21,6 +21,7 @@ class OrganizationPreviewSerializer(serializers.ModelSerializer):
             "logo",
             "is_draft",
             "is_verified",
+            "whitelabel",
         ]
 
 
@@ -103,6 +104,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             "deadline",
             "is_draft",
             "is_verified",
+            "whitelabel",
         ]
 
 

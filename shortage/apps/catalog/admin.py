@@ -41,6 +41,7 @@ class OrganizationAdmin(admin.ModelAdmin):
                     "is_draft",
                     "is_deleted",
                     "promote",
+                    "whitelabel",
                 )
             },
         ),
